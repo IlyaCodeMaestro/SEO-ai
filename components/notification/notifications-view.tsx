@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useLanguage } from "./language-provider"
-import { Bell } from "lucide-react"
+import { useLanguage } from "../provider/language-provider";
+import { Bell } from "lucide-react";
 
 export function NotificationsView() {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
 
   return (
     <div className="h-full flex flex-col">
@@ -18,9 +18,11 @@ export function NotificationsView() {
         {/* Пустое состояние с иконкой колокольчика */}
         <div className="flex-1 flex flex-col items-center justify-center p-4 h-full">
           <Bell className="h-16 w-16 text-gray-800 mb-4" strokeWidth={1.5} />
-          <p className="text-center font-medium text-gray-900">Список уведомлений пуст</p>
+          <p className="text-center font-medium text-gray-900">
+            Список уведомлений пуст
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

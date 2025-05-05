@@ -36,7 +36,7 @@
   }
 
   .dark {
-    --background: 0 0% 17%; /* rgba(44, 43, 43, 1) converted to HSL */
+    --background: 0 0% 17%;
     --foreground: 210 40% 98%;
 
     --card: 0 0% 0%;
@@ -73,4 +73,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.dark-theme.login-card-model {
+  background-color: grey;
 }

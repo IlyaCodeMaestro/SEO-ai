@@ -1,69 +1,75 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { X, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { TariffSwitchConfirmModal } from "./tariff-switch-confirm-modal"
-import { useTariff, tariffs } from "./tariff-provider"
-import { useLanguage } from "./language-provider"
+import { useState } from "react";
+import { X, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { TariffSwitchConfirmModal } from "./tariff-switch-confirm-modal";
+import { useTariff, tariffs } from "../provider/tariff-provider";
+import { useLanguage } from "../provider/language-provider";
 
 interface TariffPanelProps {
-  onClose: () => void
+  onClose: () => void;
 }
 
 export function TariffPanel({ onClose }: TariffPanelProps) {
-  const isMobile = useMediaQuery("(max-width: 768px)")
-  const { currentTariff, setCurrentTariff, getTariffById, analysisRemaining, descriptionRemaining, nextPaymentDate } =
-    useTariff()
-  const [expandedTariff, setExpandedTariff] = useState<string | null>(null)
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [tariffToSwitch, setTariffToSwitch] = useState<string | null>(null)
-  const { t } = useLanguage()
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const {
+    currentTariff,
+    setCurrentTariff,
+    getTariffById,
+    analysisRemaining,
+    descriptionRemaining,
+    nextPaymentDate,
+  } = useTariff();
+  const [expandedTariff, setExpandedTariff] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [tariffToSwitch, setTariffToSwitch] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   // Текущий тариф
-  const currentTariffData = getTariffById(currentTariff)
+  const currentTariffData = getTariffById(currentTariff);
 
   // Обработчик клика по тарифу (только для мобильной версии)
   const handleTariffClick = (tariffId: string) => {
     if (expandedTariff === tariffId) {
-      setExpandedTariff(null)
+      setExpandedTariff(null);
     } else {
-      setExpandedTariff(tariffId)
+      setExpandedTariff(tariffId);
     }
-  }
+  };
 
   // Обработчик нажатия на кнопку "Перейти"
   const handleSwitchClick = (tariffId: string) => {
-    setTariffToSwitch(tariffId)
-    setShowConfirmModal(true)
-  }
+    setTariffToSwitch(tariffId);
+    setShowConfirmModal(true);
+  };
 
   // Обработчик подтверждения переключения тарифа
   const handleConfirmSwitch = () => {
     if (tariffToSwitch) {
-      setCurrentTariff(tariffToSwitch as any)
+      setCurrentTariff(tariffToSwitch as any);
     }
-    setShowConfirmModal(false)
-    setTariffToSwitch(null)
-  }
+    setShowConfirmModal(false);
+    setTariffToSwitch(null);
+  };
 
   // Обработчик отмены переключения тарифа
   const handleCancelSwitch = () => {
-    setShowConfirmModal(false)
-    setTariffToSwitch(null)
-  }
+    setShowConfirmModal(false);
+    setTariffToSwitch(null);
+  };
 
   // Если показываем модальное окно подтверждения
   if (showConfirmModal && tariffToSwitch) {
-    const targetTariff = tariffs.find((t) => t.id === tariffToSwitch)
+    const targetTariff = tariffs.find((t) => t.id === tariffToSwitch);
     return (
       <TariffSwitchConfirmModal
         tariffName={targetTariff?.name || ""}
         onConfirm={handleConfirmSwitch}
         onCancel={handleCancelSwitch}
       />
-    )
+    );
   }
 
   // Мобильная версия (с возможностью раскрытия информации о тарифе)
@@ -78,7 +84,8 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
           <div className="flex-1 text-center">
             <h2 className="text-lg font-medium">{t("cabinet.title")}</h2>
           </div>
-          <div className="w-5"></div> {/* Пустой элемент для сбалансированного выравнивания */}
+          <div className="w-5"></div>{" "}
+          {/* Пустой элемент для сбалансированного выравнивания */}
         </div>
 
         <div className="flex-1 p-0 pt-0 max-w-md mx-auto w-full">
@@ -86,17 +93,21 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
           <div className="mb-6 px-4">
             <div className="flex justify-between items-start mb-1">
               <span className="text-gray-600">{t("tariff.my")}</span>
-              <span className="font-bold text-lg">«{currentTariffData?.name}»</span>
+              <span className="font-bold text-lg">
+                «{currentTariffData?.name}»
+              </span>
             </div>
             <div className="text-sm text-gray-600">
               <p>
                 {t("tariff.next.payment")} {nextPaymentDate}
               </p>
               <p>
-                {t("tariff.analysis.remaining")} {analysisRemaining} {t("tariff.pieces")}.
+                {t("tariff.analysis.remaining")} {analysisRemaining}{" "}
+                {t("tariff.pieces")}.
               </p>
               <p>
-                {t("tariff.description.remaining")} {descriptionRemaining} {t("tariff.pieces")}.
+                {t("tariff.description.remaining")} {descriptionRemaining}{" "}
+                {t("tariff.pieces")}.
               </p>
             </div>
             <Button
@@ -122,31 +133,42 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                   <h3 className="text-2xl font-bold mb-2">«Селлер»</h3>
                   <div className="mb-4">
                     <p className="mb-1">
-                      {t("tariff.monthly.fee")} <span className="font-bold">8000 тенге.</span>
+                      {t("tariff.monthly.fee")}{" "}
+                      <span className="font-bold">8000 тенге.</span>
                     </p>
                     <p className="mb-1">
-                      {t("tariff.analysis.count")} <span className="font-bold">5 {t("tariff.pieces")}.</span>
+                      {t("tariff.analysis.count")}{" "}
+                      <span className="font-bold">5 {t("tariff.pieces")}.</span>
                     </p>
                     <p className="mb-1">
-                      {t("tariff.description.count")} <span className="font-bold">5 {t("tariff.pieces")}.</span>
+                      {t("tariff.description.count")}{" "}
+                      <span className="font-bold">5 {t("tariff.pieces")}.</span>
                     </p>
                   </div>
 
                   <div className="text-sm mb-6">
                     <p className="mb-1">
-                      При своевременной оплате абонентская плата при переходе на более высокий тариф не теряется.
+                      При своевременной оплате абонентская плата при переходе на
+                      более высокий тариф не теряется.
                     </p>
-                    <p className="mb-1">При переходе на тариф "Менеджер" или "Премиум" бонусы сохраняются.</p>
-                    <p className="mb-1">При переходе на тариф "Селлер" 50% бонусов сохраняется.</p>
-                    <p className="mb-1">Абонентская плата безвозвратно не возвращается.</p>
+                    <p className="mb-1">
+                      При переходе на тариф "Менеджер" или "Премиум" бонусы
+                      сохраняются.
+                    </p>
+                    <p className="mb-1">
+                      При переходе на тариф "Селлер" 50% бонусов сохраняется.
+                    </p>
+                    <p className="mb-1">
+                      Абонентская плата безвозвратно не возвращается.
+                    </p>
                   </div>
 
                   {currentTariff !== "seller" && (
                     <Button
                       className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleSwitchClick("seller")
+                        e.stopPropagation();
+                        handleSwitchClick("seller");
                       }}
                     >
                       Перейти
@@ -174,31 +196,46 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                   <h3 className="text-2xl font-bold mb-2">«Менеджер»</h3>
                   <div className="mb-4">
                     <p className="mb-1">
-                      {t("tariff.monthly.fee")} <span className="font-bold">20000 тенге.</span>
+                      {t("tariff.monthly.fee")}{" "}
+                      <span className="font-bold">20000 тенге.</span>
                     </p>
                     <p className="mb-1">
-                      {t("tariff.analysis.count")} <span className="font-bold">20 {t("tariff.pieces")}.</span>
+                      {t("tariff.analysis.count")}{" "}
+                      <span className="font-bold">
+                        20 {t("tariff.pieces")}.
+                      </span>
                     </p>
                     <p className="mb-1">
-                      {t("tariff.description.count")} <span className="font-bold">20 {t("tariff.pieces")}.</span>
+                      {t("tariff.description.count")}{" "}
+                      <span className="font-bold">
+                        20 {t("tariff.pieces")}.
+                      </span>
                     </p>
                   </div>
 
                   <div className="text-sm mb-6">
                     <p className="mb-1">
-                      При своевременной оплате абонентская плата при переходе на более высокий тариф не теряется.
+                      При своевременной оплате абонентская плата при переходе на
+                      более высокий тариф не теряется.
                     </p>
-                    <p className="mb-1">При переходе на тариф "Премиум" бонусы сохраняются.</p>
-                    <p className="mb-1">При переходе на тариф "Селлер" или "Менеджер" 50% бонусов сохраняется.</p>
-                    <p className="mb-1">Абонентская плата безвозвратно не возвращается.</p>
+                    <p className="mb-1">
+                      При переходе на тариф "Премиум" бонусы сохраняются.
+                    </p>
+                    <p className="mb-1">
+                      При переходе на тариф "Селлер" или "Менеджер" 50% бонусов
+                      сохраняется.
+                    </p>
+                    <p className="mb-1">
+                      Абонентская плата безвозвратно не возвращается.
+                    </p>
                   </div>
 
                   {currentTariff !== "manager" && (
                     <Button
                       className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleSwitchClick("manager")
+                        e.stopPropagation();
+                        handleSwitchClick("manager");
                       }}
                     >
                       Перейти
@@ -226,30 +263,43 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                   <h3 className="text-2xl font-bold mb-2">«Премиум»</h3>
                   <div className="mb-4">
                     <p className="mb-1">
-                      {t("tariff.monthly.fee")} <span className="font-bold">50000 тенге.</span>
+                      {t("tariff.monthly.fee")}{" "}
+                      <span className="font-bold">50000 тенге.</span>
                     </p>
                     <p className="mb-1">
-                      {t("tariff.analysis.count")} <span className="font-bold">40 {t("tariff.pieces")}.</span>
+                      {t("tariff.analysis.count")}{" "}
+                      <span className="font-bold">
+                        40 {t("tariff.pieces")}.
+                      </span>
                     </p>
                     <p className="mb-1">
-                      {t("tariff.description.count")} <span className="font-bold">60 {t("tariff.pieces")}.</span>
+                      {t("tariff.description.count")}{" "}
+                      <span className="font-bold">
+                        60 {t("tariff.pieces")}.
+                      </span>
                     </p>
                   </div>
 
                   <div className="text-sm mb-6">
                     <p className="mb-1">
-                      При своевременной оплате абонентская плата при переходе на более высокий тариф не теряется.
+                      При своевременной оплате абонентская плата при переходе на
+                      более высокий тариф не теряется.
                     </p>
-                    <p className="mb-1">При переходе на тариф "Селлер" или "Менеджер" бонусы не сохраняются.</p>
-                    <p className="mb-1">Абонентская плата безвозвратно не возвращается.</p>
+                    <p className="mb-1">
+                      При переходе на тариф "Селлер" или "Менеджер" бонусы не
+                      сохраняются.
+                    </p>
+                    <p className="mb-1">
+                      Абонентская плата безвозвратно не возвращается.
+                    </p>
                   </div>
 
                   {currentTariff !== "premium" && (
                     <Button
                       className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleSwitchClick("premium")
+                        e.stopPropagation();
+                        handleSwitchClick("premium");
                       }}
                     >
                       Перейти
@@ -266,7 +316,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Десктопная версия (новый дизайн согласно скриншоту)
@@ -279,7 +329,11 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
             <h2 className="text-lg font-medium">Тариф</h2>
           </div>
         </div>
-        <button onClick={onClose} className="p-1 absolute right-4 top-4" aria-label="Close">
+        <button
+          onClick={onClose}
+          className="p-1 absolute right-4 top-4"
+          aria-label="Close"
+        >
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -289,7 +343,9 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
         <div className="mb-6 bg-gray-100 p-4 rounded-lg shadow-sm">
           <div className="mb-1">
             <span className="text-gray-600">Мой тариф</span>
-            <span className="font-bold text-lg ml-2">«{currentTariffData?.name}»</span>
+            <span className="font-bold text-lg ml-2">
+              «{currentTariffData?.name}»
+            </span>
           </div>
           <div className="text-sm text-gray-600">
             <p>Срок действия списания: 10 ноября</p>
@@ -306,13 +362,21 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-xl font-bold">«Селлер»</h3>
-                  <p className="text-sm">Ежемесячная абонентская плата 8000 тенге.</p>
+                  <p className="text-sm">
+                    Ежемесячная абонентская плата 8000 тенге.
+                  </p>
                   <p className="text-sm">Анализ карточки товара 5 штук.</p>
                   <p className="text-sm">Описание карточки товара 5 штук.</p>
                 </div>
                 <div className="text-xs max-w-[40%]">
-                  <p>При своевременной оплате абонентская плата при переходе на более высокий тариф не теряется.</p>
-                  <p>При переходе на тариф "Менеджер" или "Премиум" бонусы сохраняются.</p>
+                  <p>
+                    При своевременной оплате абонентская плата при переходе на
+                    более высокий тариф не теряется.
+                  </p>
+                  <p>
+                    При переходе на тариф "Менеджер" или "Премиум" бонусы
+                    сохраняются.
+                  </p>
                   <p>При переходе на тариф "Селлер" 50% бонусов сохраняется.</p>
                   <p>Абонентская плата безвозвратно не возвращается.</p>
                 </div>
@@ -334,14 +398,22 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-xl font-bold">«Менеджер»</h3>
-                  <p className="text-sm">Ежемесячная абонентская плата 20000 тенге.</p>
+                  <p className="text-sm">
+                    Ежемесячная абонентская плата 20000 тенге.
+                  </p>
                   <p className="text-sm">Анализ карточки товара 20 штук.</p>
                   <p className="text-sm">Описание карточки товара 20 штук.</p>
                 </div>
                 <div className="text-xs max-w-[40%]">
-                  <p>При своевременной оплате абонентская плата при переходе на более высокий тариф не теряется.</p>
+                  <p>
+                    При своевременной оплате абонентская плата при переходе на
+                    более высокий тариф не теряется.
+                  </p>
                   <p>При переходе на тариф "Премиум" бонусы сохраняются.</p>
-                  <p>При переходе на тариф "Селлер" или "Менеджер" 50% бонусов сохраняется.</p>
+                  <p>
+                    При переходе на тариф "Селлер" или "Менеджер" 50% бонусов
+                    сохраняется.
+                  </p>
                   <p>Абонентская плата безвозвратно не возвращается.</p>
                 </div>
               </div>
@@ -362,13 +434,21 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-xl font-bold">«Премиум»</h3>
-                  <p className="text-sm">Ежемесячная абонентская плата 50000 тенге.</p>
+                  <p className="text-sm">
+                    Ежемесячная абонентская плата 50000 тенге.
+                  </p>
                   <p className="text-sm">Анализ карточки товара 40 штук.</p>
                   <p className="text-sm">Описание карточки товара 60 штук.</p>
                 </div>
                 <div className="text-xs max-w-[40%]">
-                  <p>При своевременной оплате абонентская плата при переходе на более высокий тариф не теряется.</p>
-                  <p>При переходе на тариф "Селлер" или "Менеджер" бонусы не сохраняются.</p>
+                  <p>
+                    При своевременной оплате абонентская плата при переходе на
+                    более высокий тариф не теряется.
+                  </p>
+                  <p>
+                    При переходе на тариф "Селлер" или "Менеджер" бонусы не
+                    сохраняются.
+                  </p>
                   <p>Абонентская плата безвозвратно не возвращается.</p>
                 </div>
               </div>
@@ -385,5 +465,5 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

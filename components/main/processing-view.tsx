@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { useLanguage } from "./language-provider"
-import { X } from "lucide-react"
-import { useProcessingContext } from "./processing-provider"
-import { formatDistanceToNow } from "date-fns"
-import { ru, kk, enUS } from "date-fns/locale"
+import { X } from "lucide-react";
+import { useProcessingContext } from "./processing-provider";
+import { formatDistanceToNow } from "date-fns";
+import { ru, kk, enUS } from "date-fns/locale";
+import { useLanguage } from "../provider/language-provider";
 
 interface ProcessingViewProps {
-  onClose: () => void
+  onClose: () => void;
 }
 
 export function ProcessingView({ onClose }: ProcessingViewProps) {
-  const { language, t } = useLanguage()
-  const { processingItems } = useProcessingContext()
+  const { language, t } = useLanguage();
+  const { processingItems } = useProcessingContext();
 
   // Добавляем переводы для страницы "В обработке"
   const translations = {
@@ -40,41 +40,43 @@ export function ProcessingView({ onClose }: ProcessingViewProps) {
       "processing.analysis": "Analysis",
       "processing.description": "Description",
     },
-  }
+  };
 
   // Функция для получения перевода
   const translate = (key: string) => {
-    return translations[language][key] || key
-  }
+    return translations[language][key] || key;
+  };
 
   // Выбор локали для форматирования даты
   const getLocale = () => {
     switch (language) {
       case "ru":
-        return ru
+        return ru;
       case "kz":
-        return kk
+        return kk;
       case "en":
-        return enUS
+        return enUS;
       default:
-        return ru
+        return ru;
     }
-  }
+  };
 
   // Форматирование времени
   const formatTime = (timestamp: number) => {
     return formatDistanceToNow(new Date(timestamp), {
       addSuffix: true,
       locale: getLocale(),
-    })
-  }
+    });
+  };
 
   return (
     <div className="h-full flex flex-col">
       {/* Заголовок с кнопкой закрытия */}
       <div className="p-6 border-b">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium">{translate("processing.title")}</h2>
+          <h2 className="text-lg font-medium">
+            {translate("processing.title")}
+          </h2>
           <button onClick={onClose} className="p-2" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
@@ -84,11 +86,16 @@ export function ProcessingView({ onClose }: ProcessingViewProps) {
       {/* Содержимое */}
       <div className="flex-1 overflow-auto p-6">
         {processingItems.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">{translate("processing.empty")}</div>
+          <div className="text-center py-8 text-gray-500">
+            {translate("processing.empty")}
+          </div>
         ) : (
           <div className="space-y-4">
             {processingItems.map((item) => (
-              <div key={item.id} className="bg-white rounded-xl p-4 shadow-sm border">
+              <div
+                key={item.id}
+                className="bg-white rounded-xl p-4 shadow-sm border"
+              >
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-gray-200 rounded-full mr-3 overflow-hidden">
                     <img
@@ -106,8 +113,10 @@ export function ProcessingView({ onClose }: ProcessingViewProps) {
                       {item.type === "analysis"
                         ? translate("processing.analysis")
                         : item.type === "description"
-                          ? translate("processing.description")
-                          : translate("processing.analysis") + " и " + translate("processing.description")}
+                        ? translate("processing.description")
+                        : translate("processing.analysis") +
+                          " и " +
+                          translate("processing.description")}
                     </span>
                   </div>
                 </div>
@@ -122,5 +131,5 @@ export function ProcessingView({ onClose }: ProcessingViewProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

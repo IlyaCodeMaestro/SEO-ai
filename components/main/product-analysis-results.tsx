@@ -1,27 +1,31 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useLanguage } from "./language-provider"
-import { ArrowLeft, X, Info, Star } from "lucide-react"
-import { getProductBySku, getProductAnalysis } from "@/lib/api"
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { useState, useEffect } from "react";
+import { ArrowLeft, X, Info, Star } from "lucide-react";
+import { getProductBySku, getProductAnalysis } from "@/lib/api";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { useLanguage } from "../provider/language-provider";
 
 interface ProductAnalysisResultsProps {
-  onClose: () => void
-  onBack: () => void
+  onClose: () => void;
+  onBack: () => void;
   productData: {
-    sku: string
-    competitorSku: string
-  }
+    sku: string;
+    competitorSku: string;
+  };
 }
 
-export function ProductAnalysisResults({ onClose, onBack, productData }: ProductAnalysisResultsProps) {
-  const { language } = useLanguage()
-  const isMobile = useMediaQuery("(max-width: 768px)")
-  const [product, setProduct] = useState<any>(null)
-  const [analysisData, setAnalysisData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export function ProductAnalysisResults({
+  onClose,
+  onBack,
+  productData,
+}: ProductAnalysisResultsProps) {
+  const { language } = useLanguage();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [product, setProduct] = useState<any>(null);
+  const [analysisData, setAnalysisData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Добавляем переводы для результатов анализа
   const translations = {
@@ -76,38 +80,38 @@ export function ProductAnalysisResults({ onClose, onBack, productData }: Product
       "results.no.data": "No data to display",
       "results.back": "Back",
     },
-  }
+  };
 
   // Функция для получения перевода
   const translate = (key: string) => {
-    return translations[language][key] || key
-  }
+    return translations[language][key] || key;
+  };
 
   // Функция для загрузки данных
   const fetchData = async () => {
-    setLoading(true)
+    setLoading(true);
     // Добавляем небольшую задержку для имитации загрузки
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     try {
       const [productInfo, analysisInfo] = await Promise.all([
         getProductBySku(productData.sku),
         getProductAnalysis(productData.sku),
-      ])
-      setProduct(productInfo)
-      setAnalysisData(analysisInfo)
+      ]);
+      setProduct(productInfo);
+      setAnalysisData(analysisInfo);
     } catch (error) {
-      console.error("Error fetching data:", error)
-      setError("Failed to load data")
+      console.error("Error fetching data:", error);
+      setError("Failed to load data");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Загрузка данных о товаре и результатов анализа при монтировании компонента
   useEffect(() => {
-    fetchData()
-  }, [productData.sku, language])
+    fetchData();
+  }, [productData.sku, language]);
 
   // Отображение загрузки
   if (loading) {
@@ -118,7 +122,7 @@ export function ProductAnalysisResults({ onClose, onBack, productData }: Product
           <p>{translate("results.loading")}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -130,7 +134,9 @@ export function ProductAnalysisResults({ onClose, onBack, productData }: Product
             <button onClick={onBack} className="mr-2" aria-label="Back">
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h2 className="text-lg font-medium">{translate("results.title")}</h2>
+            <h2 className="text-lg font-medium">
+              {translate("results.title")}
+            </h2>
           </div>
           {/* Кнопка закрытия только для десктопа */}
           {!isMobile && (
@@ -162,13 +168,19 @@ export function ProductAnalysisResults({ onClose, onBack, productData }: Product
           {/* Результаты анализа */}
           <div className="space-y-6">
             <div>
-              <h3 className="font-medium mb-2">{translate("results.analysis")}</h3>
+              <h3 className="font-medium mb-2">
+                {translate("results.analysis")}
+              </h3>
               <div className="flex items-center mb-4">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star
                       key={star}
-                      className={`h-5 w-5 ${star <= analysisData?.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                      className={`h-5 w-5 ${
+                        star <= analysisData?.rating
+                          ? "text-yellow-400 fill-yellow-400"
+                          : "text-gray-300"
+                      }`}
                     />
                   ))}
                 </div>
@@ -179,15 +191,21 @@ export function ProductAnalysisResults({ onClose, onBack, productData }: Product
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span>{translate("results.visibility")}</span>
-                <span className="font-medium">{analysisData?.visibility} %</span>
+                <span className="font-medium">
+                  {analysisData?.visibility} %
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>{translate("results.keywords.presence")}</span>
-                <span className="font-medium">{analysisData?.keywordsPresence} %</span>
+                <span className="font-medium">
+                  {analysisData?.keywordsPresence} %
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>{translate("results.keywords.missed")}</span>
-                <span className="font-medium">{analysisData?.missedKeywords}</span>
+                <span className="font-medium">
+                  {analysisData?.missedKeywords}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>{translate("results.coverage.missed")}</span>
@@ -200,17 +218,25 @@ export function ProductAnalysisResults({ onClose, onBack, productData }: Product
             </div>
 
             <div>
-              <h4 className="text-sm text-gray-500 mb-2">{translate("results.keywords.missed.words")}</h4>
+              <h4 className="text-sm text-gray-500 mb-2">
+                {translate("results.keywords.missed.words")}
+              </h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="font-medium text-blue-500">{translate("results.keywords")}</span>
-                  <span className="font-medium">{translate("results.frequency")}</span>
+                  <span className="font-medium text-blue-500">
+                    {translate("results.keywords")}
+                  </span>
+                  <span className="font-medium">
+                    {translate("results.frequency")}
+                  </span>
                 </div>
                 {analysisData?.keywords?.map((keyword, index) => (
                   <div key={index} className="flex justify-between text-sm">
                     <span className="text-blue-500">{keyword.word}</span>
                     <span>
-                      {typeof keyword.frequency === "number" ? keyword.frequency.toLocaleString() : keyword.frequency}
+                      {typeof keyword.frequency === "number"
+                        ? keyword.frequency.toLocaleString()
+                        : keyword.frequency}
                     </span>
                   </div>
                 ))}
@@ -220,5 +246,5 @@ export function ProductAnalysisResults({ onClose, onBack, productData }: Product
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,109 +1,109 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useLanguage } from "./language-provider"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, X } from "lucide-react"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { getProductBySku } from "@/lib/api"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, X } from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { getProductBySku } from "@/lib/api";
+import { useLanguage } from "../provider/language-provider";
 
-interface ProductDescriptionDetailsProps {
-  onClose: () => void
-  onBack: () => void
-  onStartDescription: () => void
+interface ProductAnalysisDetailsProps {
+  onClose: () => void;
+  onBack: () => void;
+  onStartAnalysis: () => void;
   productData: {
-    sku: string
-    competitorSku: string
-  }
+    sku: string;
+    competitorSku: string;
+  };
 }
 
-export function ProductDescriptionDetails({
+export function ProductAnalysisDetails({
   onClose,
   onBack,
-  onStartDescription,
+  onStartAnalysis,
   productData,
-}: ProductDescriptionDetailsProps) {
-  const { language } = useLanguage()
-  const isMobile = useMediaQuery("(max-width: 768px)")
-  const [product, setProduct] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [isDescriptionStarted, setIsDescriptionStarted] = useState(false)
+}: ProductAnalysisDetailsProps) {
+  const { language } = useLanguage();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [isAnalysisStarted, setIsAnalysisStarted] = useState(false);
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Добавляем переводы для деталей описания товара
+  // Добавляем переводы для деталей анализа товара
   const translations = {
     ru: {
-      "details.title": "Описание карточки товара",
+      "details.title": "Анализ карточки товара",
       "details.sku": "SKU (артикул товара):",
       "details.name": "Название:",
       "details.brand": "Бренд:",
       "details.mark": "Марка:",
       "details.characteristics": "Характеристика:",
-      "details.start": "Начать описание",
+      "details.start": "Начать анализ",
       "details.loading": "Загрузка данных...",
       "details.error": "Ошибка при загрузке товара",
       "details.try.another": "Попробуйте другой SKU",
     },
     kz: {
-      "details.title": "Тауар карточкасының сипаттамасы",
+      "details.title": "Тауар карточкасын талдау",
       "details.sku": "SKU (тауар артикулы):",
       "details.name": "Атауы:",
       "details.brand": "Бренд:",
       "details.mark": "Марка:",
       "details.characteristics": "Сипаттама:",
-      "details.start": "Сипаттауды бастау",
+      "details.start": "Талдауды бастау",
       "details.loading": "Деректерді жүктеу...",
       "details.error": "Тауарды жүктеу кезінде қате",
       "details.try.another": "Басқа SKU қолданып көріңіз",
     },
     en: {
-      "details.title": "Product Card Description",
+      "details.title": "Product Card Analysis",
       "details.sku": "SKU (product article):",
       "details.name": "Name:",
       "details.brand": "Brand:",
       "details.mark": "Mark:",
       "details.characteristics": "Characteristics:",
-      "details.start": "Start Description",
+      "details.start": "Start Analysis",
       "details.loading": "Loading data...",
       "details.error": "Error loading product",
       "details.try.another": "Try another SKU",
     },
-  }
+  };
 
   // Функция для получения перевода
   const translate = (key: string) => {
-    return translations[language][key] || key
-  }
+    return translations[language][key] || key;
+  };
 
   // Загрузка данных о товаре при монтировании компонента
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productData.sku) {
-        setError(translate("details.error"))
-        setLoading(false)
-        return
+        setError(translate("details.error"));
+        setLoading(false);
+        return;
       }
 
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
       try {
-        const fetchedProduct = await getProductBySku(productData.sku)
-        setProduct(fetchedProduct)
+        const fetchedProduct = await getProductBySku(productData.sku);
+        setProduct(fetchedProduct);
       } catch (error) {
-        console.error("Error fetching product:", error)
-        setError(translate("details.error"))
+        console.error("Error fetching product:", error);
+        setError(translate("details.error"));
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProduct()
-  }, [productData.sku, language])
+    fetchProduct();
+  }, [productData.sku, language]);
 
-  const handleStartDescription = () => {
-    setIsDescriptionStarted(true)
-    onStartDescription()
-  }
+  const handleStartAnalysis = () => {
+    setIsAnalysisStarted(true);
+    onStartAnalysis();
+  };
 
   // Отображение загрузки
   if (loading) {
@@ -113,7 +113,7 @@ export function ProductDescriptionDetails({
           <p>{translate("details.loading")}</p>
         </div>
       </div>
-    )
+    );
   }
 
   // Отображение ошибки
@@ -127,7 +127,7 @@ export function ProductDescriptionDetails({
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -139,7 +139,9 @@ export function ProductDescriptionDetails({
             <button onClick={onBack} className="mr-2" aria-label="Back">
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h2 className="text-lg font-medium">{translate("details.title")}</h2>
+            <h2 className="text-lg font-medium">
+              {translate("details.title")}
+            </h2>
           </div>
           {/* Кнопка закрытия только для десктопа */}
           {!isMobile && (
@@ -163,27 +165,38 @@ export function ProductDescriptionDetails({
                 </div>
                 <div className="flex-1">
                   <div className="mb-2">
-                    <p className="text-sm text-gray-500">{translate("details.sku")}</p>
+                    <p className="text-sm text-gray-500">
+                      {translate("details.sku")}
+                    </p>
                     <p className="font-medium">{product.article}</p>
                   </div>
                   <div className="mb-2">
-                    <p className="text-sm text-gray-500">{translate("details.name")}</p>
+                    <p className="text-sm text-gray-500">
+                      {translate("details.name")}
+                    </p>
                     <p className="font-medium">{product.name}</p>
                   </div>
                   <div className="mb-2">
-                    <p className="text-sm text-gray-500">{translate("details.brand")}</p>
+                    <p className="text-sm text-gray-500">
+                      {translate("details.brand")}
+                    </p>
                     <p className="font-medium">{product.brand}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">{translate("details.mark")}</p>
+                    <p className="text-sm text-gray-500">
+                      {translate("details.mark")}
+                    </p>
                     <p className="font-medium">{product.mark || "-"}</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <p className="text-sm text-gray-500 mb-1">{translate("details.characteristics")}</p>
-                {product.characteristics && product.characteristics.length > 0 ? (
+                <p className="text-sm text-gray-500 mb-1">
+                  {translate("details.characteristics")}
+                </p>
+                {product.characteristics &&
+                product.characteristics.length > 0 ? (
                   <div className="space-y-1">
                     {product.characteristics.map((char, index) => (
                       <p key={index} className="font-medium">
@@ -203,11 +216,11 @@ export function ProductDescriptionDetails({
           )}
         </div>
 
-        {!isDescriptionStarted && product && (
+        {!isAnalysisStarted && product && (
           <div className="mt-auto pt-6">
             <Button
-              onClick={handleStartDescription}
-              className="w-full bg-gradient-to-r from-[rgba(38,99,255,1)] to-[rgba(11,60,187,1)] hover:opacity-90 text-white rounded-full"
+              onClick={handleStartAnalysis}
+              className="w-full bg-blue-400 hover:bg-blue-500 text-white rounded-full"
             >
               {translate("details.start")}
             </Button>
@@ -215,5 +228,5 @@ export function ProductDescriptionDetails({
         )}
       </div>
     </div>
-  )
+  );
 }

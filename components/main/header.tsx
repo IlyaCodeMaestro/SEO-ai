@@ -1,69 +1,90 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useTheme } from "./theme-provider"
-import { useLanguage } from "./language-provider"
-import { Sun, Moon, Menu, X } from "lucide-react"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { useProcessingContext } from "./processing-provider"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { useState, useEffect } from "react";
+import { useTheme } from "../provider/theme-provider";
+import { useLanguage } from "../provider/language-provider";
+import { Sun, Moon, Menu, X } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { useProcessingContext } from "./processing-provider";
 
 export function Header() {
-  const { theme, setTheme } = useTheme()
-  const { language, setLanguage, t } = useLanguage()
-  const [activeTab, setActiveTab] = useState("main")
-  const { hasNewItems, clearNewItems } = useProcessingContext()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const isMobile = useMediaQuery("(max-width: 768px)")
+  const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+  const [activeTab, setActiveTab] = useState("main");
+  const { hasNewItems, clearNewItems } = useProcessingContext();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Слушаем изменения в URL для определения активной вкладки
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace("#", "")
-      if (hash && ["main", "archive", "notifications", "cabinet", "partner", "feedback"].includes(hash)) {
-        setActiveTab(hash)
+      const hash = window.location.hash.replace("#", "");
+      if (
+        hash &&
+        [
+          "main",
+          "archive",
+          "notifications",
+          "cabinet",
+          "partner",
+          "feedback",
+        ].includes(hash)
+      ) {
+        setActiveTab(hash);
         if (hash === "archive") {
-          clearNewItems()
+          clearNewItems();
         }
       }
-    }
+    };
 
     // Инициализация при загрузке
-    handleHashChange()
+    handleHashChange();
 
-    window.addEventListener("hashchange", handleHashChange)
-    return () => window.removeEventListener("hashchange", handleHashChange)
-  }, [clearNewItems])
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [clearNewItems]);
 
   // Обновляем URL при изменении вкладки
   const handleTabChange = (value: string) => {
-    setActiveTab(value)
-    window.location.hash = value
+    setActiveTab(value);
+    window.location.hash = value;
     if (value === "archive") {
-      clearNewItems()
+      clearNewItems();
     }
     // Закрываем меню на мобильных устройствах после выбора вкладки
     if (isMobile) {
-      setIsMenuOpen(false)
+      setIsMenuOpen(false);
     }
-  }
+  };
 
   const handleThemeChange = (newTheme: "light" | "dark") => {
-    setTheme(newTheme)
-  }
+    setTheme(newTheme);
+  };
 
   return (
     <div
-      className={`w-full bg-[#F6F6F6] ${isMobile ? "h-[65px]" : "h-[110px]"} relative z-20 border-b border-gray-200 px-4 md:px-8 lg:px-12 xl:px-16`}
+      className={`w-full bg-[#F6F6F6] ${
+        isMobile ? "h-[65px]" : "h-[110px]"
+      } relative z-20 border-b border-gray-200 px-4 md:px-8 lg:px-12 xl:px-16`}
     >
       {/* Логотип - разные размеры для мобильной и десктопной версий */}
       <div
-        className={`${isMobile ? "h-[40px] w-[40px]" : "h-[60px] w-[60px]"} absolute ${isMobile ? "top-2" : "top-4"} left-4 md:top-5 md:left-8 lg:left-12 xl:left-16`}
+        className={`${
+          isMobile ? "h-[40px] w-[40px]" : "h-[60px] w-[60px]"
+        } absolute ${
+          isMobile ? "top-2" : "top-4"
+        } left-4 md:top-5 md:left-8 lg:left-12 xl:left-16`}
       >
-        <img src="/seo-ai-logo.png" alt="SEO-AI Logo" className="w-full h-full object-cover rounded-md" />
+        <img
+          src="/seo-ai-logo.png"
+          alt="SEO-AI Logo"
+          className="w-full h-full object-cover rounded-md"
+        />
       </div>
 
       {/* Мобильное меню */}
@@ -75,23 +96,34 @@ export function Header() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] p-0 mt-0 rounded-none">
+            <SheetContent
+              side="right"
+              className="w-[300px] p-0 mt-0 rounded-none"
+            >
               <div className="flex flex-col h-full">
                 <div className="flex justify-end items-center p-4 border-b">
-                  <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     <X className="h-5 w-5" />
                   </Button>
                 </div>
 
                 <div className="flex flex-col p-4 space-y-2">
                   <button
-                    className={`text-left py-3 px-4 rounded-md ${activeTab === "main" ? "text-blue-600 bg-blue-50" : ""}`}
+                    className={`text-left py-3 px-4 rounded-md ${
+                      activeTab === "main" ? "text-blue-600 bg-blue-50" : ""
+                    }`}
                     onClick={() => handleTabChange("main")}
                   >
                     {t("common.main")}
                   </button>
                   <button
-                    className={`text-left py-3 px-4 rounded-md relative ${activeTab === "archive" ? "text-blue-600 bg-blue-50" : ""}`}
+                    className={`text-left py-3 px-4 rounded-md relative ${
+                      activeTab === "archive" ? "text-blue-600 bg-blue-50" : ""
+                    }`}
                     onClick={() => handleTabChange("archive")}
                   >
                     {t("common.archive")}
@@ -100,25 +132,35 @@ export function Header() {
                     )}
                   </button>
                   <button
-                    className={`text-left py-3 px-4 rounded-md ${activeTab === "notifications" ? "text-blue-600 bg-blue-50" : ""}`}
+                    className={`text-left py-3 px-4 rounded-md ${
+                      activeTab === "notifications"
+                        ? "text-blue-600 bg-blue-50"
+                        : ""
+                    }`}
                     onClick={() => handleTabChange("notifications")}
                   >
                     {t("common.notifications")}
                   </button>
                   <button
-                    className={`text-left py-3 px-4 rounded-md ${activeTab === "cabinet" ? "text-blue-600 bg-blue-50" : ""}`}
+                    className={`text-left py-3 px-4 rounded-md ${
+                      activeTab === "cabinet" ? "text-blue-600 bg-blue-50" : ""
+                    }`}
                     onClick={() => handleTabChange("cabinet")}
                   >
                     {t("common.cabinet")}
                   </button>
                   <button
-                    className={`text-left py-3 px-4 rounded-md ${activeTab === "partner" ? "text-blue-600 bg-blue-50" : ""}`}
+                    className={`text-left py-3 px-4 rounded-md ${
+                      activeTab === "partner" ? "text-blue-600 bg-blue-50" : ""
+                    }`}
                     onClick={() => handleTabChange("partner")}
                   >
                     {t("common.partner")}
                   </button>
                   <button
-                    className={`text-left py-3 px-4 rounded-md ${activeTab === "feedback" ? "text-blue-600 bg-blue-50" : ""}`}
+                    className={`text-left py-3 px-4 rounded-md ${
+                      activeTab === "feedback" ? "text-blue-600 bg-blue-50" : ""
+                    }`}
                     onClick={() => handleTabChange("feedback")}
                   >
                     {t("common.feedback")}
@@ -131,7 +173,9 @@ export function Header() {
                     <ToggleGroup
                       type="single"
                       value={language}
-                      onValueChange={(value) => value && setLanguage(value as "kz" | "ru" | "en")}
+                      onValueChange={(value) =>
+                        value && setLanguage(value as "kz" | "ru" | "en")
+                      }
                       className="border rounded-full p-0.5 bg-gray-200"
                     >
                       <ToggleGroupItem
@@ -165,7 +209,9 @@ export function Header() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleThemeChange("light")}
-                        className={`rounded-full h-6 w-6 ${theme === "dark" ? "opacity-50" : "bg-white"}`}
+                        className={`rounded-full h-6 w-6 ${
+                          theme === "dark" ? "opacity-50" : "bg-white"
+                        }`}
                       >
                         <Sun className="h-4 w-4" />
                         <span className="sr-only">Light mode</span>
@@ -174,7 +220,9 @@ export function Header() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleThemeChange("dark")}
-                        className={`rounded-full h-6 w-6 ${theme === "light" ? "opacity-50" : "bg-gray-800"}`}
+                        className={`rounded-full h-6 w-6 ${
+                          theme === "light" ? "opacity-50" : "bg-gray-800"
+                        }`}
                       >
                         <Moon className="h-4 w-4 text-white" />
                         <span className="sr-only">Dark mode</span>
@@ -194,7 +242,9 @@ export function Header() {
             <ToggleGroup
               type="single"
               value={language}
-              onValueChange={(value) => value && setLanguage(value as "kz" | "ru" | "en")}
+              onValueChange={(value) =>
+                value && setLanguage(value as "kz" | "ru" | "en")
+              }
               className="border rounded-full p-0.5 bg-gray-200"
             >
               <ToggleGroupItem
@@ -226,7 +276,9 @@ export function Header() {
                 variant="ghost"
                 size="icon"
                 onClick={() => handleThemeChange("light")}
-                className={`rounded-full h-6 w-6 ${theme === "dark" ? "opacity-50" : "bg-white"}`}
+                className={`rounded-full h-6 w-6 ${
+                  theme === "dark" ? "opacity-50" : "bg-white"
+                }`}
               >
                 <Sun className="h-4 w-4" />
                 <span className="sr-only">Light mode</span>
@@ -235,7 +287,9 @@ export function Header() {
                 variant="ghost"
                 size="icon"
                 onClick={() => handleThemeChange("dark")}
-                className={`rounded-full h-6 w-6 ${theme === "light" ? "opacity-50" : "bg-gray-800"}`}
+                className={`rounded-full h-6 w-6 ${
+                  theme === "light" ? "opacity-50" : "bg-gray-800"
+                }`}
               >
                 <Moon className="h-4 w-4 text-white" />
                 <span className="sr-only">Dark mode</span>
@@ -245,7 +299,11 @@ export function Header() {
 
           {/* Центр - основные табы, смещенные влево на среднее расстояние - только для десктопа */}
           <div className="hidden md:flex justify-center items-end h-full pl-24 md:pl-[100px] lg:pl-28 xl:pl-[120px]">
-            <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full overflow-x-auto flex items-end">
+            <Tabs
+              value={activeTab}
+              onValueChange={handleTabChange}
+              className="h-full overflow-x-auto flex items-center"
+            >
               <TabsList className="bg-transparent h-auto flex gap-2 md:gap-3 lg:gap-4 mb-0 pb-0">
                 <TabsTrigger
                   value="main"
@@ -292,5 +350,5 @@ export function Header() {
         </>
       )}
     </div>
-  )
+  );
 }

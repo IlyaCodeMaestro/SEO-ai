@@ -1,22 +1,27 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { useProcessingContext } from "./processing-provider"
-import { useLanguage } from "./language-provider"
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "../provider/language-provider";
+import { useProcessingContext } from "./processing-provider";
 
 interface MainContentProps {
-  onOpenPanel: (panel: "product-analysis" | "product-description") => void
-  onOpenProcessing: () => void
+  onOpenPanel: (panel: "product-analysis" | "product-description") => void;
+  onOpenProcessing: () => void;
 }
 
-export function MainContent({ onOpenPanel, onOpenProcessing }: MainContentProps) {
-  const { processingItems } = useProcessingContext()
-  const { t } = useLanguage()
+export function MainContent({
+  onOpenPanel,
+  onOpenProcessing,
+}: MainContentProps) {
+  const { processingItems } = useProcessingContext();
+  const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full ">
       <div className="px-4 py-6 flex-1">
-        <h2 className="text-[rgba(25,80,223,1)] font-medium mb-4 text-center">{t("common.main")}</h2>
+        <h2 className="text-[rgba(25,80,223,1)] font-medium mb-4 text-center">
+          {t("common.main")}
+        </h2>
 
         <div className="bg-[#F6F6F6] rounded-[24px] shadow-sm p-4">
           <p className="mb-5">{t("common.greeting")}</p>
@@ -24,8 +29,12 @@ export function MainContent({ onOpenPanel, onOpenProcessing }: MainContentProps)
           <div className="space-y-5">
             {/* Первая карточка */}
             <div className="rounded-xl p-5 bg-gradient-to-r from-[rgba(0,131,172,0.71)] to-[rgba(52,96,209,1)] text-white">
-              <h3 className="font-medium mb-1">{t("product.analysis.title")}</h3>
-              <p className="text-xs mb-3 opacity-90">{t("product.analysis.desc")}</p>
+              <h3 className="font-medium mb-1">
+                {t("product.analysis.title")}
+              </h3>
+              <p className="text-xs mb-3 opacity-90">
+                {t("product.analysis.desc")}
+              </p>
               <Button
                 variant="secondary"
                 size="sm"
@@ -38,8 +47,12 @@ export function MainContent({ onOpenPanel, onOpenProcessing }: MainContentProps)
 
             {/* Вторая карточка */}
             <div className="rounded-xl p-5 bg-gradient-to-r from-blue-500 to-blue-700 text-white">
-              <h3 className="font-medium mb-1">{t("product.description.title")}</h3>
-              <p className="text-xs mb-3 opacity-90">{t("product.description.desc")}</p>
+              <h3 className="font-medium mb-1">
+                {t("product.description.title")}
+              </h3>
+              <p className="text-xs mb-3 opacity-90">
+                {t("product.description.desc")}
+              </p>
               <Button
                 variant="secondary"
                 size="sm"
@@ -64,5 +77,5 @@ export function MainContent({ onOpenPanel, onOpenProcessing }: MainContentProps)
         )}
       </div>
     </div>
-  )
+  );
 }

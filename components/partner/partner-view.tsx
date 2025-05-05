@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useLanguage } from "./language-provider"
+import { useState } from "react";
+import { useLanguage } from "../provider/language-provider";
 
 interface PartnerCardProps {
-  title: string
-  gradient: string
-  onNavigate: () => void
+  title: string;
+  gradient: string;
+  onNavigate: () => void;
 }
 
 function PartnerCard({ title, gradient, onNavigate }: PartnerCardProps) {
@@ -20,36 +20,36 @@ function PartnerCard({ title, gradient, onNavigate }: PartnerCardProps) {
         Перейти
       </button>
     </div>
-  )
+  );
 }
 
 export function PartnerView() {
-  const { t } = useLanguage()
-  const [activePanel, setActivePanel] = useState<string | null>(null)
+  const { t } = useLanguage();
+  const [activePanel, setActivePanel] = useState<string | null>(null);
 
   const handleOpenStandardProgram = () => {
     // Открываем стандартную программу и передаем информацию в Dashboard
     if (window.openPartnerPanel) {
-      window.openPartnerPanel("standard-program")
+      window.openPartnerPanel("standard-program");
     }
-  }
+  };
 
   const handleOpenPremiumProgram = () => {
     // Открываем премиум программу и передаем информацию в Dashboard
     if (window.openPartnerPanel) {
-      window.openPartnerPanel("premium-program")
+      window.openPartnerPanel("premium-program");
     }
-  }
+  };
 
   const handleShare = () => {
     // Открываем модальное окно для шеринга
     if (window.openShareMenu) {
       window.openShareMenu(
         "Партнерская программа SEO-AI",
-        "Присоединяйтесь к партнерской программе SEO-AI и получайте бонусы!",
-      )
+        "Присоединяйтесь к партнерской программе SEO-AI и получайте бонусы!"
+      );
     }
-  }
+  };
 
   return (
     <div className="h-full flex flex-col p-6">
@@ -74,5 +74,5 @@ export function PartnerView() {
         </button>
       </div>
     </div>
-  )
+  );
 }
