@@ -75,7 +75,7 @@ export function Header() {
       {/* Логотип - разные размеры для мобильной и десктопной версий */}
       <div
         className={`${
-          isMobile ? "h-[40px] w-[40px]" : "h-[60px] w-[60px]"
+          isMobile ? "h-[40px] w-[40px]" : "h-[70px] w-[70px]"
         } absolute ${
           isMobile ? "top-2" : "top-4"
         } left-4 md:top-5 md:left-8 lg:left-12 xl:left-16`}
@@ -168,7 +168,7 @@ export function Header() {
                 </div>
 
                 <div className="mt-auto p-4 border-t">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-start items-center">
                     <span className="text-sm text-gray-500">Язык:</span>
                     <ToggleGroup
                       type="single"
@@ -237,7 +237,7 @@ export function Header() {
       ) : (
         <>
           {/* Переключатели (языка и темы) - абсолютное позиционирование для десктопа */}
-          <div className="absolute top-2 right-[120px] md:right-[140px] lg:right-[160px] xl:right-[180px] flex items-center gap-12 z-30">
+          <div className="absolute top-2 right-28 flex items-center gap-6 z-30 ">
             {/* Переключатель языка (уменьшенный) */}
             <ToggleGroup
               type="single"
@@ -271,7 +271,7 @@ export function Header() {
             </ToggleGroup>
 
             {/* Переключатель темы */}
-            <div className="flex items-center border rounded-full p-0.5 bg-gray-200">
+            <div className="flex items-center border rounded-full p-0.5 bg-gray-200 ml-8">
               <Button
                 variant="ghost"
                 size="icon"
@@ -283,6 +283,8 @@ export function Header() {
                 <Sun className="h-4 w-4" />
                 <span className="sr-only">Light mode</span>
               </Button>
+              {/* Разделитель */}
+              <div className="w-px h-4  mx-2" />
               <Button
                 variant="ghost"
                 size="icon"
@@ -298,7 +300,7 @@ export function Header() {
           </div>
 
           {/* Центр - основные табы, смещенные влево на среднее расстояние - только для десктопа */}
-          <div className="hidden md:flex justify-center items-end h-full pl-24 md:pl-[100px] lg:pl-28 xl:pl-[120px]">
+          <div className="hidden md:flex justify-center items-end h-full pl-32 md:pl-[140px] lg:pl-36 xl:pl-[200px] translate-y-2">
             <Tabs
               value={activeTab}
               onValueChange={handleTabChange}
