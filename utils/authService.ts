@@ -1,4 +1,3 @@
-// utils/authService.ts
 import Cookies from "js-cookie";
 
 const BASE_URL = "https://api.stage.seo-ai.kz/b";

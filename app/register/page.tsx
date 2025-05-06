@@ -48,7 +48,7 @@ export default function Register() {
                 accept,
                 name,
                 phone: phone,
-                code_id: codeId, // Узбекистан
+                code_id: codeId, 
                 email,
             });
 

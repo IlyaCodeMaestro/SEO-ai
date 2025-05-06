@@ -29,8 +29,8 @@ export default function PhoneInput({ value, onChange, required = false }: PhoneI
     getCountries()
       .then((data) => {
         setCountries(data);
-        setSelectedCountry(data[0]); // установить первую страну
-        onChange(phoneNumber, data[0].code, data[0].code_id); // уведомить родителя
+        setSelectedCountry(data[0]); 
+        onChange(phoneNumber, data[0].code, data[0].code_id);
       })
       .catch((err) => setError(err.message));
   }, []);
