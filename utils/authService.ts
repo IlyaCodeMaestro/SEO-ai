@@ -1,7 +1,27 @@
 // utils/authService.ts
 import Cookies from "js-cookie";
 
-const BASE_URL = "https://api.stage.seo-ai.kz/b"; // Заменить при необходимости
+const BASE_URL = "https://api.stage.seo-ai.kz/b";
+
+export async function getCountries() {
+    const res = await fetch(`${BASE_URL}/v1/countries`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Platform-Type": "WEB",
+        Version: "1",
+        "Debug-Mode": "true",
+      },
+    });
+  
+    const json = await res.json();
+  
+    if (!json.output?.result) {
+      throw new Error(json.output?.message_ru || json.output?.message || "Ошибка при получении стран");
+    }
+  
+    return json.countries;
+  }
 
 export async function checkRegistration(data: {
     accept: boolean;

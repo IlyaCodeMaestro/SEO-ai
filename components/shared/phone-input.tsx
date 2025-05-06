@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import type React from "react"
+import { useEffect, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { getCountries } from "@/utils/authService";
 
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
-
-// Define country data with codes and flags
-const countries = [
-  { code_id: 2, code: "RU", dialCode: "+7", flag: "🇷🇺", name: "Россия" },
-  { code_id: 1, code: "KZ", dialCode: "+7", flag: "🇰🇿", name: "Казахстан" },
-  { code_id: 6, code: "UZ", dialCode: "+998", flag: "🇺🇿", name: "Узбекистан" },
-]
+interface Country {
+  code_id: number;
+  name_ru: string;
+  code: string;
+  flag?: string;
+  length?: number
+}
 
 interface PhoneInputProps {
   value: string;
@@ -19,20 +19,43 @@ interface PhoneInputProps {
 }
 
 export default function PhoneInput({ value, onChange, required = false }: PhoneInputProps) {
-  const [selectedCountry, setSelectedCountry] = useState(countries[0])
-  const [isOpen, setIsOpen] = useState(false)
-  const [phoneNumber, setPhoneNumber] = useState(value.replace(/^\+\d+\s/, ""))
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState(value.replace(/^\+\d+\s/, ""));
+  const [error, setError] = useState("");
 
-  const handleCountryChange = (country: (typeof countries)[0]) => {
+  useEffect(() => {
+    getCountries()
+      .then((data) => {
+        setCountries(data);
+        setSelectedCountry(data[0]); // установить первую страну
+        onChange(phoneNumber, data[0].code, data[0].code_id); // уведомить родителя
+      })
+      .catch((err) => setError(err.message));
+  }, []);
+
+  console.log(countries);
+
+
+  const handleCountryChange = (country: Country) => {
     setSelectedCountry(country);
     setIsOpen(false);
-    onChange(phoneNumber, country.dialCode, country.code_id);
+    onChange(phoneNumber, country.code, country.code_id);
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPhone = e.target.value.replace(/[^\d]/g, "");
-    setPhoneNumber(newPhone);
-    onChange(newPhone, selectedCountry.dialCode, selectedCountry.code_id);
+
+    // Ограничение по длине из выбранной страны
+    const maxLen = selectedCountry?.length || 15;
+    const trimmedPhone = newPhone.slice(0, maxLen);
+
+    setPhoneNumber(trimmedPhone);
+
+    if (selectedCountry) {
+      onChange(trimmedPhone, selectedCountry.code, selectedCountry.code_id);
+    }
   };
 
   return (
@@ -43,23 +66,23 @@ export default function PhoneInput({ value, onChange, required = false }: PhoneI
           className="flex items-center h-12 px-3 text-gray-700 bg-gray-50 rounded-l-full border-r border-gray-200 focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <span className="mr-1">{selectedCountry.flag}</span>
-          <span className="mr-1">{selectedCountry.dialCode}</span>
+          <span className="mr-1">{selectedCountry?.flag || "🌐"}</span>
+          <span className="mr-1">{selectedCountry?.code}</span>
           <ChevronDown className="h-4 w-4 text-gray-500" />
         </button>
 
         {isOpen && (
           <div className="absolute z-10 mt-1 w-60 max-h-60 overflow-auto bg-white border border-gray-200 rounded-md shadow-lg">
-            {countries.map((country) => (
+            {Array.isArray(countries) && countries.length > 0 && countries?.map((country) => (
               <button
-                key={country.code}
+                key={country.code_id}
                 type="button"
                 className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100"
                 onClick={() => handleCountryChange(country)}
               >
-                <span className="mr-2">{country.flag}</span>
-                <span className="mr-2">{country.dialCode}</span>
-                <span>{country.name}</span>
+                <span className="mr-2">{country.flag || "🌐"}</span>
+                <span className="mr-2">{country.code}</span>
+                <span>{country.name_ru}</span>
               </button>
             ))}
           </div>
@@ -74,9 +97,6 @@ export default function PhoneInput({ value, onChange, required = false }: PhoneI
         required={required}
         className="flex-1 h-12 pl-4 pr-12 rounded-r-full focus:outline-none"
       />
-      <div className="absolute left-[72px] top-1/2 transform -translate-y-1/2 pointer-events-none">
-        {/* This is just a spacer to ensure proper alignment */}
-      </div>
     </div>
-  )
+  );
 }

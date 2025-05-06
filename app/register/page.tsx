@@ -19,9 +19,6 @@ export default function Register() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
-    // const name2 = useAppSelector((state) => state.product.name)
-    // console.log(name2);
-
 
     const handlePhoneChange = (value: string, dial: string, code_id: number) => {
         setPhone(value);
