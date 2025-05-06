@@ -7,22 +7,15 @@ import { ChevronDown } from "lucide-react"
 
 // Define country data with codes and flags
 const countries = [
-  { code: "RU", dialCode: "+7", flag: "🇷🇺", name: "Россия" },
-  { code: "US", dialCode: "+1", flag: "🇺🇸", name: "США" },
-  { code: "GB", dialCode: "+44", flag: "🇬🇧", name: "Великобритания" },
-  { code: "DE", dialCode: "+49", flag: "🇩🇪", name: "Германия" },
-  { code: "FR", dialCode: "+33", flag: "🇫🇷", name: "Франция" },
-  { code: "IT", dialCode: "+39", flag: "🇮🇹", name: "Италия" },
-  { code: "ES", dialCode: "+34", flag: "🇪🇸", name: "Испания" },
-  { code: "CN", dialCode: "+86", flag: "🇨🇳", name: "Китай" },
-  { code: "JP", dialCode: "+81", flag: "🇯🇵", name: "Япония" },
-  { code: "KZ", dialCode: "+7", flag: "🇰🇿", name: "Казахстан" },
+  { code_id: 2, code: "RU", dialCode: "+7", flag: "🇷🇺", name: "Россия" },
+  { code_id: 1, code: "KZ", dialCode: "+7", flag: "🇰🇿", name: "Казахстан" },
+  { code_id: 6, code: "UZ", dialCode: "+998", flag: "🇺🇿", name: "Узбекистан" },
 ]
 
 interface PhoneInputProps {
-  value: string
-  onChange: (value: string, countryCode: string) => void
-  required?: boolean
+  value: string;
+  onChange: (value: string, dialCode: string, code_id: number) => void;
+  required?: boolean;
 }
 
 export default function PhoneInput({ value, onChange, required = false }: PhoneInputProps) {
@@ -31,16 +24,16 @@ export default function PhoneInput({ value, onChange, required = false }: PhoneI
   const [phoneNumber, setPhoneNumber] = useState(value.replace(/^\+\d+\s/, ""))
 
   const handleCountryChange = (country: (typeof countries)[0]) => {
-    setSelectedCountry(country)
-    setIsOpen(false)
-    onChange(`${country.dialCode} ${phoneNumber}`, country.code)
-  }
+    setSelectedCountry(country);
+    setIsOpen(false);
+    onChange(phoneNumber, country.dialCode, country.code_id);
+  };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPhone = e.target.value.replace(/[^\d]/g, "")
-    setPhoneNumber(newPhone)
-    onChange(`${selectedCountry.dialCode} ${newPhone}`, selectedCountry.code)
-  }
+    const newPhone = e.target.value.replace(/[^\d]/g, "");
+    setPhoneNumber(newPhone);
+    onChange(newPhone, selectedCountry.dialCode, selectedCountry.code_id);
+  };
 
   return (
     <div className="relative flex w-full rounded-full border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">

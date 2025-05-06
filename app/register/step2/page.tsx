@@ -1,83 +1,133 @@
-// return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-//       <div className="max-w-md w-full bg-white rounded-3xl shadow-lg p-8">
-//         <div className="text-center mb-6">
-//           <h2 className="text-2xl font-medium">Регистрация</h2>
-//         </div>
+"use client"
 
-//         <p className="text-center text-gray-600 mb-8">Заполните все поля, чтобы создать аккаунт</p>
+import { useState } from "react";
+import Link from "next/link";
+import AuthInput from "@/components/provider/auth-input";
+import { registerUser } from "@/utils/authService";
+import { useSearchParams } from "next/navigation";
 
-//         <form className="space-y-4" onSubmit={handleSubmit}>
-//           <div>
-//             <AuthInput
-//               icon="user"
-//               type="text"
-//               placeholder="Логин или Электронная почта"
-//               value={username}
-//               onChange={(e) => setUsername(e.target.value)}
-//               required
-//             />
-//           </div>
+export default function RegisterStep2() {
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-//           <div>
-//             <AuthInput
-//               icon="lock"
-//               type="password"
-//               placeholder="Пароль"
-//               showPasswordToggle
-//               value={password}
-//               onChange={(e) => setPassword(e.target.value)}
-//               required
-//             />
-//           </div>
+  const searchParams = useSearchParams();
 
-//           <div>
-//             <AuthInput
-//               icon="lock"
-//               type="password"
-//               placeholder="Повторить пароль"
-//               showPasswordToggle
-//               value={confirmPassword}
-//               onChange={(e) => setConfirmPassword(e.target.value)}
-//               required
-//             />
-//           </div>
+  const name = searchParams.get("name") || "";
+  const phone = searchParams.get("phone") || "";
+  const email = searchParams.get("email") || "";
+  const code_id = Number(searchParams.get("code_id")) || 0;
+  const accept = searchParams.get("accept") === "true";
 
-//           <p className="text-sm text-gray-600 text-center">Код отправлен Вам на электронную почту</p>
+  console.log(name, phone, code_id);
 
-//           <div>
-//             <AuthInput
-//               icon="lock"
-//               type="text"
-//               placeholder="Код"
-//               value={verificationCode}
-//               onChange={(e) => setVerificationCode(e.target.value)}
-//               required
-//             />
-//           </div>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
 
-//           {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+    if (password !== confirmPassword) {
+      setError("Пароли не совпадают");
+      return;
+    }
 
-//           <div>
-//             <button
-//               type="submit"
-//               disabled={isLoading}
-//               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-//             >
-//               {isLoading ? "Загрузка..." : "Зарегистрироваться"}
-//             </button>
-//           </div>
-//         </form>
+    try {
+      setIsLoading(true);
+      await registerUser({
+        login,
+        password,
+        email,
+        phone: phone,
+        code_id: 6,
+        name: name,
+        code: verificationCode,
+        accept: accept,
+        url: "73G2V0DA"
+      });
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-//         <div className="mt-6 text-center">
-//           <p className="text-sm text-gray-600">
-//             У Вас уже есть аккаунт?{" "}
-//             <Link href="/login" className="text-blue-600 hover:underline">
-//               Войдите
-//             </Link>
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-3xl shadow-lg p-8">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-medium">Регистрация</h2>
+        </div>
+
+        <p className="text-center text-gray-600 mb-8">
+          Заполните все поля, чтобы создать аккаунт
+        </p>
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
+
+          <AuthInput
+            icon="user"
+            type="text"
+            placeholder="Логин"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
+            required
+          />
+
+          <AuthInput
+            icon="lock"
+            type="password"
+            placeholder="Пароль"
+            showPasswordToggle
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <AuthInput
+            icon="lock"
+            type="password"
+            placeholder="Повторить пароль"
+            showPasswordToggle
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+
+          <p className="text-sm text-gray-600 text-center">
+            Код отправлен Вам на электронную почту
+          </p>
+
+          <AuthInput
+            icon="lock"
+            type="text"
+            placeholder="Код"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            required
+          />
+
+          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          >
+            {isLoading ? "Загрузка..." : "Зарегистрироваться"}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            У Вас уже есть аккаунт?{" "}
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Войдите
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
