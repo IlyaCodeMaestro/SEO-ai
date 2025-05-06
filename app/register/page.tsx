@@ -7,31 +7,22 @@ import PhoneInput from "@/components/shared/phone-input";
 import { checkRegistration } from "@/utils/authService";
 import { useRouter } from "next/navigation";
 
-// Импортируй свои компоненты
 
 export default function Register() {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
-    const [dialCode, setDialCode] = useState("+7");
     const [codeId, setCodeId] = useState<number>(2);
     const [email, setEmail] = useState("");
     const [accept, setAccept] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const router = useRouter()
 
     const handlePhoneChange = (value: string, dial: string, code_id: number) => {
         setPhone(value);
-        setDialCode(dial);
         setCodeId(code_id);
     };
-
-
-
-    console.log(phone, dialCode, codeId);
-
-
-    const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,7 +39,7 @@ export default function Register() {
                 accept,
                 name,
                 phone: phone,
-                code_id: codeId, 
+                code_id: codeId,
                 email,
             });
 

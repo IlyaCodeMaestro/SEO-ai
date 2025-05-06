@@ -19,10 +19,8 @@ export default function RegisterStep2() {
   const name = searchParams.get("name") || "";
   const phone = searchParams.get("phone") || "";
   const email = searchParams.get("email") || "";
-  const code_id = Number(searchParams.get("code_id")) || 0;
   const accept = searchParams.get("accept") === "true";
 
-  console.log(name, phone, code_id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

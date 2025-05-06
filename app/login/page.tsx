@@ -21,13 +21,10 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Здесь может быть вызов API
       await loginUser({ login, password, firebase_id: '' });
 
-
-      // Пример: успех
       router.push("/dashboard");
-    } catch (err:any) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setIsLoading(false);

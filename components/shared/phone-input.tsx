@@ -35,8 +35,6 @@ export default function PhoneInput({ value, onChange, required = false }: PhoneI
       .catch((err) => setError(err.message));
   }, []);
 
-  console.log(countries);
-
 
   const handleCountryChange = (country: Country) => {
     setSelectedCountry(country);
@@ -47,8 +45,7 @@ export default function PhoneInput({ value, onChange, required = false }: PhoneI
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPhone = e.target.value.replace(/[^\d]/g, "");
 
-    // Ограничение по длине из выбранной страны
-    const maxLen = selectedCountry?.length || 15;
+    const maxLen = selectedCountry?.length || 10;
     const trimmedPhone = newPhone.slice(0, maxLen);
 
     setPhoneNumber(trimmedPhone);
