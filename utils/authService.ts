@@ -91,7 +91,6 @@ export async function loginUser(data: {
       Version: "1",
       "Debug-Mode": "true",
 
-      "Access-Control-Allow-Origin": "*",
     },
     body: JSON.stringify(data),
       mode: "no-cors"
