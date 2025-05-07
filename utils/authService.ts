@@ -90,10 +90,8 @@ export async function loginUser(data: {
       "Platform-Type": "WEB",
       Version: "1",
       "Debug-Mode": "true",
-
     },
     body: JSON.stringify(data),
-      mode: "no-cors"
   });
 
   const json = await res.json();
