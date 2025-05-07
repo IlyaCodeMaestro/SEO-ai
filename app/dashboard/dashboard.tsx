@@ -413,8 +413,8 @@ export function Dashboard() {
 
     // Иначе показываем только левый блок
     return (
-      <div className="flex flex-1 justify-center w-full min-h-[calc(100vh-65px)]">
-        <div className="w-full bg-[#F6F6F6] rounded-none">
+      <div className="flex flex-1 justify-center w-full min-h-[calc(100vh-65px)] ">
+        <div className="w-full bg-[#F6F6F6] rounded-none ">
           {renderLeftContent()}
         </div>
         {shareMenuOpen && (
@@ -430,10 +430,10 @@ export function Dashboard() {
 
   // Для десктопной версии - оригинальный макет с общим скроллом
   return (
-    <div className="flex flex-1  w-full max-w-[1600px] mx-auto pl-0 pr-4 md:pl-0 md:pr-6 lg:pl-0 lg:pr-8 xl:pl-0 xl:pr-12 min-h-[calc(100vh-110px)]">
+    <div className="flex flex-1 w-full max-w-[1380px] mx-auto px-2 md:px-4 lg:px-6 xl:px-8 min-h-[calc(100vh-110px)] h-full">
       {/* Левая панель - всегда видима */}
 
-      <div className="w-[380px] bg-[#F6F6F6] rounded-[25px] mt-[30px] z-10 ml-4 md:ml-4 lg:ml-8 xl:ml-12 mr-3">
+      <div className="w-[450px] bg-[#f2f0f0] rounded-[25px] mt-[30px] z-10 shadow-intense">
         {renderLeftContent()}
       </div>
       {/* Правая панель - по умолчанию пустая */}

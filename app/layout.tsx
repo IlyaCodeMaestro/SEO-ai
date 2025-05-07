@@ -1,6 +1,5 @@
 import type React from "react";
 import "./globals.css";
-import "./darkTheme.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/provider/theme-provider";

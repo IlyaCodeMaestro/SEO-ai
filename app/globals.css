@@ -74,7 +74,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.dark-theme.login-card-model {
-  background-color: grey;
-}
