@@ -91,9 +91,11 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#f9f9f9] rounded-[24px] shadow-sm">
-      <div className="p-4">
-        <h2 className="text-blue-600 font-medium text-center">Архив</h2>
+    <div className="h-full flex flex-col bg-white rounded-[20px] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+      <div className="py-6">
+        <h2 className="text-[#1950df] font-medium text-center text-xl">
+          Архив
+        </h2>
       </div>
 
       <div
@@ -102,22 +104,22 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
         onScroll={handleScroll}
       >
         {sortedDates.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-[#959699]">
             В архиве пока нет элементов
           </div>
         ) : (
           <div>
             {sortedDates.map((date) => (
               <div key={date} className="mb-6">
-                <h3 className="text-sm font-medium mb-2">{date}</h3>
+                <h3 className="text-sm font-medium mb-4 ml-2">{date}</h3>
 
                 {groupedItems[date].map((item) => (
                   <div
                     key={item.id}
-                    className="bg-white rounded-xl p-3 shadow-sm flex items-center cursor-pointer hover:bg-gray-50 mb-3 relative"
+                    className="bg-white rounded-xl p-4 shadow-around flex items-center cursor-pointer hover:bg-gray-50 mb-4 relative"
                     onClick={() => handleItemClick(item)}
                   >
-                    <div className="w-8 h-8 bg-gray-200 rounded-full mr-3 overflow-hidden">
+                    <div className="w-8 h-8 bg-[#d9d9d9] rounded-full mr-3 overflow-hidden flex-shrink-0">
                       <img
                         src={`/placeholder.svg?height=32&width=32&query=clothing`}
                         alt="Product"
@@ -125,19 +127,21 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
                       />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-sm">{item.name}</p>
+                      <p className="font-medium text-sm text-[#000000]">
+                        {item.name}
+                      </p>
                       <div className="flex items-center">
-                        <p className="text-xs text-gray-500">{item.sku}</p>
-                        <FileText className="h-3 w-3 ml-2 text-gray-400" />
+                        <p className="text-xs text-[#959699]">{item.sku}</p>
+                        <FileText className="h-3 w-3 ml-2 text-[#afafaf]" />
                       </div>
                     </div>
                     <div>
-                      <span className="text-xs text-blue-600">
+                      <span className="text-xs text-[#1950df] whitespace-nowrap">
                         {getItemStatus(item)}
                       </span>
                     </div>
                     {item.isNew && (
-                      <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full"></div>
+                      <div className="absolute right-1 top-1 w-6 h-6 bg-[#1950df] rounded-full"></div>
                     )}
                   </div>
                 ))}
@@ -149,13 +153,13 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
 
       {/* Кнопки навигации */}
       {showScrollButtons && (
-        <div className="flex justify-center py-2">
+        <div className="flex justify-center py-3">
           <button
             onClick={scrollUp}
-            className={`p-1 mx-1 rounded-full ${
+            className={`p-1 mx-2 rounded-full ${
               canScrollUp
-                ? "text-blue-600 hover:bg-blue-50"
-                : "text-gray-300 cursor-not-allowed"
+                ? "text-[#1950df] hover:bg-blue-50"
+                : "text-[#d9d9d9] cursor-not-allowed"
             }`}
             disabled={!canScrollUp}
           >
@@ -163,10 +167,10 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
           </button>
           <button
             onClick={scrollDown}
-            className={`p-1 mx-1 rounded-full ${
+            className={`p-1 mx-2 rounded-full ${
               canScrollDown
-                ? "text-blue-600 hover:bg-blue-50"
-                : "text-gray-300 cursor-not-allowed"
+                ? "text-[#1950df] hover:bg-blue-50"
+                : "text-[#d9d9d9] cursor-not-allowed"
             }`}
             disabled={!canScrollDown}
           >

@@ -433,7 +433,7 @@ export function Dashboard() {
     <div className="flex flex-1 w-full max-w-[1380px] mx-auto px-2 md:px-4 lg:px-6 xl:px-8 min-h-[calc(100vh-110px)] h-full">
       {/* Левая панель - всегда видима */}
 
-      <div className="w-[450px] bg-[#f2f0f0] rounded-[25px] mt-[30px] z-10 shadow-intense">
+      <div className="w-[450px] bg-[#f9f8f8] rounded-[25px] mt-[30px] z-10 shadow-around">
         {renderLeftContent()}
       </div>
       {/* Правая панель - по умолчанию пустая */}

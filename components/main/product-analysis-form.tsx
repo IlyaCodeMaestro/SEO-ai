@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { X, ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useLanguage } from "../provider/language-provider";
 
 interface ProductAnalysisFormProps {
   onClose: () => void;
@@ -15,7 +14,6 @@ export function ProductAnalysisForm({
   onClose,
   onSubmit,
 }: ProductAnalysisFormProps) {
-  const { t, language } = useLanguage();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const {
     register,
@@ -27,49 +25,6 @@ export function ProductAnalysisForm({
       competitorSku: "",
     },
   });
-
-  // Добавляем переводы для формы анализа товара
-  const translations = {
-    ru: {
-      "analysis.title": "Анализ карточки товара",
-      "analysis.enter.sku": "Введите SKU вашего товара",
-      "analysis.sku": "SKU (анализируемый товар)",
-      "analysis.enter.competitor": "Введите SKU конкурента с высоким рейтингом",
-      "analysis.competitor": "SKU (топовый конкурент)",
-      "analysis.note":
-        "Чтобы получить больше данных о вашем товаре необходимо ввести SKU аналога конкурента с заполненными характеристиками и Описанием. Правильно подобранный аналог поможет сделать качественный анализ вашей карточки",
-      "analysis.continue": "Продолжить",
-      "analysis.required": "Это поле обязательно к заполнению",
-    },
-    kz: {
-      "analysis.title": "Тауар карточкасын талдау",
-      "analysis.enter.sku": "Тауарыңыздың SKU енгізіңіз",
-      "analysis.sku": "SKU (талданатын тауар)",
-      "analysis.enter.competitor":
-        "Жоғары рейтингі бар бәсекелестің SKU енгізіңіз",
-      "analysis.competitor": "SKU (үздік бәсекелес)",
-      "analysis.note":
-        "Тауарыңыз туралы көбірек деректер алу үшін бәсекелестің аналогының SKU енгізу қажет. Қосымша.",
-      "analysis.continue": "Жалғастыру",
-      "analysis.required": "Бұл өріс міндетті түрде толтырылуы керек",
-    },
-    en: {
-      "analysis.title": "Product Card Analysis",
-      "analysis.enter.sku": "Enter your product SKU",
-      "analysis.sku": "SKU (analyzed product)",
-      "analysis.enter.competitor": "Enter competitor SKU with high rating",
-      "analysis.competitor": "SKU (top competitor)",
-      "analysis.note":
-        "To get more data about your product, you need to enter a competitor's analog SKU. Optional.",
-      "analysis.continue": "Continue",
-      "analysis.required": "This field is required",
-    },
-  };
-
-  // Функция для получения перевода
-  const translate = (key: string) => {
-    return translations[language][key] || key;
-  };
 
   const onFormSubmit = (data) => {
     onSubmit(data);
@@ -99,13 +54,13 @@ export function ProductAnalysisForm({
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div className="flex-1 text-center mr-5">
-              <h1 className="text-blue-500 font-medium">Главная</h1>
+              <h1 className="text-blue-500 font-medium text-xl">Главная</h1>
             </div>
           </div>
 
-          {/* Подзаголовок */}
-          <div className="text-center mb-8">
-            <h2 className="text-black font-medium">Анализ карточки товара</h2>
+          {/* Подзаголовок с отступом */}
+          <div className="text-center mb-8 mt-6">
+            <h2 className="text-black font-medium text-xl">Анализ карточки товара</h2>
           </div>
 
           {/* Форма */}
@@ -113,20 +68,21 @@ export function ProductAnalysisForm({
             <form className="space-y-6" onSubmit={handleSubmit(onFormSubmit)}>
               <div className="space-y-2">
                 <p className="text-sm text-gray-500 text-center">
-                  {translate("analysis.enter.sku")}
+                  Введите SKU вашего товара
                 </p>
                 <div>
                   <Input
                     id="sku"
-                    className={`mt-1 bg-gray-100 rounded-full h-12 text-center ${
+                    className={`mt-1 bg-gray-100 rounded-full h-[45px] text-center max-w-[320px] mx-auto ${
                       errors.sku ? "border-red-500" : ""
                     }`}
-                    placeholder={translate("analysis.sku")}
+                    placeholder="SKU (анализируемый товар)"
+                    autoFocus
                     {...register("sku", { required: true })}
                   />
                   {errors.sku && (
                     <p className="text-red-500 text-xs mt-1 text-center">
-                      {translate("analysis.required")}
+                      Это поле обязательно к заполнению
                     </p>
                   )}
                 </div>
@@ -134,34 +90,44 @@ export function ProductAnalysisForm({
 
               <div className="space-y-2">
                 <p className="text-sm text-gray-500 text-center">
-                  {translate("analysis.enter.competitor")}
+                  Введите SKU конкурента с высоким рейтингом
                 </p>
                 <div>
                   <Input
                     id="competitorSku"
-                    className={`mt-1 bg-gray-100 rounded-full h-12 text-center ${
+                    className={`mt-1 bg-gray-100 rounded-full h-[45px] text-center max-w-[320px] mx-auto ${
                       errors.competitorSku ? "border-red-500" : ""
                     }`}
-                    placeholder={translate("analysis.competitor")}
+                    placeholder="SKU (топовый конкурент)"
                     {...register("competitorSku", { required: false })}
                   />
                   {errors.competitorSku && (
                     <p className="text-red-500 text-xs mt-1 text-center">
-                      {translate("analysis.required")}
+                      Это поле обязательно к заполнению
                     </p>
                   )}
                 </div>
                 <p className="text-xs text-gray-500 mt-3 text-center px-4">
-                  {translate("analysis.note")}
+                  <br />
+                  Чтобы получить больше данных о вашем товаре,
+                  <br />
+                  необходимо ввести SKU аналога конкурента с заполненными
+                  <br />
+                  Характеристиками и Описанием.
+                  <br />
+                  Правильно подобранный аналог поможет сделать качественный
+                  анализ вашей карточки
                 </p>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-blue-400 hover:bg-blue-500 text-white rounded-full h-12"
-              >
-                {translate("analysis.continue")}
-              </Button>
+              <div className="flex justify-center">
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[45px] border border-white shadow-custom inline-block px-8"
+                >
+                  Продолжить
+                </Button>
+              </div>
             </form>
           </div>
         </div>
@@ -169,67 +135,77 @@ export function ProductAnalysisForm({
 
       {/* Десктопная версия */}
       {!isMobile && (
-        <div className="max-w-md mx-auto pt-10 p-6">
-          <div className="flex items-center justify-center mb-8">
-            <div className="bg-blue-400 text-white py-3 px-6 rounded-full">
-              <h2 className="text-lg font-medium">
-                {translate("analysis.title")}
-              </h2>
-            </div>
+        <div className="max-w-md mx-auto pt-4 p-6">
+          {/* Заголовок */}
+          <div className="text-center mb-8">
+            <h2 className="text-black font-medium text-xl">
+              Анализ карточки товара
+            </h2>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit(onFormSubmit)}>
             <div className="space-y-2">
-              <p className="text-sm text-gray-500">
-                {translate("analysis.enter.sku")}
+              <p className="text-sm text-gray-500 text-center">
+                Введите SKU вашего товара
               </p>
               <div>
                 <Input
                   id="sku"
-                  className={`mt-1 bg-gray-50 dark:bg-gray-700 ${
+                  className={`mt-1 bg-gray-100 rounded-full h-[45px] text-center max-w-[320px] mx-auto ${
                     errors.sku ? "border-red-500" : ""
                   }`}
-                  placeholder="SKU12345"
+                  placeholder="SKU (анализируемый товар)"
+                  autoFocus
                   {...register("sku", { required: true })}
                 />
                 {errors.sku && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {translate("analysis.required")}
+                  <p className="text-red-500 text-xs mt-1 text-center">
+                    Это поле обязательно к заполнению
                   </p>
                 )}
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm text-gray-500">
-                {translate("analysis.enter.competitor")}
+              <p className="text-sm text-gray-500 text-center">
+                Введите SKU конкурента с высоким рейтингом
               </p>
               <div>
                 <Input
                   id="competitorSku"
-                  className={`mt-1 bg-gray-50 dark:bg-gray-700 ${
+                  className={`mt-1 bg-gray-100 rounded-full h-[45px] text-center max-w-[320px] mx-auto ${
                     errors.competitorSku ? "border-red-500" : ""
                   }`}
-                  placeholder="SKU67890"
+                  placeholder="SKU (топовый конкурент)"
                   {...register("competitorSku", { required: false })}
                 />
                 {errors.competitorSku && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {translate("analysis.required")}
+                  <p className="text-red-500 text-xs mt-1 text-center">
+                    Это поле обязательно к заполнению
                   </p>
                 )}
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {translate("analysis.note")}
+              <p className="text-xs text-gray-500 mt-3 text-center px-4">
+                <br />
+                Чтобы получить больше данных о вашем товаре,
+                <br />
+                необходимо ввести SKU аналога конкурента с заполненными
+                <br />
+                Характеристиками и Описанием.
+                <br />
+                Правильно подобранный аналог поможет сделать качественный анализ
+                вашей карточки
               </p>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-blue-400 hover:bg-blue-500 text-white rounded-full"
-            >
-              {translate("analysis.continue")}
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[45px] border border-white shadow-custom inline-block px-8"
+              >
+                Продолжить
+              </Button>
+            </div>
           </form>
         </div>
       )}

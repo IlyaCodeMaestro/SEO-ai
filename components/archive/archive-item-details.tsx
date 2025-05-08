@@ -191,9 +191,9 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     section: string;
     textColorClass?: string;
   }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
-        <h3 className="font-medium">{title}</h3>
+        <h3 className="font-medium ">{title}</h3>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => handleCopy(getContentForCopy(section), section)}
@@ -255,7 +255,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     keywords: any[];
     section: string;
   }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
         <h3 className="font-medium">{title}</h3>
         <div className="flex items-center space-x-2">
@@ -312,7 +312,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     fullWidth?: boolean;
   }) => (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden ${
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden ${
         fullWidth ? "col-span-2" : ""
       }`}
     >
@@ -359,17 +359,9 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
 
   // Компонент блока с результатами анализа
   const ResultsBlock = ({ title }: { title: string }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
         <h3 className="font-medium">{title}</h3>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => toggleSection("results")}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-          </button>
-        </div>
       </div>
       <div className="p-4">
         <div className="flex items-center mb-4">
@@ -419,22 +411,19 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
 
   const renderDesktopLayout = () => {
     return (
-      <div className="h-full overflow-auto bg-gray-50 dark:bg-gray-900">
+      <div className="h-full overflow-auto bg-white dark:bg-gray-900">
         <div className="p-6">
           {/* Заголовок с кнопкой закрытия */}
           <div className="flex items-center justify-between mb-6">
-            <div className="w-5"></div>{" "}
-            {/* Пустой элемент для центрирования заголовка */}
-            <h2 className="text-lg font-medium text-center">
-              {getItemTitle()}
-            </h2>
+            <div className="w-5"></div> {/* Пустой элемент для центрирования */}
+            <div className="w-5"></div> {/* Пустой элемент вместо заголовка */}
             <button onClick={onClose} className="p-2" aria-label="Close">
               <X className="h-5 w-5" />
             </button>
           </div>
 
           {/* Верхний блок с информацией о товаре */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm mb-6 flex items-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-around mb-6 flex items-center">
             <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full mr-3 overflow-hidden">
               <img
                 src={`/placeholder.svg?height=40&width=40&query=product`}
@@ -469,32 +458,89 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 {/* Правая колонка */}
                 <div className="space-y-6">
                   {/* Использованные нерелевантные слова */}
-                  <KeywordsBlock
-                    title={t("archive.details.irrelevant.keywords")}
-                    keywords={analysisResults.irrelevantKeywords}
-                    section="irrelevantKeywords"
-                    textColorClass="text-red-500"
-                  />
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
+                    <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+                      <h3 className="font-medium">
+                        {t("archive.details.irrelevant.keywords")}
+                      </h3>
+                    </div>
+                    <div className="p-4">
+                      <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                        <span className="font-medium">
+                          {t("archive.details.keywords.column")}
+                        </span>
+                        <span className="font-medium text-right">
+                          {t("archive.details.frequency.column")}
+                        </span>
+                      </div>
+                      {analysisResults.irrelevantKeywords
+                        .slice(
+                          0,
+                          expandedSections["irrelevantKeywords"] ? undefined : 2
+                        )
+                        .map((keyword, index) => (
+                          <div
+                            key={index}
+                            className="grid grid-cols-2 gap-2 text-sm py-1 border-b border-gray-100 dark:border-gray-700"
+                          >
+                            <span className="text-red-500">{keyword.word}</span>
+                            <span className="text-right">
+                              {keyword.frequency}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Упущенные ключевые слова (на всю ширину внизу) */}
               <div className="mt-6">
-                <KeywordsBlock
-                  title={t("archive.details.missed.keywords")}
-                  keywords={analysisResults.missedKeywords}
-                  section="missedKeywords"
-                  textColorClass="text-blue-500"
-                />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
+                  <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+                    <h3 className="font-medium">
+                      {t("archive.details.missed.keywords")}
+                    </h3>
+                  </div>
+                  <div className="p-4">
+                    <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                      <span className="font-medium">
+                        {t("archive.details.keywords.column")}
+                      </span>
+                      <span className="font-medium text-right">
+                        {t("archive.details.frequency.column")}
+                      </span>
+                    </div>
+                    {analysisResults.missedKeywords
+                      .slice(
+                        0,
+                        expandedSections["missedKeywords"] ? undefined : 2
+                      )
+                      .map((keyword, index) => (
+                        <div
+                          key={index}
+                          className="grid grid-cols-2 gap-2 text-sm py-1 border-b border-gray-100 dark:border-gray-700"
+                        >
+                          <span className="text-blue-500">{keyword.word}</span>
+                          <span className="text-right">
+                            {keyword.frequency}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
               </div>
 
               {/* Кнопка "Написать описание" */}
-              <button
-                onClick={handleWriteDescription}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-6"
-              >
-                {t("archive.write.description")}
-              </button>
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={handleWriteDescription}
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full h-[45px] border border-white shadow-around inline-block px-8"
+                  style={{ width: "fit-content" }}
+                >
+                  {t("archive.write.description")}
+                </button>
+              </div>
             </>
           )}
 
@@ -540,14 +586,6 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 <div className="space-y-6">
                   {/* Результаты анализа */}
                   <ResultsBlock title={t("archive.details.results")} />
-
-                  {/* Использованные нерелевантные слова */}
-                  <KeywordsBlock
-                    title={t("archive.details.irrelevant.keywords")}
-                    keywords={analysisResults.irrelevantKeywords}
-                    section="irrelevantKeywords"
-                    textColorClass="text-red-500"
-                  />
                 </div>
 
                 {/* Правая колонка */}
@@ -566,16 +604,6 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                     section="topKeywords"
                   />
                 </div>
-              </div>
-
-              {/* Упущенные ключевые слова */}
-              <div className="mt-6">
-                <KeywordsBlock
-                  title={t("archive.details.missed.keywords")}
-                  keywords={analysisResults.missedKeywords}
-                  section="missedKeywords"
-                  textColorClass="text-blue-500"
-                />
               </div>
 
               {/* Описание карточки товара (на всю ширину внизу) */}
@@ -597,14 +625,14 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
   // Мобильная версия (обновленная)
   const renderMobileLayout = () => {
     return (
-      <div className="h-full overflow-auto bg-gray-50 dark:bg-gray-900">
+      <div className="h-full overflow-auto bg-white dark:bg-gray-900">
         <div className="p-6">
           {/* Заголовок с кнопкой закрытия */}
           <div className="flex items-center justify-between mb-6">
             <button onClick={onClose} className="mr-2" aria-label="Back">
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h2 className="text-lg font-medium text-center">
+            <h2 className="text-[#1950df] font-medium text-center text-xl">
               {getItemTitle()}
             </h2>
             <div className="w-5"></div>{" "}
@@ -612,7 +640,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
           </div>
 
           {/* Верхний блок с информацией о товаре */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm mb-6 flex items-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-around mb-6 flex items-center">
             <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full mr-3 overflow-hidden">
               <img
                 src={`/placeholder.svg?height=40&width=40&query=product`}
@@ -640,28 +668,81 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
               <ResultsBlock title={t("archive.details.results")} />
 
               {/* Использованные нерелевантные слова */}
-              <KeywordsBlock
-                title={t("archive.details.irrelevant.keywords")}
-                keywords={analysisResults.irrelevantKeywords}
-                section="irrelevantKeywords"
-                textColorClass="text-red-500"
-              />
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
+                <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+                  <h3 className="font-medium">
+                    {t("archive.details.irrelevant.keywords")}
+                  </h3>
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                    <span className="font-medium">
+                      {t("archive.details.keywords.column")}
+                    </span>
+                    <span className="font-medium text-right">
+                      {t("archive.details.frequency.column")}
+                    </span>
+                  </div>
+                  {analysisResults.irrelevantKeywords
+                    .slice(
+                      0,
+                      expandedSections["irrelevantKeywords"] ? undefined : 2
+                    )
+                    .map((keyword, index) => (
+                      <div
+                        key={index}
+                        className="grid grid-cols-2 gap-2 text-sm py-1 border-b border-gray-100 dark:border-gray-700"
+                      >
+                        <span className="text-red-500">{keyword.word}</span>
+                        <span className="text-right">{keyword.frequency}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
 
               {/* Упущенные ключевые слова */}
-              <KeywordsBlock
-                title={t("archive.details.missed.keywords")}
-                keywords={analysisResults.missedKeywords}
-                section="missedKeywords"
-                textColorClass="text-blue-500"
-              />
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
+                <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+                  <h3 className="font-medium">
+                    {t("archive.details.missed.keywords")}
+                  </h3>
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                    <span className="font-medium">
+                      {t("archive.details.keywords.column")}
+                    </span>
+                    <span className="font-medium text-right">
+                      {t("archive.details.frequency.column")}
+                    </span>
+                  </div>
+                  {analysisResults.missedKeywords
+                    .slice(
+                      0,
+                      expandedSections["missedKeywords"] ? undefined : 2
+                    )
+                    .map((keyword, index) => (
+                      <div
+                        key={index}
+                        className="grid grid-cols-2 gap-2 text-sm py-1 border-b border-gray-100 dark:border-gray-700"
+                      >
+                        <span className="text-blue-500">{keyword.word}</span>
+                        <span className="text-right">{keyword.frequency}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
 
               {/* Кнопка "Написать описание" */}
-              <button
-                onClick={handleWriteDescription}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-6"
-              >
-                {t("archive.write.description")}
-              </button>
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={handleWriteDescription}
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full h-[45px] border border-white shadow-around inline-block px-8"
+                  style={{ width: "fit-content" }}
+                >
+                  {t("archive.write.description")}
+                </button>
+              </div>
             </div>
           )}
 
@@ -702,27 +783,11 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 section="usedKeywords"
               />
 
-              {/* Использованные нерелевантные слова */}
-              <KeywordsBlock
-                title={t("archive.details.irrelevant.keywords")}
-                keywords={analysisResults.irrelevantKeywords}
-                section="irrelevantKeywords"
-                textColorClass="text-red-500"
-              />
-
               {/* Ключевые слова ТОП позиций */}
               <TopKeywordsBlock
                 title={t("archive.details.top.keywords")}
                 keywords={analysisResults.topKeywords}
                 section="topKeywords"
-              />
-
-              {/* Упущенные ключевые слова */}
-              <KeywordsBlock
-                title={t("archive.details.missed.keywords")}
-                keywords={analysisResults.missedKeywords}
-                section="missedKeywords"
-                textColorClass="text-blue-500"
               />
 
               {/* Описание карточки товара */}

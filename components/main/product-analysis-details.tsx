@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { getProductBySku } from "@/lib/api";
-import { useLanguage } from "../provider/language-provider";
 
 interface ProductAnalysisDetailsProps {
   onClose: () => void;
@@ -23,63 +22,17 @@ export function ProductAnalysisDetails({
   onStartAnalysis,
   productData,
 }: ProductAnalysisDetailsProps) {
-  const { language } = useLanguage();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [isAnalysisStarted, setIsAnalysisStarted] = useState(false);
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Добавляем переводы для деталей анализа товара
-  const translations = {
-    ru: {
-      "details.title": "Анализ карточки товара",
-      "details.sku": "SKU (артикул товара):",
-      "details.name": "Название:",
-      "details.brand": "Бренд:",
-      "details.mark": "Марка:",
-      "details.characteristics": "Характеристика:",
-      "details.start": "Начать анализ",
-      "details.loading": "Загрузка данных...",
-      "details.error": "Ошибка при загрузке товара",
-      "details.try.another": "Попробуйте другой SKU",
-    },
-    kz: {
-      "details.title": "Тауар карточкасын талдау",
-      "details.sku": "SKU (тауар артикулы):",
-      "details.name": "Атауы:",
-      "details.brand": "Бренд:",
-      "details.mark": "Марка:",
-      "details.characteristics": "Сипаттама:",
-      "details.start": "Талдауды бастау",
-      "details.loading": "Деректерді жүктеу...",
-      "details.error": "Тауарды жүктеу кезінде қате",
-      "details.try.another": "Басқа SKU қолданып көріңіз",
-    },
-    en: {
-      "details.title": "Product Card Analysis",
-      "details.sku": "SKU (product article):",
-      "details.name": "Name:",
-      "details.brand": "Brand:",
-      "details.mark": "Mark:",
-      "details.characteristics": "Characteristics:",
-      "details.start": "Start Analysis",
-      "details.loading": "Loading data...",
-      "details.error": "Error loading product",
-      "details.try.another": "Try another SKU",
-    },
-  };
-
-  // Функция для получения перевода
-  const translate = (key: string) => {
-    return translations[language][key] || key;
-  };
-
   // Загрузка данных о товаре при монтировании компонента
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productData.sku) {
-        setError(translate("details.error"));
+        setError("Ошибка при загрузке товара");
         setLoading(false);
         return;
       }
@@ -91,14 +44,14 @@ export function ProductAnalysisDetails({
         setProduct(fetchedProduct);
       } catch (error) {
         console.error("Error fetching product:", error);
-        setError(translate("details.error"));
+        setError("Ошибка при загрузке товара");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [productData.sku, language]);
+  }, [productData.sku]);
 
   const handleStartAnalysis = () => {
     setIsAnalysisStarted(true);
@@ -110,7 +63,7 @@ export function ProductAnalysisDetails({
     return (
       <div className="h-full relative flex items-center justify-center">
         <div className="text-center">
-          <p>{translate("details.loading")}</p>
+          <p>Загрузка данных...</p>
         </div>
       </div>
     );
@@ -123,7 +76,7 @@ export function ProductAnalysisDetails({
         <div className="text-center">
           <p className="text-red-500">{error}</p>
           <Button onClick={onBack} className="mt-4">
-            {translate("details.try.another")}
+            Попробуйте другой SKU
           </Button>
         </div>
       </div>
@@ -133,96 +86,95 @@ export function ProductAnalysisDetails({
   return (
     <div className="h-full relative">
       <div className="max-w-md mx-auto p-6">
-        {/* Заголовок с кнопками назад и закрыть */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <button onClick={onBack} className="mr-2" aria-label="Back">
-              <ArrowLeft className="h-5 w-5" />
+        {/* Заголовок с кнопкой назад */}
+        <div className="relative mb-6">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2">
+            <button onClick={onBack} aria-label="Назад">
+              <ArrowLeft className="h-6 w-6 text-blue-500" />
             </button>
-            <h2 className="text-lg font-medium">
-              {translate("details.title")}
-            </h2>
           </div>
-          {/* Кнопка закрытия только для десктопа */}
-          {!isMobile && (
-            <button onClick={onClose} className="p-2" aria-label="Close">
-              <X className="h-5 w-5" />
-            </button>
+
+          {isMobile ? (
+            <div className="text-center">
+              <span className="text-blue-500 font-medium text-xl">Главная</span>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <div className="flex-1"></div>
+              <h2 className="text-md font-normal text-center flex-1">
+                Анализ карточки товара
+              </h2>
+              <div className="flex-1 flex justify-end">
+                <button
+                  onClick={onClose}
+                  className="text-gray-500"
+                  aria-label="Закрыть"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
           )}
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm">
-          {product ? (
-            <>
-              {/* Изображение товара */}
-              <div className="flex mb-6">
-                <div className="w-24 h-24 bg-gray-200 rounded-lg mr-4 overflow-hidden">
-                  <img
-                    src={product.image || "/placeholder.svg?height=96&width=96"}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                  <div className="mb-2">
-                    <p className="text-sm text-gray-500">
-                      {translate("details.sku")}
-                    </p>
-                    <p className="font-medium">{product.article}</p>
-                  </div>
-                  <div className="mb-2">
-                    <p className="text-sm text-gray-500">
-                      {translate("details.name")}
-                    </p>
-                    <p className="font-medium">{product.name}</p>
-                  </div>
-                  <div className="mb-2">
-                    <p className="text-sm text-gray-500">
-                      {translate("details.brand")}
-                    </p>
-                    <p className="font-medium">{product.brand}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      {translate("details.mark")}
-                    </p>
-                    <p className="font-medium">{product.mark || "-"}</p>
-                  </div>
-                </div>
-              </div>
+        {isMobile && (
+          <h2 className="text-xl font-normal mb-6 text-center">
+            Анализ карточки товара
+          </h2>
+        )}
 
-              <div>
-                <p className="text-sm text-gray-500 mb-1">
-                  {translate("details.characteristics")}
-                </p>
-                {product.characteristics &&
-                product.characteristics.length > 0 ? (
-                  <div className="space-y-1">
-                    {product.characteristics.map((char, index) => (
-                      <p key={index} className="font-medium">
-                        {char.name}: {char.value}
-                      </p>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="font-medium">-</p>
-                )}
+        <div className="bg-white rounded-[30px] p-6 shadow-custom mb-6">
+          {product ? (
+            <div className="flex">
+              <div className="w-32 h-32 bg-gray-200 rounded-xl mr-4 overflow-hidden">
+                <img
+                  src="/placeholder.svg?height=128&width=128"
+                  alt="Изображение товара"
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </>
+              <div className="flex-1">
+                <div className="mb-2">
+                  <p className="text-md font-medium">SKU: 379067832</p>
+                </div>
+                <div className="mb-2">
+                  <p className="text-md">Название:</p>
+                  <p className="text-md">
+                    Фен для волос женский мощный с ионизацией
+                  </p>
+                </div>
+                <div>
+                  <p className="text-md">Бренд: ARD SHOP</p>
+                </div>
+              </div>
+            </div>
           ) : (
             <div className="text-center py-8">
-              <p>{translate("details.error")}</p>
+              <p>Ошибка при загрузке товара</p>
             </div>
           )}
         </div>
 
         {!isAnalysisStarted && product && (
-          <div className="mt-auto pt-6">
+          <div className="mt-40 pt-6 flex justify-center">
             <Button
               onClick={handleStartAnalysis}
-              className="w-full bg-blue-400 hover:bg-blue-500 text-white rounded-full"
+              className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[55px] w-[200px] border border-white shadow-custom inline-block px-8"
             >
-              {translate("details.start")}
+              Начать анализ
             </Button>
           </div>
         )}

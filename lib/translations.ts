@@ -82,7 +82,7 @@ export const translations = {
     // Архив
     "archive.details.title": "Архив",
     "archive.details.results": "Результаты анализа",
-    "archive.details.top.keywords": "Ключевые слова TOP позиций",
+    "archive.details.top.keywords": "Ключевые слова TOП карточек",
     "archive.details.used.keywords": "Использованные ключевые слова",
     "archive.details.irrelevant.keywords": "Использованные нерелевантные слова",
     "archive.details.missed.keywords": "Упущенные ключевые слова",

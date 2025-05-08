@@ -58,6 +58,8 @@ const config = {
         'bottom-only': '0px 10px 20px rgba(0, 0, 0, 0.3)',  
         'intense': '0px 10px 40px rgba(0, 0, 0, 0.4)',
         'bottom-md': '0 6px 12px rgba(0, 0, 0, 0.25)',
+        'custom': "4px 4px 8px 0px rgba(0, 0, 0, 0.25)",
+        'around': '0 0 10px rgba(0, 0, 0, 0.15)',
       },
       borderRadius: {
         lg: "var(--radius)",

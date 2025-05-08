@@ -14,7 +14,7 @@ export function MainContent({
   onOpenProcessing,
 }: MainContentProps) {
   const { processingItems } = useProcessingContext();
-  const { t } = useLanguage();
+
 
   return (
     <div className="flex flex-col h-full">
@@ -27,8 +27,8 @@ export function MainContent({
         </h1>
 
         {/* First card */}
-        <div className="rounded-[24px] p-6 mb-5 bg-gradient-to-r from-[#6BBBC7] to-[#4169E1] text-white shadow-bottom-only">
-          <h2 className="text-[22px]  font-medium mb-3 ml-2">
+        <div className="rounded-[24px] p-4 mb-5 bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white shadow-bottom-only">
+          <h2 className="text-[24px]  font-medium mb-3 ml-2">
             Анализ карточки товара
           </h2>
           <p className="text-base md:text-sm mb-1 ml-2 font-medium">
@@ -40,7 +40,7 @@ export function MainContent({
           <div className="ml-2">
             <Button
               variant="secondary"
-              className="bg-white text-black hover:bg-gray-100 rounded-full text-base md:text-sm px-8 py-1  w-[160px]"
+              className="bg-white text-black hover:bg-gray-100 rounded-full text-base md:text-sm px-8 py-1 h-[32px]  w-[120px]"
               onClick={() => onOpenPanel("product-analysis")}
             >
               Перейти
@@ -49,11 +49,11 @@ export function MainContent({
         </div>
 
         {/* Second card */}
-        <div className="rounded-[24px] p-6 bg-[#4169E1] text-white shadow-bottom-only">
+        <div className="rounded-[24px] p-4 bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white shadow-bottom-only">
           <h2 className="text-[22px]  font-medium mb-3 ml-2">
             Описание карточки товара
           </h2>
-          <p className="text-base mb-1 ml-2 text-[15px] md:text-sm font-medium">
+          <p className="text-base mb-1 ml-2 text-[14px] md:text-sm font-medium">
             Качественное SEO и текст за пару кликов
           </p>
           <p className="text-base mb-5 ml-2 text-[15px] md:text-sm font-thin">
@@ -62,7 +62,7 @@ export function MainContent({
           <div className="ml-2">
             <Button
               variant="secondary"
-              className="bg-white text-black hover:bg-gray-100 rounded-full text-base md:text-sm px-8 py-1  w-[160px]"
+              className="bg-white text-black hover:bg-gray-100 rounded-full text-base md:text-sm px-8 py-1 h-[32px] w-[120px]"
               onClick={() => onOpenPanel("product-description")}
             >
               Перейти
@@ -71,10 +71,10 @@ export function MainContent({
         </div>
       </div>
 
-      <div className="px-4 pb-2  mt-6">
+      <div className="flex justify-center items-center px-4 pb-2 mt-6 w-full">
         {processingItems.length > 0 && (
           <Button
-            className="w-full h-[72px] rounded-[25px] bg-[rgba(38,99,255,1)] hover:bg-[rgba(38,99,255,0.85)] text-white  text-xl md:text-base"
+            className=" h-[60px] w-80 rounded-[25px] bg-[rgba(38,99,255,1)] hover:bg-[rgba(38,99,255,0.85)] text-white  text-2xl md:text-xl"
             onClick={onOpenProcessing}
           >
             В обработке...

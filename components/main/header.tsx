@@ -69,7 +69,7 @@ export function Header() {
   return (
     <div
       className={`w-full ${
-        isMobile ? "bg-gray-200 h-[65px] shadow-bottom-md" : "bg-[#F6F6F6] h-[110px] shadow-bottom-md"
+        isMobile ? "bg-gray-200 h-[65px] shadow-md" : "bg-[#F6F6F6] h-[110px] shadow-md"
       } relative z-20 border-b border-gray-200`}
     >
       <div className="container mx-auto px-2 md:px-4 lg:px-6 xl:px-8 h-full relative">
