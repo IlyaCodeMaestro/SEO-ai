@@ -91,7 +91,7 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-[20px] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+    <div className="h-full flex flex-col  rounded-[20px] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
       <div className="py-6">
         <h2 className="text-[#1950df] font-medium text-center text-xl">
           Архив

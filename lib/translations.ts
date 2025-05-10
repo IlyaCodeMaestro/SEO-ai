@@ -119,10 +119,10 @@ export const translations = {
     // Личный кабинет
     "cabinet.title": "Личный кабинет",
     "cabinet.balance": "Баланс",
-    "cabinet.topup": "Пополнить",
+    "cabinet.topup": "пополнить",
     "cabinet.balance.statement": "Выписка по балансу",
     "cabinet.bonuses": "Бонусы",
-    "cabinet.exchange": "Обменять",
+    "cabinet.exchange": "обменять",
     "cabinet.bonus.statement": "Выписка по бонусам",
     "cabinet.referral.statement": "Выписка по рефералам",
     "cabinet.tariff": "Тариф",

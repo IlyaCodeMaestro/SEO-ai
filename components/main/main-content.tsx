@@ -74,7 +74,7 @@ export function MainContent({
       <div className="flex justify-center items-center px-4 pb-2 mt-6 w-full">
         {processingItems.length > 0 && (
           <Button
-            className=" h-[60px] w-80 rounded-[25px] bg-[rgba(38,99,255,1)] hover:bg-[rgba(38,99,255,0.85)] text-white  text-2xl md:text-xl"
+            className="bg-gradient-to-r h-[60px] w-80 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white  text-2xl md:text-xl"
             onClick={onOpenProcessing}
           >
             В обработке...

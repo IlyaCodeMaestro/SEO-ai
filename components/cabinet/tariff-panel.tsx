@@ -4,9 +4,112 @@ import { useState } from "react";
 import { X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TariffSwitchConfirmModal } from "./tariff-switch-confirm-modal";
-import { useTariff, tariffs } from "../provider/tariff-provider";
-import { useLanguage } from "../provider/language-provider";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+
+// Define tariff types
+interface Tariff {
+  id: string;
+  name: string;
+  monthlyFee: string;
+  analysisCount: number;
+  descriptionCount: number;
+  details: string[];
+}
+
+// Tariff data
+const tariffs: Tariff[] = [
+  {
+    id: "trial",
+    name: "Пробный",
+    monthlyFee: "0",
+    analysisCount: 9,
+    descriptionCount: 8,
+    details: [],
+  },
+  {
+    id: "seller",
+    name: "Селлер",
+    monthlyFee: "8000",
+    analysisCount: 6,
+    descriptionCount: 6,
+    details: [
+      "При переподключении тарифа остатки трафика и бонусы не сохраняются.",
+      'При переходе на тариф "Менеджер" 50% бонусов сохраняются.',
+      'При переходе на тариф "Премиум" 100% бонусов сохраняются.',
+      "Абонентская плата бонусами не оплачивается.",
+    ],
+  },
+  {
+    id: "manager",
+    name: "Менеджер",
+    monthlyFee: "20000",
+    analysisCount: 20,
+    descriptionCount: 20,
+    details: [
+      "При своевременной оплате абонентской платы или переподключении тарифа 50% бонусов сохраняются, остатки трафика не сохраняются.",
+      'При переходе на тариф "Селлер" бонусы не сохраняются.',
+      'При переходе на тариф "Премиум" 100% бонусов сохраняются.',
+      "Абонентская плата бонусами не оплачивается.",
+    ],
+  },
+  {
+    id: "premium",
+    name: "Премиум",
+    monthlyFee: "40000",
+    analysisCount: 60,
+    descriptionCount: 60,
+    details: [
+      "При своевременной оплате абонентской платы или переподключении 100% бонусов сохраняются, остатки трафика не сохраняются.",
+      'При переходе на тариф "Селлер" или "Менеджер" бонусы не сохраняются.',
+      "Абонентская плата бонусами не оплачивается.",
+    ],
+  },
+];
+
+// Tariff provider context (simplified for this example)
+const useTariff = () => {
+  const [currentTariff, setCurrentTariff] = useState<string>("trial");
+  const analysisRemaining = 9;
+  const descriptionRemaining = 8;
+  const nextPaymentDate = "05 июня";
+
+  const getTariffById = (id: string) => {
+    return tariffs.find((t) => t.id === id);
+  };
+
+  return {
+    currentTariff,
+    setCurrentTariff,
+    getTariffById,
+    analysisRemaining,
+    descriptionRemaining,
+    nextPaymentDate,
+  };
+};
+
+// Translation function (simplified)
+const useLanguage = () => {
+  const t = (key: string) => {
+    const translations: Record<string, string> = {
+      "cabinet.title": "Тарифы",
+      "tariff.my": "Мой тариф",
+      "tariff.next.payment": "Дата отключения",
+      "tariff.analysis.remaining": "Остаток анализа карточки товара",
+      "tariff.description.remaining": "Остаток описания карточки товара",
+      "tariff.pieces": "штук",
+      "tariff.reconnect": "Переподключить",
+      "tariff.monthly.fee": "Ежемесячная абонентская плата",
+      "tariff.analysis.count": "Анализ карточки товара",
+      "tariff.description.count": "Описание карточки товара",
+      "tariff.switch.confirm": "Вы желаете перейти на тариф",
+      "tariff.connect": "Подключить",
+      "tariff.cancel": "Отмена",
+    };
+    return translations[key] || key;
+  };
+
+  return { t };
+};
 
 interface TariffPanelProps {
   onClose: () => void;
@@ -26,71 +129,104 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [tariffToSwitch, setTariffToSwitch] = useState<string | null>(null);
   const { t } = useLanguage();
+  const [autoRenewal, setAutoRenewal] = useState(false);
+  const [showAutoRenewalModal, setShowAutoRenewalModal] = useState(false);
 
-  // Текущий тариф
+  // Current tariff data
   const currentTariffData = getTariffById(currentTariff);
 
-  // Обработчик клика по тарифу (только для мобильной версии)
+  // Handle tariff click (mobile only)
   const handleTariffClick = (tariffId: string) => {
-    if (expandedTariff === tariffId) {
-      setExpandedTariff(null);
-    } else {
-      setExpandedTariff(tariffId);
+    if (isMobile) {
+      if (expandedTariff === tariffId) {
+        setExpandedTariff(null);
+      } else {
+        setExpandedTariff(tariffId);
+      }
     }
   };
 
-  // Обработчик нажатия на кнопку "Перейти"
+  // Handle switch button click
   const handleSwitchClick = (tariffId: string) => {
     setTariffToSwitch(tariffId);
     setShowConfirmModal(true);
   };
 
-  // Обработчик подтверждения переключения тарифа
+  // Handle confirm switch
   const handleConfirmSwitch = () => {
     if (tariffToSwitch) {
-      setCurrentTariff(tariffToSwitch as any);
+      setCurrentTariff(tariffToSwitch);
     }
     setShowConfirmModal(false);
     setTariffToSwitch(null);
   };
 
-  // Обработчик отмены переключения тарифа
+  // Handle cancel switch
   const handleCancelSwitch = () => {
     setShowConfirmModal(false);
     setTariffToSwitch(null);
   };
 
-  // Если показываем модальное окно подтверждения
-  if (showConfirmModal && tariffToSwitch) {
-    const targetTariff = tariffs.find((t) => t.id === tariffToSwitch);
-    return (
-      <TariffSwitchConfirmModal
-        tariffName={targetTariff?.name || ""}
-        onConfirm={handleConfirmSwitch}
-        onCancel={handleCancelSwitch}
-      />
-    );
-  }
+  const handleAutoRenewalToggle = () => {
+    if (!autoRenewal) {
+      setShowAutoRenewalModal(true);
+    } else {
+      setAutoRenewal(false);
+    }
+  };
 
-  // Мобильная версия (с возможностью раскрытия информации о тарифе)
+  const confirmAutoRenewal = () => {
+    setAutoRenewal(true);
+    setShowAutoRenewalModal(false);
+  };
+
+  const cancelAutoRenewal = () => {
+    setShowAutoRenewalModal(false);
+  };
+
+  // Get gradient class based on tariff ID
+  const getTariffGradient = (tariffId: string) => {
+    switch (tariffId) {
+      case "seller":
+        return "bg-gradient-to-r from-[#26CBFF] to-[#0083AC]";
+      case "manager":
+        return "bg-gradient-to-r from-[rgba(0,131,172,0.71)] to-[#3460D1]";
+      case "premium":
+        return "bg-gradient-to-r from-[#2663FF] to-[#0B3CBB]";
+      default:
+        return "bg-gradient-to-r from-[#26CBFF] to-[#0083AC]";
+    }
+  };
+
+  // Mobile view
   if (isMobile) {
     return (
       <div className="h-full flex flex-col justify-start bg-white">
-        {/* Заголовок с кнопкой закрытия */}
-        <div className="flex items-center justify-between p-4">
-          <button onClick={onClose} className="p-1" aria-label="Back">
+        {/* Header with back button and centered "Личный кабинет" text */}
+        <div className="flex items-center justify-between p-4 relative">
+          <button
+            onClick={onClose}
+            className="p-1 absolute left-4"
+            aria-label="Back"
+          >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div className="flex-1 text-center">
-            <h2 className="text-lg font-medium">{t("cabinet.title")}</h2>
+          <div className="flex-1 text-center pl-4">
+            <div className="text-[#4361EE] font-medium text-xl">
+              Личный кабинет
+            </div>
           </div>
-          <div className="w-5"></div>{" "}
-          {/* Пустой элемент для сбалансированного выравнивания */}
+          <div className="w-5"></div> {/* Empty div for balanced spacing */}
         </div>
 
-        <div className="flex-1 p-0 pt-0 max-w-md mx-auto w-full">
-          {/* Текущий тариф */}
-          <div className="mb-6 px-4">
+        {/* Tariffs title */}
+        <div className="text-center mb-4">
+          <h2 className="text-lg font-medium">{t("cabinet.title")}</h2>
+        </div>
+
+        <div className="flex-1 p-4 pt-0 max-w-md mx-auto w-full">
+          {/* Current tariff */}
+          <div className="mb-6">
             <div className="flex justify-between items-start mb-1">
               <span className="text-gray-600">{t("tariff.my")}</span>
               <span className="font-bold text-lg">
@@ -110,359 +246,339 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                 {t("tariff.pieces")}.
               </p>
             </div>
-            <Button
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full mt-4"
-              onClick={() => handleSwitchClick(currentTariff)}
-            >
-              {t("tariff.reconnect")}
-            </Button>
+
+            {/* Auto-renewal toggle */}
+            <div className="flex items-center justify-between mt-4">
+              <span className="text-gray-600">Автосписание</span>
+              <div
+                className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+                  autoRenewal ? "bg-[#4361EE]" : "bg-gray-300"
+                }`}
+                onClick={handleAutoRenewalToggle}
+              >
+                <div
+                  className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+                    autoRenewal ? "translate-x-6" : ""
+                  }`}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Список тарифов */}
-          <div className="space-y-4 px-4">
-            {/* Селлер */}
-            <div
-              className={`rounded-xl overflow-hidden transition-all duration-300 bg-gradient-to-r from-[rgba(38,203,255,1)] to-[rgba(0,131,172,1)] ${
-                expandedTariff === "seller" ? "shadow-lg" : "shadow-sm"
-              }`}
-              onClick={() => handleTariffClick("seller")}
-            >
-              {expandedTariff === "seller" ? (
-                // Развернутый вид тарифа
-                <div className="text-white p-6">
-                  <h3 className="text-2xl font-bold mb-2">«Селлер»</h3>
-                  <div className="mb-4">
-                    <p className="mb-1">
-                      {t("tariff.monthly.fee")}{" "}
-                      <span className="font-bold">8000 тенге.</span>
-                    </p>
-                    <p className="mb-1">
-                      {t("tariff.analysis.count")}{" "}
-                      <span className="font-bold">5 {t("tariff.pieces")}.</span>
-                    </p>
-                    <p className="mb-1">
-                      {t("tariff.description.count")}{" "}
-                      <span className="font-bold">5 {t("tariff.pieces")}.</span>
-                    </p>
-                  </div>
+          {/* Tariff list */}
+          <div className="space-y-4">
+            {tariffs
+              .filter((t) => t.id !== "trial")
+              .map((tariff) => (
+                <div
+                  key={tariff.id}
+                  className={`rounded-xl overflow-hidden transition-all duration-300 ${getTariffGradient(
+                    tariff.id
+                  )} ${
+                    expandedTariff === tariff.id ? "shadow-lg" : "shadow-sm"
+                  }`}
+                  onClick={() => handleTariffClick(tariff.id)}
+                >
+                  {expandedTariff === tariff.id ? (
+                    // Expanded view
+                    <div className="text-white p-6">
+                      <h3 className="text-2xl font-bold mb-2">
+                        «{tariff.name}»
+                      </h3>
+                      <div className="mb-4">
+                        <p className="mb-1">
+                          {t("tariff.monthly.fee")}{" "}
+                          <span className="font-bold">
+                            {tariff.monthlyFee} тенге.
+                          </span>
+                        </p>
+                        <p className="mb-1">
+                          {t("tariff.analysis.count")}{" "}
+                          <span className="font-bold">
+                            {tariff.analysisCount} {t("tariff.pieces")}.
+                          </span>
+                        </p>
+                        <p className="mb-1">
+                          {t("tariff.description.count")}{" "}
+                          <span className="font-bold">
+                            {tariff.descriptionCount} {t("tariff.pieces")}.
+                          </span>
+                        </p>
+                      </div>
 
-                  <div className="text-sm mb-6">
-                    <p className="mb-1">
-                      При своевременной оплате абонентская плата при переходе на
-                      более высокий тариф не теряется.
-                    </p>
-                    <p className="mb-1">
-                      При переходе на тариф "Менеджер" или "Премиум" бонусы
-                      сохраняются.
-                    </p>
-                    <p className="mb-1">
-                      При переходе на тариф "Селлер" 50% бонусов сохраняется.
-                    </p>
-                    <p className="mb-1">
-                      Абонентская плата безвозвратно не возвращается.
-                    </p>
-                  </div>
+                      <div className="text-sm mb-6">
+                        {tariff.details.map((detail, index) => (
+                          <p key={index} className="mb-1">
+                            {detail}
+                          </p>
+                        ))}
+                      </div>
 
-                  {currentTariff !== "seller" && (
-                    <Button
-                      className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSwitchClick("seller");
-                      }}
-                    >
-                      Перейти
-                    </Button>
+                      {currentTariff !== tariff.id && (
+                        <Button
+                          className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSwitchClick(tariff.id);
+                          }}
+                        >
+                          Перейти
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    // Collapsed view - now showing first 3 lines
+                    <div className="text-white p-5">
+                      <h3 className="text-2xl font-bold mb-2">
+                        «{tariff.name}»
+                      </h3>
+                      <p className="text-sm">
+                        Ежемесячная абонентская плата {tariff.monthlyFee} тенге.
+                      </p>
+                      <p className="text-sm">
+                        Анализ карточки товара {tariff.analysisCount} штук.
+                      </p>
+                      <p className="text-sm">
+                        Описание карточки товара {tariff.descriptionCount} штук.
+                      </p>
+                    </div>
                   )}
                 </div>
-              ) : (
-                // Свернутый вид тарифа
-                <div className="text-white p-5">
-                  <h3 className="text-2xl font-bold">«Селлер»</h3>
-                </div>
-              )}
-            </div>
-
-            {/* Менеджер */}
-            <div
-              className={`rounded-xl overflow-hidden transition-all duration-300 bg-gradient-to-r from-[rgba(0,131,172,0.71)] to-[rgba(52,96,209,1)] ${
-                expandedTariff === "manager" ? "shadow-lg" : "shadow-sm"
-              }`}
-              onClick={() => handleTariffClick("manager")}
-            >
-              {expandedTariff === "manager" ? (
-                // Развернутый вид тарифа
-                <div className="text-white p-6">
-                  <h3 className="text-2xl font-bold mb-2">«Менеджер»</h3>
-                  <div className="mb-4">
-                    <p className="mb-1">
-                      {t("tariff.monthly.fee")}{" "}
-                      <span className="font-bold">20000 тенге.</span>
-                    </p>
-                    <p className="mb-1">
-                      {t("tariff.analysis.count")}{" "}
-                      <span className="font-bold">
-                        20 {t("tariff.pieces")}.
-                      </span>
-                    </p>
-                    <p className="mb-1">
-                      {t("tariff.description.count")}{" "}
-                      <span className="font-bold">
-                        20 {t("tariff.pieces")}.
-                      </span>
-                    </p>
-                  </div>
-
-                  <div className="text-sm mb-6">
-                    <p className="mb-1">
-                      При своевременной оплате абонентская плата при переходе на
-                      более высокий тариф не теряется.
-                    </p>
-                    <p className="mb-1">
-                      При переходе на тариф "Премиум" бонусы сохраняются.
-                    </p>
-                    <p className="mb-1">
-                      При переходе на тариф "Селлер" или "Менеджер" 50% бонусов
-                      сохраняется.
-                    </p>
-                    <p className="mb-1">
-                      Абонентская плата безвозвратно не возвращается.
-                    </p>
-                  </div>
-
-                  {currentTariff !== "manager" && (
-                    <Button
-                      className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSwitchClick("manager");
-                      }}
-                    >
-                      Перейти
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                // Свернутый вид тарифа
-                <div className="text-white p-5">
-                  <h3 className="text-2xl font-bold">«Менеджер»</h3>
-                </div>
-              )}
-            </div>
-
-            {/* Премиум */}
-            <div
-              className={`rounded-xl overflow-hidden transition-all duration-300 bg-gradient-to-r from-[rgba(38,99,255,1)] to-[rgba(11,60,187,1)] ${
-                expandedTariff === "premium" ? "shadow-lg" : "shadow-sm"
-              }`}
-              onClick={() => handleTariffClick("premium")}
-            >
-              {expandedTariff === "premium" ? (
-                // Развернутый вид тарифа
-                <div className="text-white p-6">
-                  <h3 className="text-2xl font-bold mb-2">«Премиум»</h3>
-                  <div className="mb-4">
-                    <p className="mb-1">
-                      {t("tariff.monthly.fee")}{" "}
-                      <span className="font-bold">50000 тенге.</span>
-                    </p>
-                    <p className="mb-1">
-                      {t("tariff.analysis.count")}{" "}
-                      <span className="font-bold">
-                        40 {t("tariff.pieces")}.
-                      </span>
-                    </p>
-                    <p className="mb-1">
-                      {t("tariff.description.count")}{" "}
-                      <span className="font-bold">
-                        60 {t("tariff.pieces")}.
-                      </span>
-                    </p>
-                  </div>
-
-                  <div className="text-sm mb-6">
-                    <p className="mb-1">
-                      При своевременной оплате абонентская плата при переходе на
-                      более высокий тариф не теряется.
-                    </p>
-                    <p className="mb-1">
-                      При переходе на тариф "Селлер" или "Менеджер" бонусы не
-                      сохраняются.
-                    </p>
-                    <p className="mb-1">
-                      Абонентская плата безвозвратно не возвращается.
-                    </p>
-                  </div>
-
-                  {currentTariff !== "premium" && (
-                    <Button
-                      className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSwitchClick("premium");
-                      }}
-                    >
-                      Перейти
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                // Свернутый вид тарифа
-                <div className="text-white p-5">
-                  <h3 className="text-2xl font-bold">«Премиум»</h3>
-                </div>
-              )}
-            </div>
+              ))}
           </div>
         </div>
+
+        {/* Confirmation modal */}
+        {showConfirmModal && tariffToSwitch && (
+          <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+              <div className="text-center mb-6">
+                <p className="text-lg">
+                  {t("tariff.switch.confirm")} «
+                  {getTariffById(tariffToSwitch)?.name}»?
+                </p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Button
+                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  onClick={handleConfirmSwitch}
+                >
+                  {t("tariff.connect")}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 rounded-full py-3"
+                  onClick={handleCancelSwitch}
+                >
+                  {t("tariff.cancel")}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+        {/* Auto-renewal confirmation modal */}
+        {showAutoRenewalModal && (
+          <Dialog
+            open={showAutoRenewalModal}
+            onOpenChange={setShowAutoRenewalModal}
+          >
+            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+              <div className="text-center mb-6">
+                <p className="text-lg">
+                  Вы желаете включить автопродление тарифа?
+                </p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Button
+                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  onClick={confirmAutoRenewal}
+                >
+                  Подтвердить
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 rounded-full py-3"
+                  onClick={cancelAutoRenewal}
+                >
+                  Отмена
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     );
   }
 
-  // Десктопная версия (новый дизайн согласно скриншоту)
+  // Desktop view
   return (
-    <div className="h-full flex flex-col justify-start bg-white p-4">
-      {/* Заголовок с кнопкой закрытия */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex-1 text-center">
-          <div className="bg-[#4361EE] text-white py-2 px-4 rounded-full inline-block">
-            <h2 className="text-lg font-medium">Тариф</h2>
-          </div>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-1 absolute right-4 top-4"
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="flex-1 max-w-3xl mx-auto w-full">
-        {/* Текущий тариф */}
-        <div className="mb-6 bg-gray-100 p-4 rounded-lg shadow-sm">
-          <div className="mb-1">
-            <span className="text-gray-600">Мой тариф</span>
-            <span className="font-bold text-lg ml-2">
-              «{currentTariffData?.name}»
-            </span>
-          </div>
-          <div className="text-sm text-gray-600">
-            <p>Срок действия списания: 10 ноября</p>
-            <p>Остаток анализа карточки товара: 40 штук.</p>
-            <p>Остаток описания карточки товара: 25 штук.</p>
-          </div>
+    <div className="bg-white w-full">
+      <div className="max-w-3xl mx-auto p-6">
+        {/* Header - now with black text and no blue background */}
+        <div className="flex items-center justify-center relative mb-6">
+          <h2 className="text-lg font-medium text-black">Тарифы</h2>
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-0 p-1"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
-        {/* Список тарифов */}
-        <div className="space-y-4">
-          {/* Селлер */}
-          <div className="rounded-xl overflow-hidden bg-gradient-to-r from-[rgba(38,203,255,1)] to-[rgba(0,131,172,1)] shadow-sm">
-            <div className="p-4 text-white">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold">«Селлер»</h3>
-                  <p className="text-sm">
-                    Ежемесячная абонентская плата 8000 тенге.
-                  </p>
-                  <p className="text-sm">Анализ карточки товара 5 штук.</p>
-                  <p className="text-sm">Описание карточки товара 5 штук.</p>
+        <div className="w-full">
+          {/* Current tariff */}
+          <div className="mb-6 bg-gray-100 p-4 rounded-lg">
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="mb-1">
+                  <span className="text-gray-600">Мой тариф</span>
+                  <span className="font-bold text-lg ml-2">
+                    «{currentTariffData?.name}»
+                  </span>
                 </div>
-                <div className="text-xs max-w-[40%]">
+                <div className="text-sm text-gray-600">
+                  <p>Дата отключения {nextPaymentDate}</p>
                   <p>
-                    При своевременной оплате абонентская плата при переходе на
-                    более высокий тариф не теряется.
+                    Остаток анализа карточки товара: {analysisRemaining} штук.
                   </p>
                   <p>
-                    При переходе на тариф "Менеджер" или "Премиум" бонусы
-                    сохраняются.
+                    Остаток описания карточки товара: {descriptionRemaining}{" "}
+                    штук.
                   </p>
-                  <p>При переходе на тариф "Селлер" 50% бонусов сохраняется.</p>
-                  <p>Абонентская плата безвозвратно не возвращается.</p>
                 </div>
-              </div>
-              <div className="mt-2 text-right">
-                <button
-                  className="bg-[rgba(70,122,255,1)] text-white px-4 py-1 rounded-full text-sm"
-                  onClick={() => handleSwitchClick("seller")}
-                >
-                  Перейти
-                </button>
               </div>
             </div>
           </div>
 
-          {/* Менеджер */}
-          <div className="rounded-xl overflow-hidden bg-gradient-to-r from-[rgba(0,131,172,0.71)] to-[rgba(52,96,209,1)] shadow-sm">
-            <div className="p-4 text-white">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold">«Менеджер»</h3>
-                  <p className="text-sm">
-                    Ежемесячная абонентская плата 20000 тенге.
-                  </p>
-                  <p className="text-sm">Анализ карточки товара 20 штук.</p>
-                  <p className="text-sm">Описание карточки товара 20 штук.</p>
-                </div>
-                <div className="text-xs max-w-[40%]">
-                  <p>
-                    При своевременной оплате абонентская плата при переходе на
-                    более высокий тариф не теряется.
-                  </p>
-                  <p>При переходе на тариф "Премиум" бонусы сохраняются.</p>
-                  <p>
-                    При переходе на тариф "Селлер" или "Менеджер" 50% бонусов
-                    сохраняется.
-                  </p>
-                  <p>Абонентская плата безвозвратно не возвращается.</p>
-                </div>
-              </div>
-              <div className="mt-2 text-right">
-                <button
-                  className="bg-[rgba(70,122,255,1)] text-white px-4 py-1 rounded-full text-sm"
-                  onClick={() => handleSwitchClick("manager")}
-                >
-                  Перейти
-                </button>
-              </div>
+          {/* Auto-renewal toggle */}
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-gray-600">Автосписание</span>
+            <div
+              className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+                autoRenewal ? "bg-[#4361EE]" : "bg-gray-300"
+              }`}
+              onClick={handleAutoRenewalToggle}
+            >
+              <div
+                className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+                  autoRenewal ? "translate-x-6" : ""
+                }`}
+              />
             </div>
           </div>
 
-          {/* Премиум */}
-          <div className="rounded-xl overflow-hidden bg-gradient-to-r from-[rgba(38,99,255,1)] to-[rgba(11,60,187,1)] shadow-sm">
-            <div className="p-4 text-white">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold">«Премиум»</h3>
-                  <p className="text-sm">
-                    Ежемесячная абонентская плата 50000 тенге.
-                  </p>
-                  <p className="text-sm">Анализ карточки товара 40 штук.</p>
-                  <p className="text-sm">Описание карточки товара 60 штук.</p>
-                </div>
-                <div className="text-xs max-w-[40%]">
-                  <p>
-                    При своевременной оплате абонентская плата при переходе на
-                    более высокий тариф не теряется.
-                  </p>
-                  <p>
-                    При переходе на тариф "Селлер" или "Менеджер" бонусы не
-                    сохраняются.
-                  </p>
-                  <p>Абонентская плата безвозвратно не возвращается.</p>
-                </div>
-              </div>
-              <div className="mt-2 text-right">
-                <button
-                  className="bg-[rgba(70,122,255,1)] text-white px-4 py-1 rounded-full text-sm"
-                  onClick={() => handleSwitchClick("premium")}
+          {/* Tariff list */}
+          <div className="space-y-4">
+            {tariffs
+              .filter((t) => t.id !== "trial")
+              .map((tariff) => (
+                <div
+                  key={tariff.id}
+                  className={`rounded-xl overflow-hidden ${getTariffGradient(
+                    tariff.id
+                  )} shadow-sm`}
                 >
-                  Переподключить
-                </button>
-              </div>
-            </div>
+                  <div className="p-4 text-white">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-2xl font-bold mb-2">
+                          «{tariff.name}»
+                        </h3>
+                        <p className="text-sm">
+                          Ежемесячная абонентская плата {tariff.monthlyFee}{" "}
+                          тенге.
+                        </p>
+                        <p className="text-sm">
+                          Анализ карточки товара {tariff.analysisCount} штук.
+                        </p>
+                        <p className="text-sm">
+                          Описание карточки товара {tariff.descriptionCount}{" "}
+                          штук.
+                        </p>
+                      </div>
+                      <div className="text-sm max-w-[50%]">
+                        {tariff.details.map((detail, index) => (
+                          <p key={index} className="mb-1">
+                            {detail}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-2 text-right">
+                      <button
+                        className="bg-[#467AFF] hover:bg-[#3669EE] text-white px-6 py-2 rounded-full text-sm"
+                        onClick={() => handleSwitchClick(tariff.id)}
+                      >
+                        {currentTariff === tariff.id
+                          ? "Переподключить"
+                          : "Перейти"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
+
+        {/* Confirmation modal */}
+        {showConfirmModal && tariffToSwitch && (
+          <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+              <div className="text-center mb-6">
+                <p className="text-lg">
+                  {t("tariff.switch.confirm")} «
+                  {getTariffById(tariffToSwitch)?.name}»?
+                </p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Button
+                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  onClick={handleConfirmSwitch}
+                >
+                  {t("tariff.connect")}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 rounded-full py-3"
+                  onClick={handleCancelSwitch}
+                >
+                  {t("tariff.cancel")}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+        {/* Auto-renewal confirmation modal */}
+        {showAutoRenewalModal && (
+          <Dialog
+            open={showAutoRenewalModal}
+            onOpenChange={setShowAutoRenewalModal}
+          >
+            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+              <div className="text-center mb-6">
+                <p className="text-lg">
+                  Вы желаете включить автопродление тарифа?
+                </p>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Button
+                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  onClick={confirmAutoRenewal}
+                >
+                  Подтвердить
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 rounded-full py-3"
+                  onClick={cancelAutoRenewal}
+                >
+                  Отмена
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );

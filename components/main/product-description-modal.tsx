@@ -24,7 +24,7 @@ export function ProductDescriptionModal({
         <div className="mt-4">
           <Button
             onClick={onContinue}
-            className="w-full bg-gradient-to-r from-[#2865ff] to-[rgba(11,60,187,1)] hover:opacity-90 text-white rounded-full"
+            className="bg-gradient-to-r h-[30px] w-32 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white  text-white r"
           >
             Далее
           </Button>

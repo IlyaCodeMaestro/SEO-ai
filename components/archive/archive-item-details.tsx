@@ -191,7 +191,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     section: string;
     textColorClass?: string;
   }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
+    <div className=" dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
         <h3 className="font-medium ">{title}</h3>
         <div className="flex items-center space-x-2">

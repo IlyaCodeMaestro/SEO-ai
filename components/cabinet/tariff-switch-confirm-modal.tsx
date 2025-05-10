@@ -17,23 +17,24 @@ export function TariffSwitchConfirmModal({
   const { t } = useLanguage();
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-xl p-6 max-w-xs w-full mx-4">
-        <p className="text-center font-medium mb-6">
-          {t("tariff.confirm.switch")} "{tariffName}"?
-        </p>
-
-        <div className="space-y-3">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+        <div className="text-center mb-6">
+          <p className="text-lg">
+            {t("tariff.switch.confirm")} «{tariffName}»?
+          </p>
+        </div>
+        <div className="flex flex-col gap-3">
           <Button
+            className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
             onClick={onConfirm}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full"
           >
-            {t("tariff.confirm")}
+            {t("tariff.connect")}
           </Button>
-
           <Button
+            variant="outline"
+            className="border-gray-300 text-gray-700 rounded-full py-3"
             onClick={onCancel}
-            className="w-full bg-gray-400 hover:bg-gray-500 text-white rounded-full"
           >
             {t("tariff.cancel")}
           </Button>

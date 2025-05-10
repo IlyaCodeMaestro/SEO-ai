@@ -18,7 +18,7 @@ export function ProductAnalysisModal({ onClose, onBack, onContinue }: ProductAna
           <p className="text-sm">Уведомление придет после завершения</p>
           <p className="text-sm">Перенесено на страницу 'В обработке'</p>
           <div className="mt-4">
-            <Button onClick={onContinue} className="w-full bg-blue-400 hover:bg-blue-500 text-white rounded-full">
+            <Button onClick={onContinue} className="bg-gradient-to-r h-[30px] w-32 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white  text-white r">
               Далее
             </Button>
           </div>
