@@ -2,8 +2,6 @@
 
 import { X, ArrowLeft } from "lucide-react";
 import { useProcessingContext } from "./processing-provider";
-import { formatDistanceToNow } from "date-fns";
-import { ru } from "date-fns/locale";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface ProcessingViewProps {
@@ -14,14 +12,7 @@ export function ProcessingView({ onClose }: ProcessingViewProps) {
   const { processingItems } = useProcessingContext();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  // Форматирование времени
-  const formatTime = (timestamp: number) => {
-    return formatDistanceToNow(new Date(timestamp), {
-      addSuffix: true,
-      locale: ru,
-    });
-  };
-
+  
   return (
     <div className="h-full flex flex-col">
       {/* Заголовок с кнопкой закрытия */}

@@ -1,5 +1,5 @@
 "use client";
-import { X } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useLanguage } from "../provider/language-provider";
 
@@ -37,26 +37,34 @@ export function ActiveDevicesPanel({ onClose }: ActiveDevicesPanelProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="h-full flex flex-col justify-start bg-white">
+    <div className="h-full flex flex-col justify-start bg-white px-4 md:px-0">
       {/* Заголовок с кнопкой закрытия */}
       <div className="flex items-center justify-between p-4">
-        {isMobile && (
-          <div className="flex-1 text-center">
-            <h2 className="text-lg font-medium">{t("cabinet.title")}</h2>
-          </div>
+        {isMobile ? (
+          <>
+            <button onClick={onClose} className="p-1" aria-label="Back">
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <div className="flex-1 text-center">
+              <h2 className="text-xl font-medium text-blue-600">
+                {t("cabinet.title")}
+              </h2>
+            </div>
+            <div className="w-5"></div> {/* Empty div for balanced spacing */}
+          </>
+        ) : (
+          <>
+            <div className="flex-1"></div>
+            <button onClick={onClose} className="p-1" aria-label="Close">
+              <X className="h-5 w-5" />
+            </button>
+          </>
         )}
-        <button
-          onClick={onClose}
-          className={`p-1 ${isMobile ? "" : "ml-auto"}`}
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
       </div>
 
-      <div className="flex-1 p-0 pt-0 max-w-md mx-auto w-full">
+      <div className="flex-1 pt-0 max-w-md mx-auto w-full px-2 md:px-0">
         {/* Заголовок */}
-        <div className="bg-blue-600 rounded-xl p-4 mb-6 text-white text-center">
+        <div className="w-full border border-white bg-blue-600  py-5 rounded-[25px] text-xl font-medium shadow-md p-4 mb-6 text-white text-center">
           <div className="flex justify-center items-center">
             <span className="text-lg font-medium">
               {t("cabinet.active.devices")}
@@ -65,9 +73,12 @@ export function ActiveDevicesPanel({ onClose }: ActiveDevicesPanelProps) {
         </div>
 
         {/* Список устройств */}
-        <div className="space-y-4">
+        <div className="space-y-8">
           {devices.map((device) => (
-            <div key={device.id} className="bg-white rounded-xl p-4 shadow-sm">
+            <div
+              key={device.id}
+              className="bg-white rounded-xl p-4 shadow-md border"
+            >
               <p className="font-medium">{device.type}</p>
               <p className="text-sm text-gray-500">{device.model}</p>
               {device.isCurrent && (

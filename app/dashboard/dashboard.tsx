@@ -20,8 +20,6 @@ import { TariffPanel } from "../../components/cabinet/tariff-panel";
 import { ActiveDevicesPanel } from "../../components/cabinet/active-devices-panel";
 import { DeleteAccountPanel } from "../../components/cabinet/delete-account-panel";
 import { ShareMenu } from "../../components/shared/share-menu";
-import { PartnerStandardPanel } from "../../components/partner/partner-standard-panel";
-import { PartnerPremiumPanel } from "../../components/partner/partner-premium-panel";
 import { FeedbackFaqPanel } from "../../components/feedback/feedback-faq-panel";
 import { FeedbackRecommendationsPanel } from "../../components/feedback/feedback-recommendations-panel";
 import { FeedbackComplaintPanel } from "../../components/feedback/feedback-complaint-panel";
@@ -29,12 +27,12 @@ import { FeedbackOtherPanel } from "../../components/feedback/feedback-other-pan
 import { useProcessingContext } from "@/components/main/processing-provider";
 import { ProductAnalysisForm } from "@/components/main/product-analysis-form";
 import { ProductAnalysisDetails } from "@/components/main/product-analysis-details";
-import { ProductAnalysisModal } from "@/components/main/product-analysis-modal";
 import { ProductAnalysisResults } from "@/components/main/product-analysis-results";
 import { ProductDescriptionForm } from "@/components/main/product-description-form";
 import { ProductDescriptionDetails } from "@/components/main/product-description-details";
-import { ProductDescriptionModal } from "@/components/main/product-description-modal";
 import { ProcessingView } from "@/components/main/processing-view";
+import PartnerStandardPanel from "@/components/partner/partner-premium-panel";
+import PartnerPremiumPanel from "@/components/partner/partner-standard-panel";
 
 type ActivePanel =
   | null
@@ -233,8 +231,7 @@ export function Dashboard() {
     setShareMenuOpen(false);
   };
 
-  // Определяем, нужен ли серый фон для правого блока
-  const isModalActive = false; // Убираем серый фон
+ 
 
   // Определяем, является ли активная панель отзывом
   const isFeedbackPanel =
@@ -291,13 +288,6 @@ export function Dashboard() {
               onBack={handleBackToAnalysisForm}
               onStartAnalysis={handleStartAnalysis}
               productData={productData}
-            />
-          );
-        } else if (analysisStep === "modal") {
-          return (
-            <ProductAnalysisModal
-              onClose={handleClosePanel}
-              onBack={handleBackToAnalysisDetails}
               onContinue={handleAnalysisModalContinue}
             />
           );
@@ -323,16 +313,8 @@ export function Dashboard() {
             <ProductDescriptionDetails
               onClose={handleClosePanel}
               onBack={handleBackToDescriptionForm}
-              onStartDescription={handleStartDescription}
-              productData={productData}
-            />
-          );
-        } else if (descriptionStep === "modal") {
-          return (
-            <ProductDescriptionModal
-              onClose={handleClosePanel}
-              onBack={handleBackToDescriptionDetails}
               onContinue={handleDescriptionModalContinue}
+              productData={productData}
             />
           );
         }

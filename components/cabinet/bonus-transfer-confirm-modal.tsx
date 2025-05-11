@@ -13,12 +13,15 @@ export function BonusTransferConfirmModal({ onConfirm, onCancel }: BonusTransfer
       <div className="bg-white rounded-xl p-6 max-w-xs w-full mx-4">
         <p className="text-center font-medium mb-6">Вы желаете перевести бонусы на карту?</p>
 
-        <div className="space-y-3">
-          <Button onClick={onConfirm} className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full">
+        <div className="flex flex-col items-center gap-2">
+          <Button
+              onClick={onConfirm}
+              className="w-32  bg-gradient-to-r shadow-md from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white  text-white rounded-full"
+            >
             Перевести
-          </Button>
+            </Button>
 
-          <Button onClick={onCancel} className="w-full bg-gray-400 hover:bg-gray-500 text-white rounded-full">
+          <Button onClick={onCancel} className="w-32 bg-gray-400 hover:bg-gray-500 text-white rounded-full">
             Отмена
           </Button>
         </div>

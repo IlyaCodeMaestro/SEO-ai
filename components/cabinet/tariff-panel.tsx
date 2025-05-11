@@ -188,13 +188,13 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
   const getTariffGradient = (tariffId: string) => {
     switch (tariffId) {
       case "seller":
-        return "bg-gradient-to-r from-[#26CBFF] to-[#0083AC]";
+        return "bg-gradient-to-r from-[#26CBFF] to-[#0083AC] border border-white ";
       case "manager":
-        return "bg-gradient-to-r from-[rgba(0,131,172,0.71)] to-[#3460D1]";
+        return "bg-gradient-to-r from-[rgba(0,131,172,0.71)] to-[#3460D1] border border-white";
       case "premium":
-        return "bg-gradient-to-r from-[#2663FF] to-[#0B3CBB]";
+        return "bg-gradient-to-r from-[#2663FF] to-[#0B3CBB] border border-white";
       default:
-        return "bg-gradient-to-r from-[#26CBFF] to-[#0083AC]";
+        return "bg-gradient-to-r from-[#26CBFF] to-[#0083AC] border border-white";
     }
   };
 
@@ -316,7 +316,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
 
                       {currentTariff !== tariff.id && (
                         <Button
-                          className="bg-white text-black hover:bg-gray-100 rounded-full px-8"
+                          className="bg-gradient-to-t from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full px-8"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSwitchClick(tariff.id);
@@ -360,7 +360,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Button
-                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full py-3 border border-white"
                   onClick={handleConfirmSwitch}
                 >
                   {t("tariff.connect")}
@@ -390,7 +390,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Button
-                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full py-3"
                   onClick={confirmAutoRenewal}
                 >
                   Подтвердить
@@ -419,7 +419,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
           <h2 className="text-lg font-medium text-black">Тарифы</h2>
           <button
             onClick={onClose}
-            className="absolute right-4 top-0 p-1"
+            className="absolute right-0 top-0 p-1"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -507,7 +507,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                     </div>
                     <div className="mt-2 text-right">
                       <button
-                        className="bg-[#467AFF] hover:bg-[#3669EE] text-white px-6 py-2 rounded-full text-sm"
+                        className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white px-6 py-2  border border-white rounded-full text-sm"
                         onClick={() => handleSwitchClick(tariff.id)}
                       >
                         {currentTariff === tariff.id
@@ -533,7 +533,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Button
-                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full py-3"
                   onClick={handleConfirmSwitch}
                 >
                   {t("tariff.connect")}
@@ -563,7 +563,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Button
-                  className="bg-[#4361EE] hover:bg-[#3651DE] text-white rounded-full py-3"
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border-white border text-white rounded-full py-3"
                   onClick={confirmAutoRenewal}
                 >
                   Подтвердить

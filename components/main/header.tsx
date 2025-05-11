@@ -69,7 +69,9 @@ export function Header() {
   return (
     <div
       className={`w-full ${
-        isMobile ? "bg-gray-200 h-[65px] shadow-md" : "bg-[#F6F6F6] h-[110px] shadow-md"
+        isMobile
+          ? "bg-gray-200 h-[65px] shadow-md"
+          : "bg-[#F6F6F6] h-[110px] shadow-md"
       } relative z-20 border-b border-gray-200`}
     >
       <div className="container mx-auto px-2 md:px-4 lg:px-6 xl:px-8 h-full relative">
@@ -107,9 +109,7 @@ export function Header() {
                       variant="ghost"
                       size="icon"
                       onClick={() => setIsMenuOpen(false)}
-                    >
-                   
-                    </Button>
+                    ></Button>
                   </div>
 
                   <div className="flex flex-col p-4 space-y-2">
@@ -162,7 +162,7 @@ export function Header() {
                       }`}
                       onClick={() => handleTabChange("partner")}
                     >
-                      {t("common.partner")}
+                      {"Реферальная программа"}
                     </button>
                     <button
                       className={`text-left py-3 px-4 rounded-md ${
@@ -344,7 +344,7 @@ export function Header() {
                     value="partner"
                     className="text-lg font-medium data-[state=active]:text-blue-600 data-[state=active]:bg-transparent border-none shadow-none whitespace-nowrap h-10 mb-0"
                   >
-                    {t("common.partner")}
+                    {"Реферальная программа"}
                   </TabsTrigger>
                   <TabsTrigger
                     value="feedback"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useLanguage } from "../provider/language-provider";
@@ -41,19 +41,23 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
           </p>
 
           <div className="space-y-3">
-            <Button
-              onClick={handleConfirmDelete}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full"
-            >
-              {t("cabinet.delete")}
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                onClick={handleConfirmDelete}
+                className="w-36 bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full"
+              >
+                {t("cabinet.delete")}
+              </Button>
+            </div>
 
-            <Button
-              onClick={handleCancelDelete}
-              className="w-full bg-gray-400 hover:bg-gray-500 text-white rounded-full"
-            >
-              {t("cabinet.cancel")}
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                onClick={handleCancelDelete}
+                className="w-36 bg-gray-400 hover:bg-gray-500 text-white rounded-full"
+              >
+                {t("cabinet.cancel")}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -61,26 +65,32 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
   }
 
   return (
-    <div className="h-full flex flex-col justify-start bg-white dark:bg-[rgba(0,0,0,0.25)]">
+    <div className="h-full flex flex-col justify-start bg-white dark:bg-[rgba(0,0,0,0.25)] px-4 md:px-0">
       {/* Заголовок с кнопкой закрытия */}
       <div className="flex items-center justify-between p-4">
-        {isMobile && (
-          <div className="flex-1 text-center">
-            <h2 className="text-lg font-medium">{t("cabinet.title")}</h2>
-          </div>
+        {isMobile ? (
+          <>
+            <button onClick={onClose} className="p-1" aria-label="Back">
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <div className="flex-1 text-center">
+              <h2 className="text-lg font-medium">{t("cabinet.title")}</h2>
+            </div>
+            <div className="w-5"></div> {/* Empty div for balanced spacing */}
+          </>
+        ) : (
+          <>
+            <div className="flex-1"></div>
+            <button onClick={onClose} className="p-1" aria-label="Close">
+              <X className="h-5 w-5" />
+            </button>
+          </>
         )}
-        <button
-          onClick={onClose}
-          className={`p-1 ${isMobile ? "" : "ml-auto"}`}
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
       </div>
 
-      <div className="flex-1 p-0 pt-0 max-w-md mx-auto w-full">
+      <div className="flex-1 pt-0 max-w-md mx-auto w-full px-2 md:px-0">
         {/* Заголовок */}
-        <div className="bg-blue-600 rounded-xl p-4 mb-6 text-white text-center">
+        <div className="w-full border border-white bg-blue-600 py-5 rounded-[25px] text-xl font-medium shadow-md p-4 mb-6 text-white text-center">
           <div className="flex justify-center items-center">
             <span className="text-lg font-medium">
               {t("cabinet.delete.account")}
@@ -89,7 +99,7 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
         </div>
 
         {/* Информация об удалении */}
-        <div className="bg-white rounded-xl p-6 shadow-sm dark:bg-[rgba(0,0,0,0.25)]">
+        <div className="bg-white rounded-xl p-6 shadow-custom dark:bg-[rgba(0,0,0,0.25)]">
           <div className="space-y-4 text-center mb-6">
             <p className="text-gray-700 dark:text-white">
               {t("cabinet.delete.personal.data")}
@@ -102,12 +112,14 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
             </p>
           </div>
 
-          <Button
-            onClick={handleDeleteClick}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-full"
-          >
-            {t("cabinet.delete")}
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              onClick={handleDeleteClick}
+              className="w-36 bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full"
+            >
+              {t("cabinet.delete")}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

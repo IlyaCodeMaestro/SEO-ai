@@ -812,13 +812,15 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
         <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
           <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg max-w-xs w-full mx-4">
             <div className="text-center space-y-4">
-              <h3 className="font-medium">{t("product.description.title")}</h3>
-              <p className="text-sm">{t("product.description.time")}</p>
-              <p className="text-sm">{t("product.description.notification")}</p>
-              <p className="text-sm">{t("product.description.processing")}</p>
+              <h3 className="font-medium">Описание карточки товара</h3>
+              <p className="text-sm">
+                Описание карточки товара займет примерно 3 минуты
+              </p>
+              <p className="text-sm">Уведомление придет после завершения</p>
+              <p className="text-sm">Уведомление придет после завершения</p>
               <button
                 onClick={handleContinue}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full py-2 mt-4"
+                className="bg-gradient-to-r h-[40px] w-36 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white"
               >
                 {t("common.next")}
               </button>

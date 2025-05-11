@@ -16,74 +16,57 @@ export function FeedbackView() {
   };
 
   return (
-    <div className="flex flex-col p-6 h-full">
-      <h1 className="text-xl font-medium text-center mb-6">Отзывы</h1>
-
-      <div className="text-sm text-gray-500 mb-2 px-2">
-        Выберите вид обратной связи
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-center py-4">
+        <h1 className="text-xl font-medium text-blue-600">Отзыв</h1>
       </div>
 
-      <div className="space-y-4">
+      {/* Blue feedback button */}
+      <div className="px-6 py-4">
+        <button className="w-full bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white  text-white text-lg font-normal py-4 rounded-[24px] shadow-md">
+          Отзыв для разработчиков
+        </button>
+      </div>
+
+      <div className="text-sm text-gray-500 mb-2 px-6">Вид обратной связи</div>
+
+      <div className="px-6 space-y-3">
         {/* Часто задаваемые вопросы */}
         <button
           onClick={() => handleOpenFeedbackPanel("faq")}
-          className={`w-full rounded-2xl shadow-md p-4 flex justify-between items-center ${
-            activeTab === "faq" ? "bg-[#4C6FFF] text-white" : "bg-white"
-          }`}
+          className="w-full rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.1)] p-4 flex justify-between items-center bg-white"
         >
-          <span className="font-medium">Часто задаваемые вопросы</span>
-          <ChevronRight
-            className={`h-5 w-5 ${
-              activeTab === "faq" ? "text-white" : "text-gray-400"
-            }`}
-          />
+          <span className="text-base font-normal">
+            Часто задаваемые вопросы
+          </span>
+          <ChevronRight className="h-5 w-5 text-black" />
         </button>
 
         {/* Рекомендации */}
         <button
           onClick={() => handleOpenFeedbackPanel("recommendations")}
-          className={`w-full rounded-2xl shadow-md p-4 flex justify-between items-center ${
-            activeTab === "recommendations"
-              ? "bg-[#4C6FFF] text-white"
-              : "bg-white"
-          }`}
+          className="w-full rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.1)] p-4 flex justify-between items-center bg-white"
         >
-          <span className="font-medium">Рекомендации</span>
-          <ChevronRight
-            className={`h-5 w-5 ${
-              activeTab === "recommendations" ? "text-white" : "text-gray-400"
-            }`}
-          />
+          <span className="text-base font-normal">Рекомендации</span>
+          <ChevronRight className="h-5 w-5 text-black" />
         </button>
 
         {/* Пожаловаться */}
         <button
           onClick={() => handleOpenFeedbackPanel("complaint")}
-          className={`w-full rounded-2xl shadow-md p-4 flex justify-between items-center ${
-            activeTab === "complaint" ? "bg-[#4C6FFF] text-white" : "bg-white"
-          }`}
+          className="w-full rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.1)] p-4 flex justify-between items-center bg-white"
         >
-          <span className="font-medium">Пожаловаться</span>
-          <ChevronRight
-            className={`h-5 w-5 ${
-              activeTab === "complaint" ? "text-white" : "text-gray-400"
-            }`}
-          />
+          <span className="text-base font-normal">Пожаловаться</span>
+          <ChevronRight className="h-5 w-5 text-black" />
         </button>
 
         {/* Другое */}
         <button
           onClick={() => handleOpenFeedbackPanel("other")}
-          className={`w-full rounded-2xl shadow-md p-4 flex justify-between items-center ${
-            activeTab === "other" ? "bg-[#4C6FFF] text-white" : "bg-white"
-          }`}
+          className="w-full rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.1)] p-4 flex justify-between items-center bg-white"
         >
-          <span className="font-medium">Другое</span>
-          <ChevronRight
-            className={`h-5 w-5 ${
-              activeTab === "other" ? "text-white" : "text-gray-400"
-            }`}
-          />
+          <span className="text-base font-normal">Другое</span>
+          <ChevronRight className="h-5 w-5 text-black" />
         </button>
       </div>
     </div>

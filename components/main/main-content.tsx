@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "../provider/language-provider";
 import { useProcessingContext } from "./processing-provider";
 
 interface MainContentProps {
@@ -27,7 +26,7 @@ export function MainContent({
         </h1>
 
         {/* First card */}
-        <div className="rounded-[24px] p-4 mb-5 bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white shadow-bottom-only">
+        <div className="rounded-[24px] p-4 mb-5 bg-gradient-to-r from-[#64cada] to-[#4169E1] border text-white shadow-bottom-only">
           <h2 className="text-[24px]  font-medium mb-3 ml-2">
             Анализ карточки товара
           </h2>
@@ -40,7 +39,7 @@ export function MainContent({
           <div className="ml-2">
             <Button
               variant="secondary"
-              className="bg-white text-black hover:bg-gray-100 rounded-full text-base md:text-sm px-8 py-1 h-[32px]  w-[120px]"
+              className="bg-white text-black hover:bg-gray-100 font-light rounded-full text-base md:text-sm px-8 py-1 h-[32px]  w-[120px]"
               onClick={() => onOpenPanel("product-analysis")}
             >
               Перейти
@@ -49,7 +48,7 @@ export function MainContent({
         </div>
 
         {/* Second card */}
-        <div className="rounded-[24px] p-4 bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white shadow-bottom-only">
+        <div className="rounded-[24px] p-4 bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border text-white shadow-bottom-only">
           <h2 className="text-[22px]  font-medium mb-3 ml-2">
             Описание карточки товара
           </h2>
@@ -62,7 +61,7 @@ export function MainContent({
           <div className="ml-2">
             <Button
               variant="secondary"
-              className="bg-white text-black hover:bg-gray-100 rounded-full text-base md:text-sm px-8 py-1 h-[32px] w-[120px]"
+              className="bg-white font-light text-black hover:bg-gray-100 rounded-full text-base md:text-sm px-8 py-1 h-[32px] w-[120px]"
               onClick={() => onOpenPanel("product-description")}
             >
               Перейти

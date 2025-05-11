@@ -9,7 +9,7 @@ import { getProductBySku } from "@/lib/api";
 interface ProductAnalysisDetailsProps {
   onClose: () => void;
   onBack: () => void;
-  onStartAnalysis: () => void;
+  onContinue: () => void;
   productData: {
     sku: string;
     competitorSku: string;
@@ -19,7 +19,7 @@ interface ProductAnalysisDetailsProps {
 export function ProductAnalysisDetails({
   onClose,
   onBack,
-  onStartAnalysis,
+  onContinue,
   productData,
 }: ProductAnalysisDetailsProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -27,6 +27,7 @@ export function ProductAnalysisDetails({
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   // Загрузка данных о товаре при монтировании компонента
   useEffect(() => {
@@ -52,11 +53,6 @@ export function ProductAnalysisDetails({
 
     fetchProduct();
   }, [productData.sku]);
-
-  const handleStartAnalysis = () => {
-    setIsAnalysisStarted(true);
-    onStartAnalysis();
-  };
 
   // Отображение загрузки
   if (loading) {
@@ -171,7 +167,7 @@ export function ProductAnalysisDetails({
         {!isAnalysisStarted && product && (
           <div className="mt-40 pt-6 flex justify-center">
             <Button
-              onClick={handleStartAnalysis}
+              onClick={() => setShowModal(true)}
               className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[55px] w-[200px] border border-white shadow-custom inline-block px-8"
             >
               Начать анализ
@@ -179,6 +175,29 @@ export function ProductAnalysisDetails({
           </div>
         )}
       </div>
+      {/* Модальное окно для подтверждения */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg max-w-xs w-full mx-4">
+            <div className="text-center space-y-4">
+              <p className="text-sm">
+                Анализ карточки товара займет примерно 3 минуты
+              </p>
+              <p className="text-sm">Уведомление придет после завершения</p>
+              <p className="text-sm">Уведомление придет после завершения</p>
+              <div className="flex space-x-4 justify-center mt-4">
+                <Button
+                  onClick={onContinue}
+                  type="submit"
+                  className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[40px] border border-white shadow-custom inline-block px-12"
+                >
+                  Далее
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

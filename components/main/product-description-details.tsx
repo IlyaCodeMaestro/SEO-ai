@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "../provider/language-provider";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { getProductBySku } from "@/lib/api";
 
 interface ProductDescriptionDetailsProps {
   onClose: () => void;
   onBack: () => void;
-  onStartDescription: () => void;
+  onContinue: () => void;
   productData: {
     sku: string;
     competitorSku: string;
@@ -20,7 +20,7 @@ interface ProductDescriptionDetailsProps {
 export function ProductDescriptionDetails({
   onClose,
   onBack,
-  onStartDescription,
+  onContinue,
   productData,
 }: ProductDescriptionDetailsProps) {
   const { language } = useLanguage();
@@ -29,6 +29,8 @@ export function ProductDescriptionDetails({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDescriptionStarted, setIsDescriptionStarted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     const fetchProduct = async () => {
       if (!productData.sku) {
@@ -52,11 +54,6 @@ export function ProductDescriptionDetails({
 
     fetchProduct();
   }, [productData.sku]);
-
-  const handleStartDescription = () => {
-    setIsDescriptionStarted(true);
-    onStartDescription();
-  };
 
   // Отображение загрузки
   if (loading) {
@@ -82,7 +79,7 @@ export function ProductDescriptionDetails({
       </div>
     );
   }
- 
+
   return (
     <div className="h-full relative">
       <div className="max-w-md mx-auto p-6">
@@ -171,14 +168,38 @@ export function ProductDescriptionDetails({
         {!isDescriptionStarted && product && (
           <div className="mt-40 pt-6 flex justify-center">
             <Button
-              onClick={handleStartDescription}
-              className="bg-gradient-to-r  from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full h-[55px] w-[200px] border border-white shadow-custom inline-block px-8"
+              onClick={() => setShowModal(true)}
+              className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full h-[55px] w-[200px] border border-white shadow-custom inline-block px-8"
             >
               Начать описание
             </Button>
           </div>
         )}
       </div>
+
+      {/* Модальное окно для подтверждения */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg max-w-xs w-full mx-4">
+            <div className="text-center space-y-4">
+              <h3 className="font-medium">Описание карточки товара</h3>
+              <p className="text-sm">
+                Описание карточки товара займет примерно 3 минуты
+              </p>
+              <p className="text-sm">Уведомление придет после завершения</p>
+              <p className="text-sm">Уведомление придет после завершения</p>
+              <div className="mt-4">
+                <Button
+                  onClick={onContinue}
+                  className="bg-gradient-to-r h-[40px] w-36 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white"
+                >
+                  Далее
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

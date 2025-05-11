@@ -1,101 +1,122 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { X, ChevronUp, ChevronDown } from "lucide-react"
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { useState } from "react";
+import { X, ChevronUp, ChevronDown, ArrowLeft } from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface FeedbackFaqPanelProps {
-  onClose: () => void
-}
-
-interface FaqItem {
-  question: string
-  answer: string
-  isOpen: boolean
+  onClose: () => void;
 }
 
 export function FeedbackFaqPanel({ onClose }: FeedbackFaqPanelProps) {
-  const isMobile = useMediaQuery("(max-width: 768px)")
-  const [faqItems, setFaqItems] = useState<FaqItem[]>([
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const faqItems = [
     {
-      question: "Как тебя зовут?",
+      question: "Почему важно избегать нерелевантных слов в описании товара?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer.",
-      isOpen: false,
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
+    },
+    
+    {
+      question: "Что делать, если код для регистрации не пришел на почту?",
+      answer:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
     },
     {
-      question: "Как твоя фамилия?",
+      question: "Для кого подходит программа SEO-AI?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-      isOpen: false,
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
     },
     {
-      question: "Как твоя фамилия?",
+      question: "Как можно внести оплату из России и Беларуси?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-      isOpen: false,
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
     },
     {
-      question: "Как твоя фамилия?",
+      question: "Как SEO-оптимизация карточки товара влияет на продажи?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-      isOpen: false,
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
     },
     {
-      question: "Как твоя фамилия?",
+      question: "Как SEO-оптимизация карточки товара влияет на продажи?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-      isOpen: false,
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry...",
     },
-    {
-      question: "Как твоя фамилия?",
-      answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-      isOpen: false,
-    },
-  ])
+  ];
 
   const toggleFaqItem = (index: number) => {
-    setFaqItems(faqItems.map((item, i) => (i === index ? { ...item, isOpen: !item.isOpen } : item)))
-  }
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-white">
       {/* Заголовок */}
-      <div className="flex items-center justify-between p-4">
-        <div className="w-8"></div> {/* Для центрирования заголовка */}
-        <h2 className="text-lg font-medium flex-1 text-center">Отзыв</h2>
-        <button onClick={onClose} className="p-1 mr-2">
-          <X size={24} className="text-gray-400" />
-        </button>
+      <div className="flex items-center justify-between p-4 relative">
+        {isMobile ? (
+          <>
+            <button
+              onClick={onClose}
+              className="absolute left-4 top-1/2 -translate-y-1/2"
+            >
+              <ArrowLeft size={24} className="text-gray-400" />
+            </button>
+            <h2 className="text-lg font-medium mx-auto text-center text-blue-600 pl-6">
+              Отзыв
+            </h2>
+            <div className="w-6" />
+          </>
+        ) : (
+          <>
+            <div className="w-8" />
+            <button onClick={onClose} className="p-1 mr-2">
+              <X size={24} className="text-gray-400" />
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Подзаголовок - синяя кнопка */}
-      <div className="px-4 py-3">
-        <div className="bg-[#4C6FFF] text-white rounded-full py-3 text-center font-medium">
-          Часто задаваемые вопросы
+      {/* Контент */}
+      <div className="w-full flex justify-center px-4 pb-6 overflow-y-auto">
+        <div className="w-full max-w-[560px]">
+          {/* Подзаголовок */}
+          <div className="py-4 flex justify-center">
+            <div className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full py-3 px-6 text-center font-medium w-full">
+              Часто задаваемые вопросы
+            </div>
+          </div>
+
+          {/* Содержимое */}
+          <div className="space-y-4">
+            {faqItems.map((item, index) => (
+              <div
+                key={index}
+                className="rounded-2xl bg-[#f9f9f9] border shadow-md overflow-hidden"
+              >
+                <button
+                  onClick={() => toggleFaqItem(index)}
+                  className="w-full flex justify-between items-center px-5 py-4 text-left"
+                >
+                  <span className="text-base text-[#1e1e1e] font-medium">
+                    {item.question}
+                  </span>
+                  {openIndex === index ? (
+                    <ChevronUp size={20} className="text-[#4C6FFF]" />
+                  ) : (
+                    <ChevronDown size={20} className="text-[#4C6FFF]" />
+                  )}
+                </button>
+                {openIndex === index && (
+                  <div className="px-5 pb-4 text-sm text-gray-600">
+                    {item.answer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Содержимое - аккордеон */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
-        {faqItems.map((item, index) => (
-          <div key={index} className="rounded-xl bg-gray-100">
-            <button
-              className="w-full flex justify-between items-center p-4 hover:bg-gray-200 transition-colors rounded-xl"
-              onClick={() => toggleFaqItem(index)}
-            >
-              <span className="font-medium text-left">{item.question}</span>
-              {item.isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
-            {item.isOpen && (
-              <div className="p-4 pt-0">
-                <p className="text-gray-700">{item.answer}</p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
     </div>
-  )
+  );
 }
