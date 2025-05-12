@@ -15,7 +15,6 @@ export function ShareMenu({ content, title, onClose }: ShareMenuProps) {
   const [copied, setCopied] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Закрытие меню при клике вне его
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -50,7 +49,7 @@ export function ShareMenu({ content, title, onClose }: ShareMenuProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
+    <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
       <div
         ref={menuRef}
         className="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-xs w-full mx-4 overflow-hidden"
@@ -66,7 +65,6 @@ export function ShareMenu({ content, title, onClose }: ShareMenuProps) {
         </div>
 
         <div className="p-4">
-          {/* Иконки для шеринга */}
           <div className="flex justify-around mb-6">
             <button
               onClick={handleWhatsAppShare}
@@ -103,7 +101,6 @@ export function ShareMenu({ content, title, onClose }: ShareMenuProps) {
             </button>
           </div>
 
-          {/* Дополнительная опция копирования */}
           <div className="space-y-3">
             <button
               onClick={handleCopy}

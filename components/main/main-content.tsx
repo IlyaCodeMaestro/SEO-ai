@@ -14,11 +14,10 @@ export function MainContent({
 }: MainContentProps) {
   const { processingItems } = useProcessingContext();
 
-
   return (
     <div className="flex flex-col h-full">
       <div className="pt-4 pb-0 px-6">
-        <h2 className="text-[#1950DF] font-medium mb-4  text-center text-lg md:text-md uppercase tracking-wide">
+        <h2 className="text-[#1950DF] font-medium mb-4  text-center text-xl md:text-md ">
           Главная
         </h2>
         <h1 className="text-[25px] md:text-xl font-normal mb-4">
@@ -70,7 +69,7 @@ export function MainContent({
         </div>
       </div>
 
-      <div className="flex justify-center items-center px-4 pb-2 mt-6 w-full">
+      <div className="flex justify-center items-center px-4  mt-12 mb-10  w-full">
         {processingItems.length > 0 && (
           <Button
             className="bg-gradient-to-r h-[60px] w-80 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white  text-2xl md:text-xl"

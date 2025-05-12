@@ -14,7 +14,7 @@ export function NotificationsView() {
       </div>
 
       {/* Серый блок с контентом */}
-      <div className="flex-1 mx-4 mb-4 rounded-[24px] shadow-sm">
+      <div className="flex-1 mx-4 mb-6 rounded-[24px]">
         {/* Пустое состояние с иконкой колокольчика */}
         <div className="flex-1 flex flex-col items-center justify-center p-4 h-full">
           <Bell className="h-16 w-16 text-gray-800 mb-4" strokeWidth={1.5} />

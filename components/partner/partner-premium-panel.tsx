@@ -2,21 +2,28 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { ShareMenu } from "../shared/share-menu";
+import { useState } from "react";
 interface PartnerPremiumPanelProps {
   onClose: () => void;
 }
 
 export default function PartnerPremiumPanel({ onClose }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const [shareContent, setShareContent] = useState<{
+    content: string;
+    title: string;
+  } | null>(null);
 
   const handleShare = () => {
-    // Share functionality
-    if (window.openShareMenu) {
-      window.openShareMenu(
-        "Реферальная программа",
-        "Присоединяйтесь к реферальной программе и получайте бонусы!"
-      );
-    }
+    setShareContent({
+      content: "Присоединяйтесь к реферальной программе и получайте бонусы!",
+      title: "Реферальная программа",
+    });
+  };
+
+  const handleCloseShareMenu = () => {
+    setShareContent(null);
   };
 
   return (
@@ -155,16 +162,24 @@ export default function PartnerPremiumPanel({ onClose }) {
             </div>
           </div>
         </div>
-
-        {/* Share button */}
         <div className="mt-6 flex justify-center">
           <button
             onClick={handleShare}
-            className="bg-gradient-to-r h-[60px] w-80 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white  text-2xl md:text-xl"
+            className="bg-gradient-to-r h-[60px] w-80 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white text-2xl md:text-xl"
           >
             Поделиться
           </button>
         </div>
+        {/* ShareMenu with overlay */}
+        {shareContent && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+            <ShareMenu
+              content={shareContent.content}
+              title={shareContent.title}
+              onClose={handleCloseShareMenu}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

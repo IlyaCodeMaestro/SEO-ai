@@ -1,21 +1,28 @@
-"use client"
+"use client";
 
-import { ArrowLeft } from "lucide-react"
-import { useMediaQuery } from "@/hooks/use-media-query"
+import { ArrowLeft } from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { ShareMenu } from "../shared/share-menu";
+import { useState } from "react";
 
 interface PartnerStandartPanelProps {
-  onClose: () => void
+  onClose: () => void;
 }
 
-export default function PartnerStandardPanel({ onClose }) {
-  const isMobile = useMediaQuery("(max-width: 768px)")
+export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelProps) {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [shareContent, setShareContent] = useState<{ content: string; title: string } | null>(null);
 
   const handleShare = () => {
-    // Share functionality
-    if (window.openShareMenu) {
-      window.openShareMenu("Реферальная программа", "Присоединяйтесь к реферальной программе и получайте бонусы!")
-    }
-  }
+    setShareContent({
+      content: "Присоединяйтесь к реферальной программе и получайте бонусы!",
+      title: "Реферальная программа",
+    });
+  };
+
+  const handleCloseShareMenu = () => {
+    setShareContent(null);
+  };
 
   return (
     <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto h-full flex flex-col">
@@ -23,7 +30,7 @@ export default function PartnerStandardPanel({ onClose }) {
       <div className="flex items-center p-4 bg-white relative">
         {isMobile ? (
           <>
-            <button onClick={onClose} className=" absolute left-4">
+            <button onClick={onClose} className="absolute left-4">
               <ArrowLeft size={24} />
             </button>
             <h1 className="text-xl font-medium text-blue-600 text-center w-full">Реферальная программа</h1>
@@ -141,12 +148,23 @@ export default function PartnerStandardPanel({ onClose }) {
         <div className="mt-6 flex justify-center">
           <button
             onClick={handleShare}
-            className="bg-gradient-to-r h-[60px] w-80 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white  text-2xl md:text-xl"
+            className="bg-gradient-to-r h-[60px] w-80 rounded-[25px] shadow-custom from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white text-2xl md:text-xl"
           >
             Поделиться
           </button>
         </div>
       </div>
+
+      {/* ShareMenu with overlay */}
+      {shareContent && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <ShareMenu
+            content={shareContent.content}
+            title={shareContent.title}
+            onClose={handleCloseShareMenu}
+          />
+        </div>
+      )}
     </div>
-  )
+  );
 }

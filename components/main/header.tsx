@@ -177,7 +177,7 @@ export function Header() {
                   </div>
 
                   <div className="mt-auto p-4 border-t">
-                    <div className="flex justify-start items-center">
+                    <div className="flex justify-start items-center gap-24">
                       <span className="text-sm text-gray-500">Язык:</span>
                       <ToggleGroup
                         type="single"
@@ -233,7 +233,7 @@ export function Header() {
                             theme === "light" ? "opacity-50" : "bg-gray-800"
                           }`}
                         >
-                          <Moon className="h-4 w-4 text-white" />
+                          <Moon className="  h-4 w-4 text-black stroke-black fill-white " />
                           <span className="sr-only">Dark mode</span>
                         </Button>
                       </div>
@@ -300,7 +300,7 @@ export function Header() {
                     theme === "light" ? "opacity-50" : "bg-gray-800"
                   }`}
                 >
-                  <Moon className="h-4 w-4 text-white" />
+                  <Moon className="  h-4 w-4 text-black stroke-black fill-white" />
                   <span className="sr-only">Dark mode</span>
                 </Button>
               </div>

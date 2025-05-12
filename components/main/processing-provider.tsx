@@ -58,7 +58,7 @@ const mockArchivedItems: ProcessingHistoryItem[] = [
     type: "analysis",
     status: "completed",
     timestamp: Date.now() - 172800000, // 2 days ago
-    name: "Утюг паровой для глажки с отпаривателем EEI-2402 2400Вт",
+    name: "Утюг паровой для глажки с отпаривателем",
   },
 ]
 

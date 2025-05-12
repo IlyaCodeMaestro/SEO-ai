@@ -4,7 +4,6 @@ import { useState } from "react";
 import { X, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 // Define tariff types
 interface Tariff {
@@ -347,11 +346,10 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               ))}
           </div>
         </div>
-
         {/* Confirmation modal */}
         {showConfirmModal && tariffToSwitch && (
-          <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
-            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl max-w-xs w-full mx-4">
               <div className="text-center mb-6">
                 <p className="text-lg">
                   {t("tariff.switch.confirm")} «
@@ -360,7 +358,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Button
-                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full py-3 border border-white"
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full py-3"
                   onClick={handleConfirmSwitch}
                 >
                   {t("tariff.connect")}
@@ -373,16 +371,13 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                   {t("tariff.cancel")}
                 </Button>
               </div>
-            </DialogContent>
-          </Dialog>
+            </div>
+          </div>
         )}
-        {/* Auto-renewal confirmation modal */}
+
         {showAutoRenewalModal && (
-          <Dialog
-            open={showAutoRenewalModal}
-            onOpenChange={setShowAutoRenewalModal}
-          >
-            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl max-w-xs w-full mx-4">
               <div className="text-center mb-6">
                 <p className="text-lg">
                   Вы желаете включить автопродление тарифа?
@@ -403,8 +398,8 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                   Отмена
                 </Button>
               </div>
-            </DialogContent>
-          </Dialog>
+            </div>
+          </div>
         )}
       </div>
     );
@@ -523,8 +518,8 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
 
         {/* Confirmation modal */}
         {showConfirmModal && tariffToSwitch && (
-          <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
-            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+          <div className="absolute pb-32 inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl max-w-xs w-full mx-4">
               <div className="text-center mb-6">
                 <p className="text-lg">
                   {t("tariff.switch.confirm")} «
@@ -546,16 +541,13 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                   {t("tariff.cancel")}
                 </Button>
               </div>
-            </DialogContent>
-          </Dialog>
+            </div>
+          </div>
         )}
-        {/* Auto-renewal confirmation modal */}
+
         {showAutoRenewalModal && (
-          <Dialog
-            open={showAutoRenewalModal}
-            onOpenChange={setShowAutoRenewalModal}
-          >
-            <DialogContent className="bg-white p-6 rounded-xl max-w-xs mx-auto">
+          <div className="absolute pb-32 inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl max-w-xs w-full mx-4">
               <div className="text-center mb-6">
                 <p className="text-lg">
                   Вы желаете включить автопродление тарифа?
@@ -563,7 +555,7 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
               </div>
               <div className="flex flex-col gap-3">
                 <Button
-                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border-white border text-white rounded-full py-3"
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full py-3"
                   onClick={confirmAutoRenewal}
                 >
                   Подтвердить
@@ -576,8 +568,8 @@ export function TariffPanel({ onClose }: TariffPanelProps) {
                   Отмена
                 </Button>
               </div>
-            </DialogContent>
-          </Dialog>
+            </div>
+          </div>
         )}
       </div>
     </div>

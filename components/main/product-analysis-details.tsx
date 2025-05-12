@@ -175,19 +175,27 @@ export function ProductAnalysisDetails({
           </div>
         )}
       </div>
-      {/* Модальное окно для подтверждения */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg max-w-xs w-full mx-4">
+        <div className="absolute inset-0 z-50 flex items-center justify-center">
+          {/* Затемнение только вокруг модального окна */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowModal(false)}
+          ></div>
+
+          {/* Модальное окно */}
+          <div className="relative z-10 bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg max-w-xs w-full mx-4">
             <div className="text-center space-y-4">
               <p className="text-sm">
                 Анализ карточки товара займет примерно 3 минуты
               </p>
               <p className="text-sm">Уведомление придет после завершения</p>
-              <p className="text-sm">Уведомление придет после завершения</p>
               <div className="flex space-x-4 justify-center mt-4">
                 <Button
-                  onClick={onContinue}
+                  onClick={() => {
+                    setShowModal(false);
+                    onContinue();
+                  }}
                   type="submit"
                   className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[40px] border border-white shadow-custom inline-block px-12"
                 >

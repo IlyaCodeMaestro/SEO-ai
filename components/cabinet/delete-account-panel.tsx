@@ -30,64 +30,40 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
   const handleCancelDelete = () => {
     setShowConfirmModal(false);
   };
+  return (
+    <div className="h-full flex flex-col justify-start bg-white dark:bg-[rgba(0,0,0,0.25)] px-4 md:px-0">
+      {/* Модалка с затемнённым фоном */}
+      {showConfirmModal && (
+        <div className="absolute pb-64 inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-xl p-6 max-w-xs w-full mx-4 dark:bg-[rgba(0,0,0,0.25)]">
+            <p className="text-center font-medium mb-6">
+              {t("cabinet.confirm.delete")}
+            </p>
 
-  // Если показываем модальное окно подтверждения
-  if (showConfirmModal) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white rounded-xl p-6 max-w-xs w-full mx-4 dark:bg-[rgba(0,0,0,0.25)]">
-          <p className="text-center font-medium mb-6">
-            {t("cabinet.confirm.delete")}
-          </p>
+            <div className="space-y-3">
+              <div className="flex justify-center">
+                <Button
+                  onClick={handleConfirmDelete}
+                  className="w-36 bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full"
+                >
+                  {t("cabinet.delete")}
+                </Button>
+              </div>
 
-          <div className="space-y-3">
-            <div className="flex justify-center">
-              <Button
-                onClick={handleConfirmDelete}
-                className="w-36 bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] border border-white text-white rounded-full"
-              >
-                {t("cabinet.delete")}
-              </Button>
-            </div>
-
-            <div className="flex justify-center">
-              <Button
-                onClick={handleCancelDelete}
-                className="w-36 bg-gray-400 hover:bg-gray-500 text-white rounded-full"
-              >
-                {t("cabinet.cancel")}
-              </Button>
+              <div className="flex justify-center">
+                <Button
+                  onClick={handleCancelDelete}
+                  className="w-36 bg-gray-400 hover:bg-gray-500 text-white rounded-full"
+                >
+                  {t("cabinet.cancel")}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      )}
 
-  return (
-    <div className="h-full flex flex-col justify-start bg-white dark:bg-[rgba(0,0,0,0.25)] px-4 md:px-0">
-      {/* Заголовок с кнопкой закрытия */}
-      <div className="flex items-center justify-between p-4">
-        {isMobile ? (
-          <>
-            <button onClick={onClose} className="p-1" aria-label="Back">
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <div className="flex-1 text-center">
-              <h2 className="text-lg font-medium">{t("cabinet.title")}</h2>
-            </div>
-            <div className="w-5"></div> {/* Empty div for balanced spacing */}
-          </>
-        ) : (
-          <>
-            <div className="flex-1"></div>
-            <button onClick={onClose} className="p-1" aria-label="Close">
-              <X className="h-5 w-5" />
-            </button>
-          </>
-        )}
-      </div>
-
+      {/* Основной контент */}
       <div className="flex-1 pt-0 max-w-md mx-auto w-full px-2 md:px-0">
         {/* Заголовок */}
         <div className="w-full border border-white bg-blue-600 py-5 rounded-[25px] text-xl font-medium shadow-md p-4 mb-6 text-white text-center">

@@ -33,6 +33,7 @@ import { ProductDescriptionDetails } from "@/components/main/product-description
 import { ProcessingView } from "@/components/main/processing-view";
 import PartnerStandardPanel from "@/components/partner/partner-premium-panel";
 import PartnerPremiumPanel from "@/components/partner/partner-standard-panel";
+import EmptyPartnerPanel from "@/components/partner/empty-panel";
 
 type ActivePanel =
   | null
@@ -50,6 +51,7 @@ type ActivePanel =
   | "delete-account"
   | "standard-program"
   | "premium-program"
+  | "empty-panel"
   | "faq"
   | "recommendations"
   | "complaint"
@@ -63,6 +65,7 @@ declare global {
     openPartnerPanel?: (panel: string) => void;
     openFeedbackPanel?: (panel: string) => void;
     openShareMenu?: (title: string, content: string) => void;
+    openEmptyPanel?: (panel: string) => void;
   }
 }
 
@@ -99,6 +102,7 @@ export function Dashboard() {
 
     return () => {
       window.openPartnerPanel = undefined;
+
       window.openFeedbackPanel = undefined;
       window.openShareMenu = undefined;
     };
@@ -231,8 +235,6 @@ export function Dashboard() {
     setShareMenuOpen(false);
   };
 
- 
-
   // Определяем, является ли активная панель отзывом
   const isFeedbackPanel =
     activePanel === "faq" ||
@@ -357,6 +359,8 @@ export function Dashboard() {
         return <PartnerStandardPanel onClose={handleClosePanel} />;
       } else if (activePanel === "premium-program") {
         return <PartnerPremiumPanel onClose={handleClosePanel} />;
+      } else if (activePanel === "empty-panel") {
+        return <EmptyPartnerPanel onClose={handleClosePanel} />;
       }
     } else if (activeTab === "feedback") {
       if (activePanel === "faq") {
@@ -382,13 +386,6 @@ export function Dashboard() {
           <div className="w-full bg-white rounded-none">
             {renderRightContent()}
           </div>
-          {shareMenuOpen && (
-            <ShareMenu
-              title={shareContent.title}
-              content={shareContent.content}
-              onClose={handleCloseShareMenu}
-            />
-          )}
         </div>
       );
     }
@@ -399,13 +396,6 @@ export function Dashboard() {
         <div className="w-full bg-[#F6F6F6] rounded-none ">
           {renderLeftContent()}
         </div>
-        {shareMenuOpen && (
-          <ShareMenu
-            title={shareContent.title}
-            content={shareContent.content}
-            onClose={handleCloseShareMenu}
-          />
-        )}
       </div>
     );
   }
@@ -428,14 +418,6 @@ export function Dashboard() {
           {renderRightContent()}
         </div>
       </div>
-
-      {shareMenuOpen && (
-        <ShareMenu
-          title={shareContent.title}
-          content={shareContent.content}
-          onClose={handleCloseShareMenu}
-        />
-      )}
     </div>
   );
 }

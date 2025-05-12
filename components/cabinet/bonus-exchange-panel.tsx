@@ -186,24 +186,57 @@ export function BonusExchangePanel({ onClose }: BonusExchangePanelProps) {
 
       {/* Модальные окна */}
       {showExchangeConfirm && (
-        <BonusExchangeConfirmModal
-          onConfirm={handleExchangeConfirm}
-          onCancel={handleExchangeCancel}
-        />
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center pb-56">
+          <div
+            className="absolute inset-0"
+            onClick={handleExchangeCancel}
+          ></div>
+          <div
+            className="bg-white rounded-xl p-6 max-w-xs w-full mx-4 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <BonusExchangeConfirmModal
+              onConfirm={handleExchangeConfirm}
+              onCancel={handleExchangeCancel}
+            />
+          </div>
+        </div>
       )}
 
       {showTransferCard && (
-        <BonusTransferCardModal
-          onSubmit={handleCardSubmit}
-          onClose={() => setShowTransferCard(false)}
-        />
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0"
+            onClick={() => setShowTransferCard(false)}
+          ></div>
+          <div
+            className="bg-white rounded-xl p-6 max-w-xs w-full mx-4 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <BonusTransferCardModal
+              onSubmit={handleCardSubmit}
+              onClose={() => setShowTransferCard(false)}
+            />
+          </div>
+        </div>
       )}
 
       {showTransferConfirm && (
-        <BonusTransferConfirmModal
-          onConfirm={handleTransferConfirm}
-          onCancel={handleTransferCancel}
-        />
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0"
+            onClick={handleTransferCancel}
+          ></div>
+          <div
+            className="bg-white rounded-xl p-6 max-w-xs w-full mx-4 z-50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <BonusTransferConfirmModal
+              onConfirm={handleTransferConfirm}
+              onCancel={handleTransferCancel}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

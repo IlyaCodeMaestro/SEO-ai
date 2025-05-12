@@ -1,7 +1,7 @@
 "use client";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { ChevronUp, ChevronDown, FileText } from "lucide-react";
+import { FileText, Inbox } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { useProcessingContext } from "../main/processing-provider";
 
@@ -15,59 +15,48 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
-  // Группировка элементов по дате
-  const groupedItems = archivedItems.reduce((acc, item) => {
-    const date = format(new Date(item.timestamp), "d MMMM", { locale: ru });
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(item);
-    return acc;
-  }, {} as Record<string, typeof archivedItems>);
+  // Функция для безопасной проверки пустого архива
+  const isArchiveEmpty = () => {
+    return (
+      !archivedItems ||
+      !Array.isArray(archivedItems) ||
+      archivedItems.length === 0
+    );
+  };
 
-  // Сортировка дат (сначала новые)
-  const sortedDates = Object.keys(groupedItems).sort((a, b) => {
-    const dateA = new Date(groupedItems[a][0].timestamp);
-    const dateB = new Date(groupedItems[b][0].timestamp);
-    return dateB.getTime() - dateA.getTime();
-  });
+  // Группировка элементов по дате, если архив не пуст
+  const groupedItems = !isArchiveEmpty()
+    ? archivedItems.reduce((acc, item) => {
+        const date = format(new Date(item.timestamp), "d MMMM", { locale: ru });
+        if (!acc[date]) acc[date] = [];
+        acc[date].push(item);
+        return acc;
+      }, {} as Record<string, typeof archivedItems>)
+    : {};
 
-  // Функция для определения статуса элемента
+  // Сортировка дат, если архив не пуст
+  const sortedDates = !isArchiveEmpty()
+    ? Object.keys(groupedItems).sort((a, b) => {
+        const dateA = new Date(groupedItems[a][0].timestamp);
+        const dateB = new Date(groupedItems[b][0].timestamp);
+        return dateB.getTime() - dateA.getTime();
+      })
+    : [];
+
   const getItemStatus = (item: any) => {
-    if (item.type === "both") {
-      return "Анализ и описание Выполнены";
-    } else if (item.type === "analysis") {
-      return "Анализ Выполнен";
-    } else {
-      return "Описание Выполнено";
-    }
+    if (item.type === "both") return "Анализ и\nописание\nвыполнены";
+    if (item.type === "analysis") return "Анализ\nвыполнен";
+    return "Описание\nвыполнено";
   };
 
-  // Функция для обработки клика по элементу
   const handleItemClick = (item: any) => {
-    if (item.isNew) {
-      markItemAsRead(item.id);
-    }
-    if (onSelectItem) {
-      onSelectItem(item);
-    }
+    if (item.isNew) markItemAsRead(item.id);
+    setSelectedItemId(item.id);
+    if (onSelectItem) onSelectItem(item);
   };
 
-  // Функции для скролла
-  const scrollUp = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop -= 100;
-    }
-  };
-
-  const scrollDown = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop += 100;
-    }
-  };
-
-  // Проверка возможности скролла
   const checkScrollability = () => {
     if (scrollContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } =
@@ -78,24 +67,60 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
     }
   };
 
-  // Проверка при монтировании и изменении элементов
   useEffect(() => {
     checkScrollability();
     window.addEventListener("resize", checkScrollability);
     return () => window.removeEventListener("resize", checkScrollability);
   }, [archivedItems]);
 
-  // Обработчик события скролла
   const handleScroll = () => {
     checkScrollability();
   };
 
+  const formatStatusText = (text: string) => {
+    return text.split("\n").map((line, i) => (
+      <span key={i} className="block">
+        {line}
+      </span>
+    ));
+  };
+
+  // Функция для разделения текста на две строки
+  const formatProductName = (name: string) => {
+    const words = name.split(" ");
+    const midpoint = Math.ceil(words.length / 2);
+
+    const firstLine = words.slice(0, midpoint).join(" ");
+    const secondLine = words.slice(midpoint).join(" ");
+
+    return (
+      <>
+        <span className="block">{firstLine}</span>
+        {secondLine && <span className="block">{secondLine}</span>}
+      </>
+    );
+  };
+
+  // Функция для определения стиля элемента в зависимости от его состояния
+  const getItemStyle = (itemId: string) => {
+    // Базовые классы, которые всегда применяются
+    const baseClasses =
+      "bg-white rounded-2xl p-4 shadow-md flex items-start cursor-pointer mb-4 relative transition-all duration-200";
+
+    // Только для десктопа (md:)
+    if (selectedItemId === itemId) {
+      // Если элемент выбран - синяя граница всегда видна
+      return `${baseClasses} md:border-2 md:border-blue-600`;
+    } else {
+      // Если элемент не выбран - прозрачная граница по умолчанию, синяя при наведении
+      return `${baseClasses} md:border-2 md:border-transparent md:hover:border-blue-600`;
+    }
+  };
+
   return (
-    <div className="h-full flex flex-col  rounded-[20px] shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
-      <div className="py-6">
-        <h2 className="text-[#1950df] font-medium text-center text-xl">
-          Архив
-        </h2>
+    <div className="h-full flex flex-col">
+      <div className="py-4">
+        <h2 className="text-blue-600 font-medium text-center text-xl">Архив</h2>
       </div>
 
       <div
@@ -103,45 +128,52 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
         className="flex-1 overflow-auto px-4"
         onScroll={handleScroll}
       >
-        {sortedDates.length === 0 ? (
-          <div className="text-center py-8 text-[#959699]">
-            В архиве пока нет элементов
+        {isArchiveEmpty() ? (
+          <div className="text-center py-8 text-[#161616] flex flex-col items-center justify-center">
+            <Inbox className="w-12 h-12 text-gray-400 mb-3" />
+            <p className="font-medium text-base">В архиве пока нет элементов</p>
           </div>
         ) : (
           <div>
             {sortedDates.map((date) => (
               <div key={date} className="mb-6">
-                <h3 className="text-sm font-medium mb-4 ml-2">{date}</h3>
+                <h3 className="text-[#333333] font-medium mb-4 text-lg md:text-lg sm:text-base">
+                  {date}
+                </h3>
 
                 {groupedItems[date].map((item) => (
                   <div
                     key={item.id}
-                    className="bg-white rounded-xl p-4 shadow-around flex items-center cursor-pointer hover:bg-gray-50 mb-4 relative"
+                    className={getItemStyle(item.id)}
                     onClick={() => handleItemClick(item)}
                   >
-                    <div className="w-8 h-8 bg-[#d9d9d9] rounded-full mr-3 overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 rounded-md mr-4 overflow-hidden flex-shrink-0">
                       <img
-                        src={`/placeholder.svg?height=32&width=32&query=clothing`}
+                        src={`/placeholder.svg?height=64&width=64&query=product`}
                         alt="Product"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm text-[#000000]">
-                        {item.name}
-                      </p>
-                      <div className="flex items-center">
-                        <p className="text-xs text-[#959699]">{item.sku}</p>
-                        <FileText className="h-3 w-3 ml-2 text-[#afafaf]" />
+
+                    <div className="flex-1 flex flex-col">
+                      <div className="font-normal md:text-md sm:text-md text-md text-black leading-tight mb-2">
+                        {formatProductName(item.name)}
+                      </div>
+
+                      <div className="flex items-center mt-1">
+                        <p className="text-blue-600 md:text-base sm:text-md text-md">
+                          {item.sku}
+                        </p>
+                        <FileText className="md:h-5 md:w-5 md:ml-2 sm:h-3 sm:w-3 sm:ml-1 h-3 w-3 ml-1 text-blue-600" />
                       </div>
                     </div>
-                    <div>
-                      <span className="text-xs text-[#1950df] whitespace-nowrap">
-                        {getItemStatus(item)}
-                      </span>
+
+                    <div className="text-blue-600 text-right mt-3 md:text-md sm:text-md text-md font-normal ml-2 md:w-28 sm:w-24 w-24">
+                      {formatStatusText(getItemStatus(item))}
                     </div>
+
                     {item.isNew && (
-                      <div className="absolute right-1 top-1 w-6 h-6 bg-[#1950df] rounded-full"></div>
+                      <div className="absolute right-1 top-1 w-6 h-6 bg-blue-600 rounded-full"></div>
                     )}
                   </div>
                 ))}
@@ -150,34 +182,6 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
           </div>
         )}
       </div>
-
-      {/* Кнопки навигации */}
-      {showScrollButtons && (
-        <div className="flex justify-center py-3">
-          <button
-            onClick={scrollUp}
-            className={`p-1 mx-2 rounded-full ${
-              canScrollUp
-                ? "text-[#1950df] hover:bg-blue-50"
-                : "text-[#d9d9d9] cursor-not-allowed"
-            }`}
-            disabled={!canScrollUp}
-          >
-            <ChevronUp className="h-5 w-5" />
-          </button>
-          <button
-            onClick={scrollDown}
-            className={`p-1 mx-2 rounded-full ${
-              canScrollDown
-                ? "text-[#1950df] hover:bg-blue-50"
-                : "text-[#d9d9d9] cursor-not-allowed"
-            }`}
-            disabled={!canScrollDown}
-          >
-            <ChevronDown className="h-5 w-5" />
-          </button>
-        </div>
-      )}
     </div>
   );
 }

@@ -28,8 +28,6 @@ export function FeedbackView() {
         </button>
       </div>
 
-      <div className="text-sm text-gray-500 mb-2 px-6">Вид обратной связи</div>
-
       <div className="px-6 space-y-3">
         {/* Часто задаваемые вопросы */}
         <button
@@ -41,7 +39,9 @@ export function FeedbackView() {
           </span>
           <ChevronRight className="h-5 w-5 text-black" />
         </button>
-
+        <div className="text-sm text-gray-500 mb-2 px-2">
+          Вид обратной связи
+        </div>
         {/* Рекомендации */}
         <button
           onClick={() => handleOpenFeedbackPanel("recommendations")}

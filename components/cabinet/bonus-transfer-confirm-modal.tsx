@@ -9,7 +9,7 @@ interface BonusTransferConfirmModalProps {
 
 export function BonusTransferConfirmModal({ onConfirm, onCancel }: BonusTransferConfirmModalProps) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="absolute pb-32 inset-0 flex items-center justify-center bg-black bg-opacity-10 z-50">
       <div className="bg-white rounded-xl p-6 max-w-xs w-full mx-4">
         <p className="text-center font-medium mb-6">Вы желаете перевести бонусы на карту?</p>
 

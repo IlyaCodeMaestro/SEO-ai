@@ -59,7 +59,7 @@ export function BonusTransferCardModal({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="absolute pb-48 inset-0 flex items-center justify-center bg-black bg-opacity-10 z-50">
       <div className="bg-white rounded-xl p-6 max-w-xs w-full mx-4 relative">
         {/* Добавляем кнопку закрытия (крестик) в правом верхнем углу */}
         <button
