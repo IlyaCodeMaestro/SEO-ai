@@ -2,8 +2,8 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { ShareMenu } from "../shared/share-menu";
 import { useState } from "react";
+import { ShareMenuWithoutCopy } from "../shared/share-menu-without-copy";
 interface PartnerPremiumPanelProps {
   onClose: () => void;
 }
@@ -173,7 +173,7 @@ export default function PartnerPremiumPanel({ onClose }) {
         {/* ShareMenu with overlay */}
         {shareContent && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-            <ShareMenu
+            <ShareMenuWithoutCopy
               content={shareContent.content}
               title={shareContent.title}
               onClose={handleCloseShareMenu}

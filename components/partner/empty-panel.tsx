@@ -2,7 +2,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useEffect, useState } from "react";
-import { ShareMenu } from "../shared/share-menu";
+import { ShareMenuWithoutCopy } from "../shared/share-menu-without-copy";
 
 interface EmptyPanelProps {
   onClose: () => void;
@@ -63,7 +63,7 @@ export default function EmptyPartnerPanel({ onClose }: EmptyPanelProps) {
           onClick={onClose}
           className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50 "
         >
-          <ShareMenu
+          <ShareMenuWithoutCopy
             content={shareContent.content}
             title={shareContent.title}
             onClose={handleCloseShareMenu}

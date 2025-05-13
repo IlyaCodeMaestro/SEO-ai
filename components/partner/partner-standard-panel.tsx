@@ -2,16 +2,21 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { ShareMenu } from "../shared/share-menu";
 import { useState } from "react";
+import { ShareMenuWithoutCopy } from "../shared/share-menu-without-copy";
 
 interface PartnerStandartPanelProps {
   onClose: () => void;
 }
 
-export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelProps) {
+export default function PartnerStandardPanel({
+  onClose,
+}: PartnerStandartPanelProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [shareContent, setShareContent] = useState<{ content: string; title: string } | null>(null);
+  const [shareContent, setShareContent] = useState<{
+    content: string;
+    title: string;
+  } | null>(null);
 
   const handleShare = () => {
     setShareContent({
@@ -33,7 +38,9 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
             <button onClick={onClose} className="absolute left-4">
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-xl font-medium text-blue-600 text-center w-full">Реферальная программа</h1>
+            <h1 className="text-xl font-medium text-blue-600 text-center w-full">
+              Реферальная программа
+            </h1>
           </>
         ) : (
           <button onClick={onClose} className="text-gray-600 absolute right-4">
@@ -59,13 +66,16 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
       {/* Blue banner */}
       <div className="from-[#0d52ff] to-[rgba(11,60,187,1)] bg-gradient-to-r text-white p-6 rounded-[30px] mx-4 mb-4 text-center">
         <p className="text-xl font-medium leading-tight">
-          Приглашайте 50+ друзей в течении подключенного тарифа (30 дней) и получайте 30% от их оплаты на свой счет
+          Приглашайте 50+ друзей в течении подключенного тарифа (30 дней) и
+          получайте 30% от их оплаты на свой счет
         </p>
       </div>
 
       {/* Main content */}
       <div className="flex-1 bg-gray-100 rounded-[30px] mx-4 p-6 shadow-md border">
-        <h2 className="text-xl font-medium mb-6">5 простых шагов на встречу выгоде</h2>
+        <h2 className="text-xl font-medium mb-6">
+          5 простых шагов на встречу выгоде
+        </h2>
 
         <div className="space-y-8 relative">
           {/* Vertical line */}
@@ -80,7 +90,10 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
             </div>
             <div>
               <h3 className="font-bold text-lg mb-1">Подключите тариф</h3>
-              <p className="text-gray-700">Выберите и подключите один из тарифов: Селлер, Менеджер или Премиум</p>
+              <p className="text-gray-700">
+                Выберите и подключите один из тарифов: Селлер, Менеджер или
+                Премиум
+              </p>
             </div>
           </div>
 
@@ -93,7 +106,9 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
             </div>
             <div>
               <h3 className="font-bold text-lg mb-1">Приглашайте друзей</h3>
-              <p className="text-gray-700">Делитесь ссылкой SEO-AI в социальных сетях</p>
+              <p className="text-gray-700">
+                Делитесь ссылкой SEO-AI в социальных сетях
+              </p>
             </div>
           </div>
 
@@ -105,9 +120,12 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-1">Друзья регистрируются по приглашению</h3>
+              <h3 className="font-bold text-lg mb-1">
+                Друзья регистрируются по приглашению
+              </h3>
               <p className="text-gray-700">
-                Когда кто-либо регистрируется по Вашей ссылке, то они зачисляются как Ваши "друзья"
+                Когда кто-либо регистрируется по Вашей ссылке, то они
+                зачисляются как Ваши "друзья"
               </p>
             </div>
           </div>
@@ -120,9 +138,12 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-1">30% от оплаты друзей поступят Вам на бонусы</h3>
+              <h3 className="font-bold text-lg mb-1">
+                30% от оплаты друзей поступят Вам на бонусы
+              </h3>
               <p className="text-gray-700">
-                При подключении тарифа Вашими друзьями, 30% от их оплаты поступают Вам на бонусы
+                При подключении тарифа Вашими друзьями, 30% от их оплаты
+                поступают Вам на бонусы
               </p>
             </div>
           </div>
@@ -135,10 +156,12 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-1">Переведите бонусы в реальные деньги</h3>
+              <h3 className="font-bold text-lg mb-1">
+                Переведите бонусы в реальные деньги
+              </h3>
               <p className="text-gray-700">
-                Когда приглашенных друзей 50+ в течении подключенного тарифа (30 дней), привяжите банковскую карту и
-                переведите
+                Когда приглашенных друзей 50+ в течении подключенного тарифа (30
+                дней), привяжите банковскую карту и переведите
               </p>
             </div>
           </div>
@@ -158,7 +181,7 @@ export default function PartnerStandardPanel({ onClose }: PartnerStandartPanelPr
       {/* ShareMenu with overlay */}
       {shareContent && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-          <ShareMenu
+          <ShareMenuWithoutCopy
             content={shareContent.content}
             title={shareContent.title}
             onClose={handleCloseShareMenu}
