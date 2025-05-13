@@ -40,22 +40,6 @@ export function IrrelevantKeywordsTable({
       <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
           <div className="flex items-center mb-3">
-            <div className="w-5 h-5 bg-blue-100 rounded mr-2 flex items-center justify-center">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M2 7H12M7 2V12"
-                  stroke="#1950DF"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
             <h3 className="font-medium text-sm">{title}</h3>
           </div>
 
