@@ -1,22 +1,17 @@
-import { Star } from "lucide-react"
+import { Star } from "lucide-react";
 
 interface ResultsBlockProps {
-  title: string
-  rating: number
-  isMobile: boolean
+  title: string;
+  rating: number;
+  isMobile: boolean;
 }
 
 export function ResultsBlock({ title, rating, isMobile }: ResultsBlockProps) {
   if (isMobile) {
     return (
-      <div className="bg-white rounded-xl shadow-around overflow-hidden">
+      <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
           <div className="flex items-center mb-3">
-            <div className="w-5 h-5 bg-blue-100 rounded mr-2 flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 7H12M7 2V12" stroke="#1950DF" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </div>
             <h3 className="font-medium text-sm">{title}</h3>
           </div>
           <div className="flex items-center mb-3">
@@ -24,7 +19,11 @@ export function ResultsBlock({ title, rating, isMobile }: ResultsBlockProps) {
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`h-4 w-4 ${star <= 3 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                  className={`h-4 w-4 ${
+                    star <= 3
+                      ? "text-yellow-400 fill-yellow-400"
+                      : "text-gray-300"
+                  }`}
                 />
               ))}
             </div>
@@ -36,11 +35,15 @@ export function ResultsBlock({ title, rating, isMobile }: ResultsBlockProps) {
               <span className="font-medium text-sm">60 %</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-700 text-sm">Присутствие ключевых слов:</span>
+              <span className="text-gray-700 text-sm">
+                Присутствие ключевых слов:
+              </span>
               <span className="font-medium text-sm">70 %</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-700 text-sm">Упущено ключевых слов:</span>
+              <span className="text-gray-700 text-sm">
+                Упущено ключевых слов:
+              </span>
               <span className="font-medium text-sm">10</span>
             </div>
             <div className="flex justify-between items-center">
@@ -50,11 +53,11 @@ export function ResultsBlock({ title, rating, isMobile }: ResultsBlockProps) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
+    <div className="bg-[#f9f8f8]  dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
         <h3 className="font-medium">{title}</h3>
       </div>
@@ -65,7 +68,9 @@ export function ResultsBlock({ title, rating, isMobile }: ResultsBlockProps) {
               <Star
                 key={star}
                 className={`h-5 w-5 ${
-                  star <= 3 ? "text-yellow-400 fill-yellow-400" : "text-gray-300 dark:text-gray-600"
+                  star <= 3
+                    ? "text-yellow-400 fill-yellow-400"
+                    : "text-gray-300 dark:text-gray-600"
                 }`}
               />
             ))}
@@ -74,23 +79,37 @@ export function ResultsBlock({ title, rating, isMobile }: ResultsBlockProps) {
         </div>
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-gray-700 dark:text-gray-300 text-sm">Видимость:</span>
+            <span className="text-gray-700 dark:text-gray-300 text-sm">
+              Видимость:
+            </span>
             <span className="font-medium ml-2 text-sm">60 %</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-700 dark:text-gray-300 text-sm">Присутствие ключевых слов:</span>
+            <span className="text-gray-700 dark:text-gray-300 text-sm">
+              Присутствие ключевых слов:
+            </span>
             <span className="font-medium ml-2 text-sm">70 %</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-700 dark:text-gray-300 text-sm">Упущено ключевых слов:</span>
+            <span className="text-gray-700 dark:text-gray-300 text-sm">
+              Упущено ключевых слов:
+            </span>
             <span className="font-medium ml-2 text-sm">10</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-700 dark:text-gray-300 text-sm">Упущено охвата:</span>
+            <span className="text-gray-700 dark:text-gray-300 text-sm">
+              Упущенный охват:
+            </span>
             <span className="font-medium ml-2 text-sm">45 678 900</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-700 dark:text-gray-300 text-sm">
+              Наличие нерелевантных слов:
+            </span>
+            <span className="font-medium ml-2 text-sm">13</span>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

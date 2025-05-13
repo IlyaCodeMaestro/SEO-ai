@@ -19,7 +19,7 @@ interface KeywordsTableProps {
   isMobile: boolean;
 }
 
-export function KeywordsTable({
+export function IrrelevantKeywordsTable({
   title,
   keywords,
   section,
@@ -40,11 +40,27 @@ export function KeywordsTable({
       <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
           <div className="flex items-center mb-3">
+            <div className="w-5 h-5 bg-blue-100 rounded mr-2 flex items-center justify-center">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 7H12M7 2V12"
+                  stroke="#1950DF"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
             <h3 className="font-medium text-sm">{title}</h3>
           </div>
 
           <div className="grid grid-cols-2 gap-x-4 text-sm">
-            <div className="font-medium mb-2">Ключевые слова</div>
+            <div className="font-medium mb-2">Нерелевант. слова</div>
             <div className="font-medium mb-2 text-right">Сумм. частотность</div>
 
             {keywords
@@ -81,30 +97,21 @@ export function KeywordsTable({
   }
 
   return (
-    <div className="bg-[#f9f8f8] dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700 relative">
-        {/* Левая часть — Copy и Maximize2 */}
-        <div className="flex items-center space-x-2">
-          <Copy
-            className={`h-5 w-5 ${
-              copiedSection === section ? "text-green-500" : "text-blue-500"
-            }`}
-          />
-          <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-        </div>
-
-        {/* Центр — заголовок, абсолютно по центру */}
-        <h3 className="absolute left-1/2 transform -translate-x-1/2 font-medium">
-          {title}
-        </h3>
-
-        {/* Правая часть — иконки */}
+    <div className="bg-[#f9f8f8]  dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+        <h3 className="font-medium">{title}</h3>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => onCopy(getContentForCopy(), section)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             aria-label="Copy keywords"
-          ></button>
+          >
+            <Copy
+              className={`h-5 w-5 ${
+                copiedSection === section ? "text-green-500" : "text-blue-500"
+              }`}
+            />
+          </button>
           <button
             onClick={() => onShare(keywords, title)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -115,13 +122,14 @@ export function KeywordsTable({
           <button
             onClick={() => onToggle(section)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-          ></button>
+          >
+            <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          </button>
         </div>
       </div>
-
       <div className="p-4">
         <div className="grid grid-cols-2 gap-2 text-sm mb-2">
-          <span className="font-medium">Ключевые слова</span>
+          <span className="font-medium">Нерелевант. слова</span>
           <span className="font-medium text-right">Сумм. частотность</span>
         </div>
         {keywords.slice(0, isExpanded ? undefined : 2).map((keyword, index) => (

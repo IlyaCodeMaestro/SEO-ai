@@ -60,7 +60,7 @@ export function ReferralStatementPanel({ onClose }: BalanceHistoryPanelProps) {
   return (
     <div className="h-full flex flex-col bg-white px-4 py-6 max-w-2xl mx-auto">
       {/* Заголовок с кнопкой закрытия */}
-      <div className="flex items-center mb-8">
+      <div className="flex items-center mb-3">
         {isMobile ? (
           <>
             <button onClick={onClose} className="p-1" aria-label="Back">

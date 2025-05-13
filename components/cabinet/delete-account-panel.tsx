@@ -30,6 +30,7 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
   const handleCancelDelete = () => {
     setShowConfirmModal(false);
   };
+
   return (
     <div className="h-full flex flex-col justify-start bg-white dark:bg-[rgba(0,0,0,0.25)] px-4 md:px-0">
       {/* Модалка с затемнённым фоном */}
@@ -65,13 +66,29 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
 
       {/* Основной контент */}
       <div className="flex-1 pt-0 max-w-md mx-auto w-full px-2 md:px-0">
-        {/* Заголовок */}
-        <div className="w-full border border-white bg-blue-600 py-5 rounded-[25px] text-xl font-medium shadow-md p-4 mb-6 text-white text-center">
-          <div className="flex justify-center items-center">
-            <span className="text-lg font-medium">
-              {t("cabinet.delete.account")}
-            </span>
+        {/* Заголовок с крестиком или стрелкой */}
+        <div className="flex justify-between items-center mb-12">
+          <div className="flex items-center">
+            {isMobile ? (
+              <button onClick={onClose} className="pt-3" aria-label="Back">
+                <ArrowLeft className="h-6 w-6" />
+              </button>
+            ) : null}
           </div>
+
+          <div className="flex justify-center w-full pt-6">
+            <h1 className="text-xl font-medium text-center text-blue-600">
+              {t("cabinet.delete.account")}
+            </h1>
+          </div>
+
+          {!isMobile && (
+            <div className="flex items-center">
+              <button onClick={onClose} className="p-1" aria-label="Close">
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Информация об удалении */}

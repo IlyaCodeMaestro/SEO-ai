@@ -12,6 +12,7 @@ import { KeywordsTable } from "./archive-layout/keywords-table";
 import { TopKeywords } from "./archive-layout/top-keywords";
 import { DescriptionBlock } from "./archive-layout/description-block";
 import { ConfirmationModal } from "./archive-layout/confirmation-modal";
+import { IrrelevantKeywordsTable } from "./archive-layout/irrelevant-keywords";
 
 interface ArchiveItemDetailsProps {
   onClose: () => void;
@@ -148,10 +149,14 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
 
   const renderDesktopLayout = () => {
     return (
-      <div className="h-full overflow-auto bg-white dark:bg-gray-900">
+      <div className="h-full  overflow-auto bg-white dark:bg-gray-900">
         <div className="p-6">
           {/* Заголовок с кнопкой закрытия */}
-          <ArchiveHeader onClose={onClose} isMobile={false} />
+          <ArchiveHeader
+            onClose={onClose}
+            isMobile={false}
+            itemType={item.type}
+          />
 
           {/* Верхний блок с информацией о товаре */}
           <ProductInfo item={item} isMobile={false} />
@@ -174,7 +179,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 {/* Правая колонка */}
                 <div className="space-y-6">
                   {/* Использованные нерелевантные слова */}
-                  <KeywordsTable
+                  <IrrelevantKeywordsTable
                     title="Использованные нерелевантные слова"
                     keywords={analysisResults.irrelevantKeywords}
                     section="irrelevantKeywords"
@@ -235,14 +240,14 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
 
                 {/* Правая колонка */}
                 <div>
-                  <DescriptionBlock
-                    title="Описание карточки товара"
-                    description={analysisResults.description}
-                    section="description"
-                    isExpanded={expandedSections["description"]}
+                  <KeywordsTable
+                    title="Использованные ключевые слова"
+                    keywords={analysisResults.usedKeywords}
+                    section="usedKeywords"
+                    isExpanded={expandedSections["usedKeywords"]}
                     onToggle={toggleSection}
                     onCopy={handleCopy}
-                    onShare={handleShareDescription}
+                    onShare={handleShareKeywords}
                     copiedSection={copiedSection}
                     isMobile={false}
                   />
@@ -251,14 +256,14 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
 
               {/* Использованные ключевые слова (под двумя блоками) */}
               <div className="mt-6">
-                <KeywordsTable
-                  title="Использованные ключевые слова"
-                  keywords={analysisResults.usedKeywords}
-                  section="usedKeywords"
-                  isExpanded={expandedSections["usedKeywords"]}
+                <DescriptionBlock
+                  title="Описание карточки товара"
+                  description={analysisResults.description}
+                  section="description"
+                  isExpanded={expandedSections["description"]}
                   onToggle={toggleSection}
                   onCopy={handleCopy}
-                  onShare={handleShareKeywords}
+                  onShare={handleShareDescription}
                   copiedSection={copiedSection}
                   isMobile={false}
                 />
@@ -283,6 +288,15 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 {/* Правая колонка */}
                 <div className="space-y-6">
                   {/* Использованные ключевые слова (уменьшенный) */}
+
+                  {/* Ключевые слова ТОП позиций */}
+                  <TopKeywords
+                    keywords={analysisResults.topKeywords}
+                    section="topKeywords"
+                    isExpanded={expandedSections["topKeywords"]}
+                    onToggle={toggleSection}
+                    isMobile={false}
+                  />
                   <KeywordsTable
                     title="Использованные ключевые слова"
                     keywords={analysisResults.usedKeywords}
@@ -292,15 +306,6 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                     onCopy={handleCopy}
                     onShare={handleShareKeywords}
                     copiedSection={copiedSection}
-                    isMobile={false}
-                  />
-
-                  {/* Ключевые слова ТОП позиций */}
-                  <TopKeywords
-                    keywords={analysisResults.topKeywords}
-                    section="topKeywords"
-                    isExpanded={expandedSections["topKeywords"]}
-                    onToggle={toggleSection}
                     isMobile={false}
                   />
                 </div>
@@ -334,12 +339,54 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
       <div className="h-full overflow-auto bg-white dark:bg-gray-900">
         <div className="p-4">
           {/* Заголовок с кнопкой закрытия */}
-          <ArchiveHeader onClose={onClose} isMobile={true} />
+          <ArchiveHeader
+            onClose={onClose}
+            isMobile={true}
+            itemType={item.type}
+          />
 
           {/* Верхний блок с информацией о товаре */}
           <ProductInfo item={item} isMobile={true} />
 
-          {/* Основной контент в зависимости от типа */}
+          {item.type === "description" && (
+            <div className="space-y-4">
+              {/* Ключевые слова TOP позиций */}
+              <TopKeywords
+                keywords={analysisResults.topKeywords}
+                section="topKeywords"
+                isExpanded={expandedSections["topKeywords"]}
+                onToggle={toggleSection}
+                isMobile={true}
+              />
+
+              {/* Использованные ключевые слова */}
+              <KeywordsTable
+                title="Использованные ключевые слова"
+                keywords={analysisResults.usedKeywords}
+                section="usedKeywords"
+                isExpanded={expandedSections["usedKeywords"]}
+                onToggle={toggleSection}
+                onCopy={handleCopy}
+                onShare={handleShareKeywords}
+                copiedSection={copiedSection}
+                isMobile={true}
+              />
+
+              {/* Описание карточки товара */}
+              <DescriptionBlock
+                title="Описание карточки товара"
+                description={analysisResults.description}
+                section="description"
+                isExpanded={expandedSections["description"]}
+                onToggle={toggleSection}
+                onCopy={handleCopy}
+                onShare={handleShareDescription}
+                copiedSection={copiedSection}
+                isMobile={true}
+              />
+            </div>
+          )}
+
           {item.type === "analysis" && (
             <div className="space-y-4">
               {/* Результаты анализа */}
@@ -350,7 +397,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
               />
 
               {/* Использованные нерелевантные слова */}
-              <KeywordsTable
+              <IrrelevantKeywordsTable
                 title="Использованные нерелевантные слова"
                 keywords={analysisResults.irrelevantKeywords}
                 section="irrelevantKeywords"
@@ -378,7 +425,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
               />
 
               {/* Кнопка "Написать описание" */}
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-6">
                 <button
                   onClick={handleWriteDescription}
                   className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full h-[45px] border border-white shadow-around inline-block px-8"
@@ -387,45 +434,6 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                   {t("archive.write.description")}
                 </button>
               </div>
-            </div>
-          )}
-
-          {item.type === "description" && (
-            <div className="space-y-4">
-              {/* Ключевые слова TOP позиций */}
-              <TopKeywords
-                keywords={analysisResults.topKeywords}
-                section="topKeywords"
-                isExpanded={expandedSections["topKeywords"]}
-                onToggle={toggleSection}
-                isMobile={true}
-              />
-
-              {/* Описание карточки товара */}
-              <DescriptionBlock
-                title="Описание карточки товара"
-                description={analysisResults.description}
-                section="description"
-                isExpanded={expandedSections["description"]}
-                onToggle={toggleSection}
-                onCopy={handleCopy}
-                onShare={handleShareDescription}
-                copiedSection={copiedSection}
-                isMobile={true}
-              />
-
-              {/* Использованные ключевые слова */}
-              <KeywordsTable
-                title="Использованные ключевые слова"
-                keywords={analysisResults.usedKeywords}
-                section="usedKeywords"
-                isExpanded={expandedSections["usedKeywords"]}
-                onToggle={toggleSection}
-                onCopy={handleCopy}
-                onShare={handleShareKeywords}
-                copiedSection={copiedSection}
-                isMobile={true}
-              />
             </div>
           )}
 
@@ -438,6 +446,15 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 isMobile={true}
               />
 
+              {/* Ключевые слова TOP позиций */}
+              <TopKeywords
+                keywords={analysisResults.topKeywords}
+                section="topKeywords"
+                isExpanded={expandedSections["topKeywords"]}
+                onToggle={toggleSection}
+                isMobile={true}
+              />
+
               {/* Использованные ключевые слова */}
               <KeywordsTable
                 title="Использованные ключевые слова"
@@ -448,15 +465,6 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 onCopy={handleCopy}
                 onShare={handleShareKeywords}
                 copiedSection={copiedSection}
-                isMobile={true}
-              />
-
-              {/* Ключевые слова ТОП позиций */}
-              <TopKeywords
-                keywords={analysisResults.topKeywords}
-                section="topKeywords"
-                isExpanded={expandedSections["topKeywords"]}
-                onToggle={toggleSection}
                 isMobile={true}
               />
 

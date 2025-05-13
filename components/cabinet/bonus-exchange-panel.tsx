@@ -63,7 +63,7 @@ export function BonusExchangePanel({ onClose }: BonusExchangePanelProps) {
   return (
     <div className="h-full flex flex-col justify-start bg-white px-4 md:px-0">
       {/* Заголовок с кнопкой закрытия */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between mt-3">
         {isMobile ? (
           <>
             <button onClick={onClose} className="p-1" aria-label="Back">

@@ -28,9 +28,9 @@ export function BalanceTopupPanel({ onClose }: BalanceTopupPanelProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white px-4 py-6 max-w-2xl mx-auto">
+    <div className="h-full flex flex-col bg-white px-4 py-6 max-w-2xl mx-auto ">
       {/* Header */}
-      <div className="flex items-center mb-8">
+      <div className="flex items-center mb-3">
         {isMobile ? (
           <>
             <button onClick={onClose} className="p-1" aria-label="Back">
@@ -50,7 +50,7 @@ export function BalanceTopupPanel({ onClose }: BalanceTopupPanelProps) {
       </div>
 
       {/* Main content */}
-      <div className="flex flex-col gap-6 w-full md:max-w-md md:mx-auto">
+      <div className="flex flex-col gap-6 w-full  md:max-w-md md:mx-auto">
         {/* Top up balance button */}
         <button className="w-full border border-white bg-blue-600 text-white py-5 rounded-[25px] text-xl font-medium shadow-md">
           Пополнить баланс

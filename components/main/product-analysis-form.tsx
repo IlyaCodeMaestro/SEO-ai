@@ -29,6 +29,7 @@ export function ProductAnalysisForm({
   const onFormSubmit = (data) => {
     onSubmit(data);
   };
+  
 
   return (
     <div className="h-full relative">
@@ -78,7 +79,7 @@ export function ProductAnalysisForm({
                     }`}
                     placeholder="SKU (анализируемый товар)"
                     autoFocus
-                    {...register("sku", { required: true })}
+                    {...register("", { required: true })}
                   />
                   {errors.sku && (
                     <p className="text-red-500 text-xs mt-1 text-center">

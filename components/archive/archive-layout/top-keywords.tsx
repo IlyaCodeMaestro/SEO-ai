@@ -13,7 +13,7 @@ interface TopKeywordsProps {
 export function TopKeywords({ keywords, section, isExpanded, onToggle, isMobile }: TopKeywordsProps) {
   if (isMobile) {
     return (
-      <div className="bg-white rounded-xl shadow-around overflow-hidden">
+      <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
           <h3 className="font-medium text-sm mb-3">Ключевые слова ТОП карточек</h3>
           <div className="space-y-3">
@@ -46,7 +46,7 @@ export function TopKeywords({ keywords, section, isExpanded, onToggle, isMobile 
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-around overflow-hidden">
+    <div className="bg-[#f9f8f8]  dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
         <h3 className="font-medium">Ключевые слова ТОП карточек</h3>
         <div className="flex items-center space-x-2">
