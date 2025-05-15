@@ -41,6 +41,12 @@ export function ShareMenu({ content, title, onClose }: ShareMenuProps) {
     );
     window.open(`https://wa.me/?text=${shareText}`, "_blank");
   };
+  const handleTelegramShare = () => {
+    const shareText = encodeURIComponent(
+      title ? `${title}\n\n${content}` : content
+    );
+    window.open(`https://t.me/share/url?url=${shareText}`, "_blank");
+  };
 
   const handleEmailShare = () => {
     const subject = encodeURIComponent(title || "Информация о товаре");
@@ -66,6 +72,19 @@ export function ShareMenu({ content, title, onClose }: ShareMenuProps) {
 
         <div className="p-4">
           <div className="flex justify-around mb-6">
+            <button
+              onClick={handleTelegramShare}
+              className="flex flex-col items-center"
+            >
+              <div className="w-12 h-12 rounded-full bg-sky-500 flex items-center justify-center mb-1">
+                <img
+                  src="/icons/telegram-logo.png"
+                  alt="Telegram"
+                  className="h-6 w-6 object-contain"
+                />
+              </div>
+              <span className="text-xs">Telegram</span>
+            </button>
             <button
               onClick={handleWhatsAppShare}
               className="flex flex-col items-center"

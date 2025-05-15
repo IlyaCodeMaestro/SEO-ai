@@ -1,69 +1,56 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { X } from "lucide-react"
-import { useEffect, useRef } from "react"
+import { X } from "lucide-react";
+import { useEffect } from "react";
 
-interface BlockModalProps {
-  isOpen: boolean
-  onClose: () => void
-  title: string
-  children: React.ReactNode
-  parentRef: React.RefObject<HTMLDivElement>
+interface ArchiveItemDetailsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  title: string;
 }
 
-export function BlockModal({ isOpen, onClose, title, children, parentRef }: BlockModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null)
-
+export function ArchiveItemDetailsModal({
+  isOpen,
+  onClose,
+  children,
+  title,
+}: ArchiveItemDetailsModalProps) {
+  // Prevent scrolling on the body when modal is open
   useEffect(() => {
     if (isOpen) {
-      // Предотвращаем прокрутку основного контента
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ""
+      document.body.style.overflow = "";
     }
-
     return () => {
-      document.body.style.overflow = ""
-    }
-  }, [isOpen])
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
-  if (!isOpen || !parentRef.current) return null
-
-  // Получаем размеры и позицию родительского блока
-  const parentRect = parentRef.current.getBoundingClientRect()
+  if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed z-50"
-      style={{
-        top: `${parentRect.top}px`,
-        left: `${parentRect.left}px`,
-        width: `${parentRect.width}px`,
-        height: `${parentRect.height}px`,
-      }}
-    >
-      {/* Затемнение только для этого блока */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
-
-      {/* Модальное окно */}
+    <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+      <div className="absolute inset-0" onClick={onClose}></div>
       <div
-        ref={modalRef}
-        className="absolute inset-0 bg-white dark:bg-gray-800 rounded-xl overflow-auto p-4 shadow-lg"
+        className="bg-white dark:bg-gray-900 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-auto z-50 m-4"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Заголовок и кнопка закрытия */}
-        <div className="flex items-center justify-between mb-4 sticky top-0 bg-white dark:bg-gray-800 z-10 py-2">
-          <h3 className="font-medium">{title}</h3>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+        <div className="sticky top-0 bg-white dark:bg-gray-900 z-10 flex items-center justify-between p-4 border-b">
+        
+          <button
+            onClick={onClose}
+            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            aria-label="Close"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
-
-        {/* Содержимое модального окна */}
-        <div>{children}</div>
+        <div className="p-4">{children}</div>
       </div>
     </div>
-  )
+  );
 }

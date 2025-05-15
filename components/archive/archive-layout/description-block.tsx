@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Maximize2, Share2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Maximize2, Share2 } from "lucide-react";
 
 interface DescriptionBlockProps {
   title: string;
@@ -29,30 +29,64 @@ export function DescriptionBlock({
 }: DescriptionBlockProps) {
   if (isMobile) {
     return (
-      <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
+      <div className="bg-[#f9f8f8] rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <h3 className="font-medium text-sm">{title}</h3>
-            </div>
-            <div className="flex space-x-2">
-              <button className="text-blue-600" onClick={onShare}>
-                <Share2 className="h-4 w-4" />
-              </button>
-              <button
-                className="text-blue-600"
-                onClick={() => onCopy(description, section)}
-              >
-                <Copy
-                  className={`h-4 w-4 ${
-                    copiedSection === section ? "text-green-500" : ""
-                  }`}
-                />
-              </button>
-            </div>
+          {/* Верхняя строка: копировать — заголовок — поделиться */}
+          <div className="relative flex items-center justify-between mb-3">
+            {/* Левая иконка */}
+            <button
+              className="text-blue-600 z-10"
+              onClick={() => onCopy(description, section)}
+              aria-label="Copy description"
+            >
+              <Copy
+                className={`h-4 w-4 ${
+                  copiedSection === section ? "text-green-500" : ""
+                }`}
+              />
+            </button>
+
+            {/* Заголовок — по центру, в одну строку, обрезается если не помещается */}
+            <h3
+              className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium z-0 truncate max-w-[70%] text-center"
+              title={title} // показываем подсказку при наведении
+            >
+              {title}
+            </h3>
+
+            {/* Правая иконка */}
+            <button
+              className="text-blue-600 z-10"
+              onClick={onShare}
+              aria-label="Share description"
+            >
+              <Share2 className="h-4 w-4" />
+            </button>
           </div>
 
-          <p className="text-sm leading-relaxed line-clamp-3">{description}</p>
+          {/* Основной текст — выравниваем по левому краю */}
+          <p
+            className={`text-sm leading-relaxed text-left ${
+              isExpanded ? "" : "line-clamp-3"
+            }`}
+          >
+            {description}
+          </p>
+
+          {/* Иконка раскрытия / скрытия */}
+          <div className="flex justify-center mt-2">
+            <button
+              onClick={() => onToggle(section)}
+              className="text-gray-500 hover:text-gray-700"
+              aria-label={isExpanded ? "Collapse" : "Expand"}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-5 w-5" />
+              ) : (
+                <ChevronDown className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -60,13 +94,13 @@ export function DescriptionBlock({
 
   return (
     <div
-      className={`bg-[#f9f8f8]  dark:bg-gray-800 rounded-xl shadow-md overflow-hidden ${
+      className={`bg-[#f9f8f8] dark:bg-gray-800 rounded-[20px] shadow-md overflow-hidden ${
         fullWidth ? "col-span-2" : ""
       }`}
     >
-      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
-        <h3 className="font-medium">{title}</h3>
-        <div className="flex items-center space-x-2">
+      <div className="relative flex flex-col sm:flex-row items-center p-4 border-b dark:border-gray-700">
+        {/* Левая иконка копирования */}
+        <div className="flex items-center z-10 mb-2 sm:mb-0">
           <button
             onClick={() => onCopy(description, section)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -78,6 +112,15 @@ export function DescriptionBlock({
               }`}
             />
           </button>
+        </div>
+
+        {/* Заголовок по центру */}
+        <h3 className="sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 font-medium z-0 text-center w-full sm:w-auto mb-2 sm:mb-0">
+          {title}
+        </h3>
+
+        {/* Правые иконки */}
+        <div className="sm:ml-auto flex items-center space-x-2 z-10">
           <button
             onClick={onShare}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -93,10 +136,11 @@ export function DescriptionBlock({
           </button>
         </div>
       </div>
+
       <div className="p-4">
         <p
           className={`text-sm leading-relaxed ${
-            isExpanded ? "" : "line-clamp-3"
+            isExpanded ? "" : "line-clamp-6"
           }`}
         >
           {description}

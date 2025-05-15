@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Copy, X, MessageCircle } from "lucide-react";
+import {  X, MessageCircle } from "lucide-react";
 import { useLanguage } from "../provider/language-provider";
 
 interface ShareMenuProps {
@@ -12,6 +12,7 @@ interface ShareMenuProps {
 
 export function ShareMenuWithoutCopy({ content, title, onClose }: ShareMenuProps) {
   const { t } = useLanguage();
+  const [copied, setCopied] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,11 +28,18 @@ export function ShareMenuWithoutCopy({ content, title, onClose }: ShareMenuProps
     };
   }, [onClose]);
 
+  
   const handleWhatsAppShare = () => {
     const shareText = encodeURIComponent(
       title ? `${title}\n\n${content}` : content
     );
     window.open(`https://wa.me/?text=${shareText}`, "_blank");
+  };
+  const handleTelegramShare = () => {
+    const shareText = encodeURIComponent(
+      title ? `${title}\n\n${content}` : content
+    );
+    window.open(`https://t.me/share/url?url=${shareText}`, "_blank");
   };
 
   const handleEmailShare = () => {
@@ -58,6 +66,19 @@ export function ShareMenuWithoutCopy({ content, title, onClose }: ShareMenuProps
 
         <div className="p-4">
           <div className="flex justify-around mb-6">
+            <button
+              onClick={handleTelegramShare}
+              className="flex flex-col items-center"
+            >
+              <div className="w-12 h-12 rounded-full bg-sky-500 flex items-center justify-center mb-1">
+                <img
+                  src="/icons/telegram-logo.png"
+                  alt="Telegram"
+                  className="h-6 w-6 object-contain"
+                />
+              </div>
+              <span className="text-xs">Telegram</span>
+            </button>
             <button
               onClick={handleWhatsAppShare}
               className="flex flex-col items-center"

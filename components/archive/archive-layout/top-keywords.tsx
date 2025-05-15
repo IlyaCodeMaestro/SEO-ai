@@ -1,85 +1,196 @@
-"use client"
+"use client";
 
-import { Info, Maximize2 } from "lucide-react"
+import { useState } from "react";
+import { Maximize2, Check, ChevronUp, ChevronDown } from "lucide-react";
 
 interface TopKeywordsProps {
-  keywords: { name: string; sku: string }[]
-  section: string
-  isExpanded: boolean
-  onToggle: (section: string) => void
-  isMobile: boolean
+  section: string;
+  isExpanded: boolean;
+  onToggle: (section: string) => void;
+  isMobile: boolean;
+  // Делаем keywords опциональным, так как теперь у нас есть мок данные
+  keywords?: { name: string; sku: string }[];
+  onMaximize?: (section: string, title: string) => void;
 }
 
-export function TopKeywords({ keywords, section, isExpanded, onToggle, isMobile }: TopKeywordsProps) {
+// Мок данные прямо в файле компонента
+const mockKeywords = [
+  {
+    name: "Фен для волос женский мощный с ионизацией",
+    sku: "379067832",
+  },
+  {
+    name: "Профессиональный фен для волос",
+    sku: "379067833",
+  },
+  {
+    name: "Фен для волос с диффузором",
+    sku: "379067834",
+  },
+];
+
+export function TopKeywords({
+  section,
+  isExpanded,
+  onToggle,
+  isMobile,
+  keywords = mockKeywords, // Используем мок данные по умолчанию
+  onMaximize,
+}: TopKeywordsProps) {
+  const [copied, setCopied] = useState<string | null>(null);
+
+  const handleCopy = (sku: string) => {
+    navigator.clipboard.writeText(sku);
+    setCopied(sku);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
   if (isMobile) {
     return (
-      <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
+      <div className="bg-[#f9f8f8] rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
-          <h3 className="font-medium text-sm mb-3">Ключевые слова ТОП карточек</h3>
+          <h3 className="font-medium text-sm mb-3 text-center">
+            Ключевые слова ТОП карточек
+          </h3>
           <div className="space-y-3">
-            {keywords.slice(0, isExpanded ? undefined : 1).map((keyword, index) => (
-              <div key={index} className="flex items-start">
-                <div className="w-10 h-10 bg-gray-200 rounded-lg mr-3 overflow-hidden flex-shrink-0">
-                  <img
-                    src={`/placeholder.svg?height=40&width=40&query=product`}
-                    alt="Product"
-                    className="w-full h-full object-cover"
-                  />
+            {keywords
+              .slice(0, isExpanded ? undefined : 1)
+              .map((keyword, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-[16px] p-3 flex items-start"
+                >
+                  <div className="w-14 h-14 bg-gray-200 rounded-lg mr-3 overflow-hidden flex-shrink-0">
+                    <img
+                      src={`/placeholder.svg?height=56&width=56&query=product`}
+                      alt="Product"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm leading-tight mb-2">{keyword.name}</p>
+                    <div className="flex items-center">
+                      <p className="text-base text-[#22C55E]">{keyword.sku}</p>
+                      <button
+                        onClick={() => handleCopy(keyword.sku)}
+                        className="ml-2"
+                        aria-label="Copy SKU"
+                      >
+                        {copied === keyword.sku ? (
+                          <Check className="h-4 w-4 text-[#22C55E]" />
+                        ) : (
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              x="4.5"
+                              y="4.5"
+                              width="15"
+                              height="15"
+                              rx="3"
+                              stroke="#22C55E"
+                              strokeWidth="1.5"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm leading-tight">{keyword.name}</p>
-                  <p className="text-xs text-blue-600 mt-1">{keyword.sku}</p>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
         <div className="flex justify-center pb-2">
           <button className="text-gray-400" onClick={() => onToggle(section)}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 10L4 6H12L8 10Z" fill="currentColor" />
-            </svg>
+            {isExpanded ? (
+              <ChevronUp className="h-5 w-5" />
+            ) : (
+              <ChevronDown className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="bg-[#f9f8f8]  dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
-        <h3 className="font-medium">Ключевые слова ТОП карточек</h3>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => onToggle(section)}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-          </button>
-        </div>
+    <div className="bg-[#f9f8f8] rounded-[20px] shadow-md overflow-hidden h-[225px]">
+      <div className="relative border-b px-4 py-3 flex flex-col sm:flex-row items-center">
+        <h3 className="text-center font-medium text-base mx-auto w-max">
+          Ключевые слова ТОП карточек
+        </h3>
+
+        <button
+          onClick={() =>
+            onMaximize &&
+            onMaximize("topKeywords", "Ключевые слова ТОП карточек")
+          }
+          className="p-1 rounded-full hover:bg-gray-100 sm:absolute sm:right-4 sm:top-1/2 sm:-translate-y-1/2"
+          aria-label="Развернуть"
+        >
+          <Maximize2 className="h-5 w-5 text-gray-500" />
+        </button>
       </div>
-      <div className="p-4">
+
+      <div className="p-4 overflow-auto">
         <div className="space-y-3">
-          {keywords.slice(0, isExpanded ? undefined : 1).map((keyword, index) => (
-            <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 flex items-start">
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded-full mr-3 overflow-hidden flex-shrink-0">
-                <img
-                  src={`/placeholder.svg?height=32&width=32&query=product`}
-                  alt="Product"
-                  className="w-full h-full object-cover"
-                />
+          {keywords
+            .slice(0, isExpanded ? undefined : 1)
+            .map((keyword, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-[16px] p-3 flex flex-col sm:flex-row items-center sm:items-start"
+              >
+                <div className="w-[60px] h-[60px] bg-gray-200 rounded-lg mb-3 sm:mb-0 sm:mr-3 overflow-hidden flex-shrink-0">
+                  <img
+                    src={`/placeholder.svg?height=60&width=60&query=hair dryer`}
+                    alt="Product"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0 text-center sm:text-left">
+                  <p className="text-base font-medium leading-tight mb-2">
+                    {keyword.name}
+                  </p>
+                  <div className="flex items-center justify-center sm:justify-start">
+                    <p className="text-base text-[#22C55E]">{keyword.sku}</p>
+                    <button
+                      onClick={() => handleCopy(keyword.sku)}
+                      className="ml-2"
+                      aria-label="Copy SKU"
+                    >
+                      {copied === keyword.sku ? (
+                        <Check className="h-4 w-4 text-[#22C55E]" />
+                      ) : (
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            x="4.5"
+                            y="4.5"
+                            width="15"
+                            height="15"
+                            rx="3"
+                            stroke="#22C55E"
+                            strokeWidth="1.5"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">{keyword.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">SKU: {keyword.sku}</p>
-              </div>
-              <button className="ml-2 flex-shrink-0">
-                <Info className="h-4 w-4 text-blue-500" />
-              </button>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

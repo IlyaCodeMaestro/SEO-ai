@@ -9,6 +9,13 @@ interface ArchiveViewProps {
   onSelectItem?: (item: any) => void;
 }
 
+function isMobileDevice() {
+  if (typeof window !== "undefined") {
+    return window.innerWidth < 768; // Common breakpoint for mobile devices
+  }
+  return false;
+}
+
 export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
   const { archivedItems, markItemAsRead } = useProcessingContext();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -45,6 +52,15 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
       })
     : [];
 
+  const scrollToTop = () => {
+    if (!isMobileDevice()) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const getItemStatus = (item: any) => {
     if (item.type === "both") return "Анализ и\nописание\nвыполнены";
     if (item.type === "analysis") return "Анализ\nвыполнен";
@@ -55,6 +71,7 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
     if (item.isNew) markItemAsRead(item.id);
     setSelectedItemId(item.id);
     if (onSelectItem) onSelectItem(item);
+    scrollToTop();
   };
 
   const checkScrollability = () => {

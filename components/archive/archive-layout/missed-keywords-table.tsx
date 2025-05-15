@@ -3,7 +3,7 @@
 import { ChevronDown, ChevronUp, Maximize2 } from "lucide-react";
 import React from "react";
 
-interface KeywordsTableProps {
+interface MissedKeywordsTableProps {
   title: string;
   keywords: { word: string; frequency: string }[];
   section: string;
@@ -19,29 +19,36 @@ interface KeywordsTableProps {
   isMobile: boolean;
 }
 
-export function IrrelevantKeywordsTable({
+export function MissedKeywordsTable({
   title,
   keywords,
   section,
   isExpanded,
   onToggle,
+  onCopy,
+  onShare,
+  copiedSection,
   textColorClass = "",
   isMobile,
-}: KeywordsTableProps) {
+}: MissedKeywordsTableProps) {
   const getContentForCopy = () => {
     return keywords.map((k) => `${k.word}: ${k.frequency}`).join("\n");
   };
 
   if (isMobile) {
     return (
-      <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
+      <div className="bg-[#f9f8f8] rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
-          <div className="flex items-center justify-center w-full mb-3">
-            <h3 className="font-medium text-sm text-center">{title}</h3>
+          {/* Simplified header with just the title */}
+          <div className="flex items-center justify-center mb-3">
+            <h3 className="text-sm font-medium text-center" title={title}>
+              {title}
+            </h3>
           </div>
 
+          {/* Sетка с ключевыми словами */}
           <div className="grid grid-cols-2 gap-x-4 text-sm">
-            <div className="font-medium mb-2">Нерелевант. слова</div>
+            <div className="font-medium mb-2">Ключевые слова</div>
             <div className="font-medium mb-2 text-right">Сумм. частотность</div>
 
             {keywords
@@ -60,6 +67,8 @@ export function IrrelevantKeywordsTable({
               ))}
           </div>
         </div>
+
+        {/* Keep the chevron icons for expand/collapse */}
         <div className="flex justify-center pb-2">
           <button
             className="text-gray-400 hover:text-gray-600"
@@ -78,9 +87,18 @@ export function IrrelevantKeywordsTable({
   }
 
   return (
-    <div className="bg-[#f9f8f8] dark:bg-gray-800 rounded-[20px] shadow-md overflow-hidden">
-      <div className="flex flex-col items-center p-4 border-b dark:border-gray-700 relative">
-        <h3 className="font-medium mb-2 text-center">{title}</h3>
+    <div
+      className={`bg-[#f9f8f8] dark:bg-gray-800 rounded-[20px] shadow-md overflow-hidden ${
+        !isExpanded ? "h-[220px]" : ""
+      }`}
+    >
+      <div className="p-4 border-b dark:border-gray-700 relative">
+        {/* Title in a single line */}
+        <h3 className="font-medium text-center mb-0">
+          Упущенные ключевые слова
+        </h3>
+
+        {/* Right side - only maximize icon */}
         <div className="absolute top-4 right-4">
           <button
             onClick={() => onToggle(section)}
@@ -90,9 +108,10 @@ export function IrrelevantKeywordsTable({
           </button>
         </div>
       </div>
-      <div className="p-4">
+
+      <div className="p-4 overflow-auto">
         <div className="grid grid-cols-2 gap-2 text-sm mb-2">
-          <span className="font-medium">Нерелевант. слова</span>
+          <span className="font-medium">Ключевые слова</span>
           <span className="font-medium text-right">Сумм. частотность</span>
         </div>
         {keywords.slice(0, isExpanded ? undefined : 2).map((keyword, index) => (

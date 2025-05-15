@@ -44,8 +44,15 @@ export function ArchiveHeader({
   }
 
   return (
-    <div className="flex items-center justify-between mb-3">
-      <div className="w-5"></div> {/* Пустой элемент для выравнивания */}
+    <div className="flex flex-col sm:flex-row items-center justify-between mb-3">
+      <div className="w-5 hidden sm:block"></div>{" "}
+      {/* Пустой элемент для выравнивания на десктопе */}
+      <h2 className="text-blue-600 font-medium text-xl mb-2 sm:mb-0 sm:hidden">
+        Архив
+      </h2>
+      <h3 className="text-gray-700 font-medium text-md mb-3 sm:mb-0 sm:hidden">
+        {getSubtitle()}
+      </h3>
       <button onClick={onClose} className="p-1" aria-label="Close">
         <X className="h-5 w-5" />
       </button>

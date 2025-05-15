@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState } from "react";
 import { useLanguage } from "../provider/language-provider";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -13,6 +15,9 @@ import { TopKeywords } from "./archive-layout/top-keywords";
 import { DescriptionBlock } from "./archive-layout/description-block";
 import { ConfirmationModal } from "./archive-layout/confirmation-modal";
 import { IrrelevantKeywordsTable } from "./archive-layout/irrelevant-keywords";
+import { MissedKeywordsTable } from "./archive-layout/missed-keywords-table";
+import { ArchiveItemDetailsModal } from "./archive-layout/block-modal";
+
 
 interface ArchiveItemDetailsProps {
   onClose: () => void;
@@ -29,9 +34,10 @@ interface ArchiveItemDetailsProps {
 
 export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
   const { t } = useLanguage();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 1060px)");
   const { addProcessingItem } = useProcessingContext();
   const [showModal, setShowModal] = useState(false);
+
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({
@@ -47,6 +53,12 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     title?: string;
   } | null>(null);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState<React.ReactNode | null>(
+    null
+  );
+  const [modalTitle, setModalTitle] = useState("");
 
   // Моковые данные для результатов анализа
   const analysisResults = {
@@ -147,10 +159,112 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     });
   };
 
+  const handleMaximize = (section: string, title: string) => {
+    setModalTitle(title);
+
+    // Set the content based on the section
+    let content;
+    switch (section) {
+      case "topKeywords":
+        content = (
+          <div className="p-4">
+            <TopKeywords
+              keywords={analysisResults.topKeywords}
+              section="topKeywords"
+              isExpanded={true}
+              onToggle={() => {}}
+              isMobile={false}
+            />
+          </div>
+        );
+        break;
+      // Other cases...
+      case "results":
+        content = (
+          <ResultsBlock
+            title="Результаты анализа"
+            rating={analysisResults.rating}
+            isMobile={false}
+            isExpanded={true}
+            onToggle={() => {}}
+            section="results"
+          />
+        );
+        break;
+      case "usedKeywords":
+        content = (
+          <KeywordsTable
+            title="Использованные ключевые слова"
+            keywords={analysisResults.usedKeywords}
+            section="usedKeywords"
+            isExpanded={true}
+            onToggle={() => {}}
+            onCopy={handleCopy}
+            onShare={handleShareKeywords}
+            copiedSection={copiedSection}
+            isMobile={false}
+          />
+        );
+        break;
+      case "irrelevantKeywords":
+        content = (
+          <IrrelevantKeywordsTable
+            title="Использованные нерелевантные слова"
+            keywords={analysisResults.irrelevantKeywords}
+            section="irrelevantKeywords"
+            isExpanded={true}
+            onToggle={() => {}}
+            onCopy={handleCopy}
+            onShare={handleShareKeywords}
+            copiedSection={copiedSection}
+            textColorClass="text-red-500"
+            isMobile={false}
+          />
+        );
+        break;
+      case "missedKeywords":
+        content = (
+          <MissedKeywordsTable
+            title="Упущенные ключевые слова"
+            keywords={analysisResults.missedKeywords}
+            section="missedKeywords"
+            isExpanded={true}
+            onToggle={() => {}}
+            onCopy={handleCopy}
+            onShare={handleShareKeywords}
+            copiedSection={copiedSection}
+            textColorClass="text-blue-500"
+            isMobile={false}
+          />
+        );
+        break;
+      case "description":
+        content = (
+          <DescriptionBlock
+            title="Описание карточки товара"
+            description={analysisResults.description}
+            section="description"
+            isExpanded={true}
+            onToggle={() => {}}
+            onCopy={handleCopy}
+            onShare={handleShareDescription}
+            copiedSection={copiedSection}
+            isMobile={false}
+          />
+        );
+        break;
+      default:
+        content = null;
+    }
+
+    setModalContent(content);
+    setModalOpen(true);
+  };
+
   const renderDesktopLayout = () => {
     return (
-      <div className="h-full  overflow-auto bg-white dark:bg-gray-900">
-        <div className="p-6">
+      <div className="h-full overflow-auto bg-white dark:bg-gray-900">
+        <div className="p-3 sm:p-6">
           {/* Заголовок с кнопкой закрытия */}
           <ArchiveHeader
             onClose={onClose}
@@ -165,56 +279,66 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
           {item.type === "analysis" && (
             <>
               {/* Двухколоночная сетка для анализа */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {/* Левая колонка */}
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Результаты анализа */}
                   <ResultsBlock
                     title="Результаты анализа"
                     rating={analysisResults.rating}
                     isMobile={false}
+                    isExpanded={expandedSections["results"]}
+                    onToggle={toggleSection}
+                    section="results"
+                    onMaximize={(title) => handleMaximize("results", title)}
                   />
                 </div>
 
                 {/* Правая колонка */}
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Использованные нерелевантные слова */}
-                  <IrrelevantKeywordsTable
-                    title="Использованные нерелевантные слова"
-                    keywords={analysisResults.irrelevantKeywords}
-                    section="irrelevantKeywords"
-                    isExpanded={expandedSections["irrelevantKeywords"]}
+                  <MissedKeywordsTable
+                    title="Упущенные ключевые слова"
+                    keywords={analysisResults.missedKeywords}
+                    section="missedKeywords"
+                    isExpanded={expandedSections["missed-keywords"]}
                     onToggle={toggleSection}
                     onCopy={handleCopy}
                     onShare={handleShareKeywords}
                     copiedSection={copiedSection}
-                    textColorClass="text-red-500"
+                    textColorClass="text-blue-500"
                     isMobile={false}
+                    onMaximize={(title) =>
+                      handleMaximize("missedKeywords", title)
+                    }
                   />
                 </div>
               </div>
 
               {/* Упущенные ключевые слова (на всю ширину внизу) */}
-              <div className="mt-6">
-                <KeywordsTable
-                  title="Упущенные ключевые слова"
-                  keywords={analysisResults.missedKeywords}
-                  section="missedKeywords"
-                  isExpanded={expandedSections["missedKeywords"]}
+              <div className="mt-4 sm:mt-6">
+                <IrrelevantKeywordsTable
+                  title="Использованные нерелевантные слова"
+                  keywords={analysisResults.irrelevantKeywords}
+                  section="irrelevantKeywords"
+                  isExpanded={expandedSections["irrelevantKeywords"]}
                   onToggle={toggleSection}
                   onCopy={handleCopy}
                   onShare={handleShareKeywords}
                   copiedSection={copiedSection}
-                  textColorClass="text-blue-500"
+                  textColorClass="text-red-500"
                   isMobile={false}
+                  onMaximize={(title) =>
+                    handleMaximize("irrelevantKeywords", title)
+                  }
                 />
               </div>
 
               {/* Кнопка "Написать описание" */}
-              <div className="flex justify-center mt-6">
+              <div className="flex justify-center mt-4 sm:mt-6">
                 <button
                   onClick={handleWriteDescription}
-                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full h-[45px] border border-white shadow-around inline-block px-8"
+                  className="bg-gradient-to-r from-[#0d52ff] to-[rgba(11,60,187,1)] text-white rounded-full h-[40px] sm:h-[45px] border border-white shadow-around inline-block px-6 sm:px-8 text-sm sm:text-base"
                   style={{ width: "fit-content" }}
                 >
                   {t("archive.write.description")}
@@ -226,7 +350,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
           {item.type === "description" && (
             <>
               {/* Двухколоночная сетка для описания */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {/* Левая колонка */}
                 <div>
                   <TopKeywords
@@ -235,6 +359,9 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                     isExpanded={expandedSections["topKeywords"]}
                     onToggle={toggleSection}
                     isMobile={false}
+                    onMaximize={(section, title) =>
+                      handleMaximize(section, title)
+                    }
                   />
                 </div>
 
@@ -250,12 +377,15 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                     onShare={handleShareKeywords}
                     copiedSection={copiedSection}
                     isMobile={false}
+                    onMaximize={(title) =>
+                      handleMaximize("usedKeywords", title)
+                    }
                   />
                 </div>
               </div>
 
               {/* Использованные ключевые слова (под двумя блоками) */}
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-6">
                 <DescriptionBlock
                   title="Описание карточки товара"
                   description={analysisResults.description}
@@ -266,6 +396,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                   onShare={handleShareDescription}
                   copiedSection={copiedSection}
                   isMobile={false}
+                  onMaximize={(title) => handleMaximize("description", title)}
                 />
               </div>
             </>
@@ -273,30 +404,35 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
 
           {item.type === "both" && (
             <>
-              {/* Двухколоночная сетка для анализа и описания */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Левая колонка */}
-                <div className="space-y-6">
-                  {/* Результаты анализа */}
+              {/* Общая двухколоночная сетка 2x2 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {/* Результаты анализа */}
+                <div className="space-y-4 sm:space-y-6">
                   <ResultsBlock
                     title="Результаты анализа"
                     rating={analysisResults.rating}
                     isMobile={false}
+                    isExpanded={expandedSections["results"]}
+                    onToggle={toggleSection}
+                    section="results"
+                    onMaximize={(title) => handleMaximize("results", title)}
                   />
                 </div>
 
-                {/* Правая колонка */}
-                <div className="space-y-6">
-                  {/* Использованные ключевые слова (уменьшенный) */}
-
-                  {/* Ключевые слова ТОП позиций */}
+                {/* Ключевые слова ТОП позиций */}
+                <div className="space-y-4 sm:space-y-6">
                   <TopKeywords
                     keywords={analysisResults.topKeywords}
                     section="topKeywords"
                     isExpanded={expandedSections["topKeywords"]}
                     onToggle={toggleSection}
                     isMobile={false}
+                    onMaximize={(title) => handleMaximize("topKeywords", title)}
                   />
+                </div>
+
+                {/* Использованные ключевые слова */}
+                <div className="space-y-4 sm:space-y-6">
                   <KeywordsTable
                     title="Использованные ключевые слова"
                     keywords={analysisResults.usedKeywords}
@@ -307,24 +443,28 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                     onShare={handleShareKeywords}
                     copiedSection={copiedSection}
                     isMobile={false}
+                    onMaximize={(title) =>
+                      handleMaximize("usedKeywords", title)
+                    }
                   />
                 </div>
-              </div>
 
-              {/* Описание карточки товара (на всю ширину внизу) */}
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <DescriptionBlock
-                  title="Описание карточки товара"
-                  description={analysisResults.description}
-                  section="description"
-                  isExpanded={expandedSections["description"]}
-                  onToggle={toggleSection}
-                  onCopy={handleCopy}
-                  onShare={handleShareDescription}
-                  copiedSection={copiedSection}
-                  fullWidth={true}
-                  isMobile={false}
-                />
+                {/* Описание карточки товара */}
+                <div className="space-y-4 sm:space-y-6">
+                  <DescriptionBlock
+                    title="Описание карточки товара"
+                    description={analysisResults.description}
+                    section="description"
+                    isExpanded={expandedSections["description"]}
+                    onToggle={toggleSection}
+                    onCopy={handleCopy}
+                    onShare={handleShareDescription}
+                    copiedSection={copiedSection}
+                    fullWidth={false} // убираем fullWidth, чтобы заняло только половину
+                    isMobile={false}
+                    onMaximize={(title) => handleMaximize("description", title)}
+                  />
+                </div>
               </div>
             </>
           )}
@@ -394,9 +534,26 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 title="Результаты анализа"
                 rating={analysisResults.rating}
                 isMobile={true}
+                isExpanded={expandedSections["results"]}
+                onToggle={toggleSection}
+                section="results"
               />
 
               {/* Использованные нерелевантные слова */}
+
+              {/* Упущенные ключевые слова */}
+              <MissedKeywordsTable
+                title="Упущенные ключевые слова"
+                keywords={analysisResults.missedKeywords}
+                section="missedKeywords"
+                isExpanded={expandedSections["missedKeywords"]}
+                onToggle={toggleSection}
+                onCopy={handleCopy}
+                onShare={handleShareKeywords}
+                copiedSection={copiedSection}
+                textColorClass="text-blue-500"
+                isMobile={true}
+              />
               <IrrelevantKeywordsTable
                 title="Использованные нерелевантные слова"
                 keywords={analysisResults.irrelevantKeywords}
@@ -409,21 +566,6 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 textColorClass="text-red-500"
                 isMobile={true}
               />
-
-              {/* Упущенные ключевые слова */}
-              <KeywordsTable
-                title="Упущенные ключевые слова"
-                keywords={analysisResults.missedKeywords}
-                section="missedKeywords"
-                isExpanded={expandedSections["missedKeywords"]}
-                onToggle={toggleSection}
-                onCopy={handleCopy}
-                onShare={handleShareKeywords}
-                copiedSection={copiedSection}
-                textColorClass="text-blue-500"
-                isMobile={true}
-              />
-
               {/* Кнопка "Написать описание" */}
               <div className="flex justify-center mt-6">
                 <button
@@ -444,6 +586,9 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
                 title="Результаты анализа"
                 rating={analysisResults.rating}
                 isMobile={true}
+                isExpanded={expandedSections["results"]}
+                onToggle={toggleSection}
+                section="results"
               />
 
               {/* Ключевые слова TOP позиций */}
@@ -507,6 +652,14 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
           onClose={() => setShareContent(null)}
         />
       )}
+      {/* Modal for maximized content */}
+      <ArchiveItemDetailsModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalTitle}
+      >
+        {modalContent}
+      </ArchiveItemDetailsModal>
     </div>
   );
 }

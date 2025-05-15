@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Maximize2, Share2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Maximize2, Share2 } from "lucide-react";
 import React from "react";
 
 interface KeywordsTableProps {
@@ -37,12 +37,44 @@ export function KeywordsTable({
 
   if (isMobile) {
     return (
-      <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
+      <div className="bg-[#f9f8f8] rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
-          <div className="flex items-center mb-3">
-            <h3 className="font-medium text-sm">{title}</h3>
+          {/* Верхняя строка: иконка - заголовок - иконка */}
+          <div className="relative flex items-center justify-between mb-3">
+            {/* Левая иконка копирования */}
+            <button
+              className="text-blue-600 z-10"
+              onClick={() =>
+                onCopy(keywords.map((k) => k.word).join(", "), section)
+              }
+              aria-label="Copy keywords"
+            >
+              <Copy
+                className={`h-4 w-4 ${
+                  copiedSection === section ? "text-green-500" : ""
+                }`}
+              />
+            </button>
+
+            {/* Заголовок — по центру, в одну строку, обрезается при переполнении */}
+            <h3
+              className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium  max-w-[70%] text-center"
+              title={title}
+            >
+              {title}
+            </h3>
+
+            {/* Правая иконка — поделиться */}
+            <button
+              className="text-blue-600 z-10"
+              onClick={() => onShare(keywords, title)}
+              aria-label="Share keywords"
+            >
+              <Share2 className="h-4 w-4" />
+            </button>
           </div>
 
+          {/* Сетка с ключевыми словами */}
           <div className="grid grid-cols-2 gap-x-4 text-sm">
             <div className="font-medium mb-2">Ключевые слова</div>
             <div className="font-medium mb-2 text-right">Сумм. частотность</div>
@@ -63,17 +95,19 @@ export function KeywordsTable({
               ))}
           </div>
         </div>
+
+        {/* Иконка расширения / сворачивания */}
         <div className="flex justify-center pb-2">
-          <button className="text-gray-400" onClick={() => onToggle(section)}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M8 10L4 6H12L8 10Z" fill="currentColor" />
-            </svg>
+          <button
+            className="text-gray-400 hover:text-gray-600"
+            onClick={() => onToggle(section)}
+            aria-label={isExpanded ? "Collapse" : "Expand"}
+          >
+            {isExpanded ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>
@@ -81,30 +115,32 @@ export function KeywordsTable({
   }
 
   return (
-    <div className="bg-[#f9f8f8] dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700 relative">
-        {/* Левая часть — Copy и Maximize2 */}
-        <div className="flex items-center space-x-2">
-          <Copy
-            className={`h-5 w-5 ${
-              copiedSection === section ? "text-green-500" : "text-blue-500"
-            }`}
-          />
-          <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-        </div>
-
-        {/* Центр — заголовок, абсолютно по центру */}
-        <h3 className="absolute left-1/2 transform -translate-x-1/2 font-medium">
-          {title}
-        </h3>
-
-        {/* Правая часть — иконки */}
-        <div className="flex items-center space-x-2">
+    <div className="bg-[#f9f8f8] dark:bg-gray-800 rounded-[20px] shadow-md overflow-hidden h-[225px]">
+      <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-b dark:border-gray-700 relative">
+        {/* Левая часть — только копирование */}
+        <div className="flex items-center space-x-2 mb-2 sm:mb-0 z-10">
           <button
             onClick={() => onCopy(getContentForCopy(), section)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             aria-label="Copy keywords"
-          ></button>
+          >
+            <Copy
+              className={`h-5 w-5 ${
+                copiedSection === section ? "text-green-500" : "text-blue-500"
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Центр — заголовок, абсолютно по центру на десктопе, обычный на мобильном */}
+        <h3 className="font-medium text-center leading-tight mb-2 sm:mb-0 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2">
+          Использованные
+          <br />
+          ключевые слова
+        </h3>
+
+        {/* Правая часть — поделиться + расширение */}
+        <div className="flex items-center space-x-2 z-10">
           <button
             onClick={() => onShare(keywords, title)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -115,11 +151,13 @@ export function KeywordsTable({
           <button
             onClick={() => onToggle(section)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-          ></button>
+          >
+            <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          </button>
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 overflow-auto">
         <div className="grid grid-cols-2 gap-2 text-sm mb-2">
           <span className="font-medium">Ключевые слова</span>
           <span className="font-medium text-right">Сумм. частотность</span>

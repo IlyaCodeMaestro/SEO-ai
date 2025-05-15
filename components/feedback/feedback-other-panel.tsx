@@ -66,7 +66,7 @@ export function FeedbackOtherPanel({ onClose }: FeedbackOtherPanelProps) {
             >
               <span>Написать в</span>
               <Image
-                src="/telegram-logo.png"
+                src="icons//telegram-logo.png"
                 alt="Telegram"
                 width={20}
                 height={20}
