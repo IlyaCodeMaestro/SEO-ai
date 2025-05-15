@@ -63,14 +63,14 @@ export function BonusExchangePanel({ onClose }: BonusExchangePanelProps) {
   return (
     <div className="h-full flex flex-col justify-start bg-white px-4 md:px-0">
       {/* Заголовок с кнопкой закрытия */}
-      <div className="flex items-center justify-between mt-3">
+      <div className="flex items-center justify-between ">
         {isMobile ? (
           <>
-            <button onClick={onClose} className="p-1" aria-label="Back">
+            <button onClick={onClose} className="p-1 mt-3" aria-label="Back">
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div className="flex-1 text-center">
-              <h2 className="text-xl font-medium text-blue-600">
+              <h2 className="text-xl font-medium text-blue-600 mt-3">
                 Личный кабинет
               </h2>
             </div>
@@ -186,7 +186,7 @@ export function BonusExchangePanel({ onClose }: BonusExchangePanelProps) {
 
       {/* Модальные окна */}
       {showExchangeConfirm && (
-        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center pb-56">
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center pb-56 rounded-3xl">
           <div
             className="absolute inset-0"
             onClick={handleExchangeCancel}
@@ -204,7 +204,7 @@ export function BonusExchangePanel({ onClose }: BonusExchangePanelProps) {
       )}
 
       {showTransferCard && (
-        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center rounded-3xl">
           <div
             className="absolute inset-0"
             onClick={() => setShowTransferCard(false)}
@@ -222,7 +222,7 @@ export function BonusExchangePanel({ onClose }: BonusExchangePanelProps) {
       )}
 
       {showTransferConfirm && (
-        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center rounded-3xl">
           <div
             className="absolute inset-0"
             onClick={handleTransferCancel}

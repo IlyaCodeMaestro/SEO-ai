@@ -35,7 +35,7 @@ export function DeleteAccountPanel({ onClose }: DeleteAccountPanelProps) {
     <div className="h-full flex flex-col justify-start bg-white dark:bg-[rgba(0,0,0,0.25)] px-4 md:px-0">
       {/* Модалка с затемнённым фоном */}
       {showConfirmModal && (
-        <div className="absolute pb-64 inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="absolute pb-64 inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 rounded-3xl">
           <div className="bg-white rounded-xl p-6 max-w-xs w-full mx-4 dark:bg-[rgba(0,0,0,0.25)]">
             <p className="text-center font-medium mb-6">
               {t("cabinet.confirm.delete")}

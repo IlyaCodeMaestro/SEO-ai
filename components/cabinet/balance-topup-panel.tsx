@@ -30,7 +30,7 @@ export function BalanceTopupPanel({ onClose }: BalanceTopupPanelProps) {
   return (
     <div className="h-full flex flex-col bg-white px-4 py-6 max-w-2xl mx-auto ">
       {/* Header */}
-      <div className="flex items-center mb-3">
+      <div className="flex items-center">
         {isMobile ? (
           <>
             <button onClick={onClose} className="p-1" aria-label="Back">

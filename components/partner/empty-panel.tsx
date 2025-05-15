@@ -61,7 +61,7 @@ export default function EmptyPartnerPanel({ onClose }: EmptyPanelProps) {
       {shareContent && (
         <div
           onClick={onClose}
-          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50 "
+          className="absolute inset-0 flex items-center justify-center  bg-black bg-opacity-30 z-50 "
         >
           <ShareMenuWithoutCopy
             content={shareContent.content}

@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp, Copy, Maximize2, Share2 } from "lucide-react";
+import Image from "next/image";
 
 interface DescriptionBlockProps {
   title: string;
@@ -13,6 +14,7 @@ interface DescriptionBlockProps {
   copiedSection: string | null;
   fullWidth?: boolean;
   isMobile: boolean;
+  onMaximize?: (title: string) => void;
 }
 
 export function DescriptionBlock({
@@ -26,6 +28,7 @@ export function DescriptionBlock({
   copiedSection,
   fullWidth = false,
   isMobile,
+  onMaximize,
 }: DescriptionBlockProps) {
   if (isMobile) {
     return (
@@ -60,7 +63,13 @@ export function DescriptionBlock({
               onClick={onShare}
               aria-label="Share description"
             >
-              <Share2 className="h-4 w-4" />
+              <Image
+                src="/icons/free-icon-share-8162990.png"
+                alt="Share"
+                width={16}
+                height={16}
+                className="h-4 w-4"
+              />
             </button>
           </div>
 
@@ -121,16 +130,24 @@ export function DescriptionBlock({
 
         {/* Правые иконки */}
         <div className="sm:ml-auto flex items-center space-x-2 z-10">
+          {/* Правая иконка */}
           <button
+            className="text-blue-600 z-10"
             onClick={onShare}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             aria-label="Share description"
           >
-            <Share2 className="h-5 w-5 text-blue-500" />
+            <Image
+              src="/icons/free-icon-share-8162990.png"
+              alt="Share"
+              width={16}
+              height={16}
+              className="h-6 w-6"
+            />
           </button>
           <button
-            onClick={() => onToggle(section)}
+            onClick={() => onMaximize && onMaximize(title)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="Maximize"
           >
             <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>

@@ -17,6 +17,7 @@ interface KeywordsTableProps {
   copiedSection: string | null;
   textColorClass?: string;
   isMobile: boolean;
+  onMaximize?: (title: string) => void;
 }
 
 export function IrrelevantKeywordsTable({
@@ -27,6 +28,7 @@ export function IrrelevantKeywordsTable({
   onToggle,
   textColorClass = "",
   isMobile,
+  onMaximize,
 }: KeywordsTableProps) {
   const getContentForCopy = () => {
     return keywords.map((k) => `${k.word}: ${k.frequency}`).join("\n");
@@ -34,7 +36,7 @@ export function IrrelevantKeywordsTable({
 
   if (isMobile) {
     return (
-      <div className="bg-[#f9f8f8]  rounded-xl shadow-md overflow-hidden">
+      <div className="bg-[#f9f8f8] rounded-xl shadow-md overflow-hidden">
         <div className="p-4">
           <div className="flex items-center justify-center w-full mb-3">
             <h3 className="font-medium text-sm text-center">{title}</h3>
@@ -49,7 +51,7 @@ export function IrrelevantKeywordsTable({
               .map((keyword, index) => (
                 <React.Fragment key={index}>
                   <div
-                    className={`text-sm py-2 border-t border-gray-100 ${textColorClass}`}
+                    className={`text-sm py-2 border-t border-gray-100 text-blue-500`}
                   >
                     {keyword.word}
                   </div>
@@ -83,8 +85,9 @@ export function IrrelevantKeywordsTable({
         <h3 className="font-medium mb-2 text-center">{title}</h3>
         <div className="absolute top-4 right-4">
           <button
-            onClick={() => onToggle(section)}
+            onClick={() => (onMaximize ? onMaximize(title) : onToggle(section))}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="Maximize"
           >
             <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
@@ -100,7 +103,7 @@ export function IrrelevantKeywordsTable({
             key={index}
             className="grid grid-cols-2 gap-2 text-sm py-1 border-b border-gray-100 dark:border-gray-700"
           >
-            <span className={`${textColorClass} truncate`}>{keyword.word}</span>
+            <span className={`text-blue-500 truncate`}>{keyword.word}</span>
             <span className="text-right">{keyword.frequency}</span>
           </div>
         ))}

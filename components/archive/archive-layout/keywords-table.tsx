@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp, Copy, Maximize2, Share2 } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 interface KeywordsTableProps {
@@ -17,6 +18,7 @@ interface KeywordsTableProps {
   copiedSection: string | null;
   textColorClass?: string;
   isMobile: boolean;
+  onMaximize?: (title: string) => void;
 }
 
 export function KeywordsTable({
@@ -30,6 +32,7 @@ export function KeywordsTable({
   copiedSection,
   textColorClass = "",
   isMobile,
+  onMaximize,
 }: KeywordsTableProps) {
   const getContentForCopy = () => {
     return keywords.map((k) => `${k.word}: ${k.frequency}`).join("\n");
@@ -65,12 +68,19 @@ export function KeywordsTable({
             </h3>
 
             {/* Правая иконка — поделиться */}
+            {/* Правая иконка */}
             <button
               className="text-blue-600 z-10"
               onClick={() => onShare(keywords, title)}
-              aria-label="Share keywords"
+              aria-label="Share description"
             >
-              <Share2 className="h-4 w-4" />
+              <Image
+                src="/icons/free-icon-share-8162990.png"
+                alt="Share"
+                width={16}
+                height={16}
+                className="h-4 w-4"
+              />
             </button>
           </div>
 
@@ -141,16 +151,25 @@ export function KeywordsTable({
 
         {/* Правая часть — поделиться + расширение */}
         <div className="flex items-center space-x-2 z-10">
+          {/* Правая иконка */}
           <button
+            className="text-blue-600 z-10"
             onClick={() => onShare(keywords, title)}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-            aria-label="Share keywords"
+            aria-label="Share description"
           >
-            <Share2 className="h-5 w-5 text-blue-500" />
+            <Image
+              src="/icons/free-icon-share-8162990.png"
+              alt="Share"
+              width={16}
+              height={16}
+              className="h-6 w-6"
+            />
           </button>
+
           <button
-            onClick={() => onToggle(section)}
+            onClick={() => onMaximize && onMaximize(title)}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="Maximize"
           >
             <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>

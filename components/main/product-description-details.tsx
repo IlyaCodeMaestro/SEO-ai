@@ -182,7 +182,7 @@ export function ProductDescriptionDetails({
         <div className="absolute inset-0 z-50 flex items-center justify-center">
           {/* Затемнение только вокруг модального окна */}
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/50 rounded-3xl"
             onClick={() => setShowModal(false)}
           ></div>
 

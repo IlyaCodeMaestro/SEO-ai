@@ -1,8 +1,8 @@
 "use client";
 
-import type React from "react";
+import React from "react";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../provider/language-provider";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { ShareMenu } from "../shared/share-menu";
@@ -16,8 +16,8 @@ import { DescriptionBlock } from "./archive-layout/description-block";
 import { ConfirmationModal } from "./archive-layout/confirmation-modal";
 import { IrrelevantKeywordsTable } from "./archive-layout/irrelevant-keywords";
 import { MissedKeywordsTable } from "./archive-layout/missed-keywords-table";
+import { Check, Copy, Share2, Star } from "lucide-react";
 import { ArchiveItemDetailsModal } from "./archive-layout/block-modal";
-
 
 interface ArchiveItemDetailsProps {
   onClose: () => void;
@@ -37,6 +37,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
   const isMobile = useMediaQuery("(max-width: 1060px)");
   const { addProcessingItem } = useProcessingContext();
   const [showModal, setShowModal] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
@@ -59,6 +60,16 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     null
   );
   const [modalTitle, setModalTitle] = useState("");
+  const [currentSection, setCurrentSection] = useState<string | null>(null);
+
+  // Prevent scrolling of the archive-item-details when modal is open
+  useEffect(() => {
+    if (modalOpen && containerRef.current) {
+      containerRef.current.style.overflow = "hidden";
+    } else if (containerRef.current) {
+      containerRef.current.style.overflow = "auto";
+    }
+  }, [modalOpen]);
 
   // Моковые данные для результатов анализа
   const analysisResults = {
@@ -159,98 +170,258 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
     });
   };
 
+  // Function to get color based on rating
+  const getRatingColor = (rating: number) => {
+    if (rating < 2.5) return "text-red-500";
+    if (rating < 3.5) return "text-yellow-500";
+    return "text-green-500";
+  };
+
   const handleMaximize = (section: string, title: string) => {
     setModalTitle(title);
+    setCurrentSection(section);
 
     // Set the content based on the section
     let content;
     switch (section) {
       case "topKeywords":
         content = (
-          <div className="p-4">
-            <TopKeywords
-              keywords={analysisResults.topKeywords}
-              section="topKeywords"
-              isExpanded={true}
-              onToggle={() => {}}
-              isMobile={false}
-            />
+          <div>
+            <div className="bg-[#f9f8f8] rounded-[20px] shadow-md">
+              <div className="p-6">
+                <div className="space-y-4">
+                  {analysisResults.topKeywords.map((keyword, index) => (
+                    <div
+                      key={index}
+                      className="bg-white rounded-[16px] p-4 flex items-start"
+                    >
+                      <div className="w-[80px] h-[80px] bg-gray-200 rounded-lg mr-4 overflow-hidden flex-shrink-0">
+                        <img
+                          src={`/placeholder.svg?height=80&width=80&query=hair dryer`}
+                          alt="Product"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-lg font-medium leading-tight mb-3">
+                          {keyword.name}
+                        </p>
+                        <div className="flex items-center">
+                          <p className="text-lg text-[#22C55E]">
+                            {keyword.sku}
+                          </p>
+                          <button
+                            onClick={() =>
+                              handleCopy(keyword.sku, "topKeywords")
+                            }
+                            className="ml-2"
+                            aria-label="Copy SKU"
+                          >
+                            {copiedSection === "topKeywords" ? (
+                              <Check className="h-5 w-5 text-[#22C55E]" />
+                            ) : (
+                              <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <rect
+                                  x="4.5"
+                                  y="4.5"
+                                  width="15"
+                                  height="15"
+                                  rx="3"
+                                  stroke="#22C55E"
+                                  strokeWidth="1.5"
+                                />
+                              </svg>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         );
         break;
-      // Other cases...
       case "results":
         content = (
-          <ResultsBlock
-            title="Результаты анализа"
-            rating={analysisResults.rating}
-            isMobile={false}
-            isExpanded={true}
-            onToggle={() => {}}
-            section="results"
-          />
+          <div className="bg-[#f9f8f8] rounded-[20px] shadow-md">
+            <div className="p-6">
+              <div className="flex items-center justify-center mb-6"></div>
+
+              <div className="flex items-center justify-center mb-6">
+                <div className="flex items-center">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`h-8 w-8 ${
+                          star <= Math.round(analysisResults.rating)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300 dark:text-gray-600"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="ml-2 text-2xl font-bold text-gray-600 dark:text-gray-400">
+                    {analysisResults.rating.toFixed(1)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-white rounded-[16px] p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 dark:text-gray-300 text-lg">
+                      Видимость:
+                    </span>
+                    <span className="font-medium text-lg">60 %</span>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-[16px] p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 dark:text-gray-300 text-lg">
+                      Присутствие ключевых слов:
+                    </span>
+                    <span className="font-medium text-lg">70 %</span>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-[16px] p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 dark:text-gray-300 text-lg">
+                      Упущено ключевых слов:
+                    </span>
+                    <span className="font-medium text-lg">10</span>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-[16px] p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 dark:text-gray-300 text-lg">
+                      Упущенный охват:
+                    </span>
+                    <span className="font-medium text-lg">45 678 900</span>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-[16px] p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700 dark:text-gray-300 text-lg">
+                      Наличие нерелевантных слов:
+                    </span>
+                    <span className="font-medium text-lg">13</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         );
         break;
       case "usedKeywords":
         content = (
-          <KeywordsTable
-            title="Использованные ключевые слова"
-            keywords={analysisResults.usedKeywords}
-            section="usedKeywords"
-            isExpanded={true}
-            onToggle={() => {}}
-            onCopy={handleCopy}
-            onShare={handleShareKeywords}
-            copiedSection={copiedSection}
-            isMobile={false}
-          />
+          <div>
+            <div className="bg-[#f9f8f8] rounded-[20px] shadow-md">
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="font-medium text-lg">Ключевые слова</div>
+                  <div className="font-medium text-lg text-right">
+                    Сумм. частотность
+                  </div>
+                  {analysisResults.usedKeywords.map((keyword, index) => (
+                    <React.Fragment key={index}>
+                      <div className="bg-white rounded-[16px] p-4">
+                        <p className="text-lg">{keyword.word}</p>
+                      </div>
+                      <div className="bg-white rounded-[16px] p-4">
+                        <p className="text-lg text-right text-gray-500">
+                          {keyword.frequency}
+                        </p>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         );
         break;
       case "irrelevantKeywords":
         content = (
-          <IrrelevantKeywordsTable
-            title="Использованные нерелевантные слова"
-            keywords={analysisResults.irrelevantKeywords}
-            section="irrelevantKeywords"
-            isExpanded={true}
-            onToggle={() => {}}
-            onCopy={handleCopy}
-            onShare={handleShareKeywords}
-            copiedSection={copiedSection}
-            textColorClass="text-red-500"
-            isMobile={false}
-          />
+          <div>
+            <div className="bg-[#f9f8f8] rounded-[20px] shadow-md">
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="font-medium text-lg">Нерелевант. слова</div>
+                  <div className="font-medium text-lg text-right">
+                    Сумм. частотность
+                  </div>
+                  {analysisResults.irrelevantKeywords.map((keyword, index) => (
+                    <React.Fragment key={index}>
+                      <div className="bg-white rounded-[16px] p-4">
+                        <p className="text-lg text-blue-600">{keyword.word}</p>
+                      </div>
+                      <div className="bg-white rounded-[16px] p-4">
+                        <p className="text-lg text-right text-gray-500">
+                          {keyword.frequency}
+                        </p>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         );
         break;
       case "missedKeywords":
         content = (
-          <MissedKeywordsTable
-            title="Упущенные ключевые слова"
-            keywords={analysisResults.missedKeywords}
-            section="missedKeywords"
-            isExpanded={true}
-            onToggle={() => {}}
-            onCopy={handleCopy}
-            onShare={handleShareKeywords}
-            copiedSection={copiedSection}
-            textColorClass="text-blue-500"
-            isMobile={false}
-          />
+          <div>
+            <div className="bg-[#f9f8f8] rounded-[20px] shadow-md">
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="font-medium text-lg">Ключевые слова</div>
+                  <div className="font-medium text-lg text-right">
+                    Сумм. частотность
+                  </div>
+                  {analysisResults.missedKeywords.map((keyword, index) => (
+                    <React.Fragment key={index}>
+                      <div className="bg-white rounded-[16px] p-4">
+                        <p className="text-lg text-blue-500">{keyword.word}</p>
+                      </div>
+                      <div className="bg-white rounded-[16px] p-4">
+                        <p className="text-lg text-right text-gray-500">
+                          {keyword.frequency}
+                        </p>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         );
         break;
       case "description":
         content = (
-          <DescriptionBlock
-            title="Описание карточки товара"
-            description={analysisResults.description}
-            section="description"
-            isExpanded={true}
-            onToggle={() => {}}
-            onCopy={handleCopy}
-            onShare={handleShareDescription}
-            copiedSection={copiedSection}
-            isMobile={false}
-          />
+          <div>
+            <div className="bg-[#f9f8f8] rounded-[20px] shadow-md">
+              <div className="p-6">
+                <div className="bg-white rounded-[16px] p-6">
+                  <p className="text-lg leading-relaxed whitespace-pre-wrap">
+                    {analysisResults.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         );
         break;
       default:
@@ -263,7 +434,10 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
 
   const renderDesktopLayout = () => {
     return (
-      <div className="h-full overflow-auto bg-white dark:bg-gray-900">
+      <div
+        className="h-full overflow-auto bg-white dark:bg-gray-900"
+        ref={containerRef}
+      >
         <div className="p-3 sm:p-6">
           {/* Заголовок с кнопкой закрытия */}
           <ArchiveHeader
@@ -476,7 +650,10 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
   // Мобильная версия (обновленная)
   const renderMobileLayout = () => {
     return (
-      <div className="h-full overflow-auto bg-white dark:bg-gray-900">
+      <div
+        className="h-full overflow-auto bg-white dark:bg-gray-900"
+        ref={containerRef}
+      >
         <div className="p-4">
           {/* Заголовок с кнопкой закрытия */}
           <ArchiveHeader
@@ -652,6 +829,7 @@ export function ArchiveItemDetails({ onClose, item }: ArchiveItemDetailsProps) {
           onClose={() => setShareContent(null)}
         />
       )}
+
       {/* Modal for maximized content */}
       <ArchiveItemDetailsModal
         isOpen={modalOpen}

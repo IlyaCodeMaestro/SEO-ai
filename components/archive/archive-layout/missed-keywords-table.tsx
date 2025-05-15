@@ -1,22 +1,20 @@
-"use client";
+"use client"
 
-import { ChevronDown, ChevronUp, Maximize2 } from "lucide-react";
-import React from "react";
+import { ChevronDown, ChevronUp, Maximize2 } from "lucide-react"
+import React from "react"
 
 interface MissedKeywordsTableProps {
-  title: string;
-  keywords: { word: string; frequency: string }[];
-  section: string;
-  isExpanded: boolean;
-  onToggle: (section: string) => void;
-  onCopy: (content: string, section: string) => void;
-  onShare: (
-    keywords: { word: string; frequency: string }[],
-    title: string
-  ) => void;
-  copiedSection: string | null;
-  textColorClass?: string;
-  isMobile: boolean;
+  title: string
+  keywords: { word: string; frequency: string }[]
+  section: string
+  isExpanded: boolean
+  onToggle: (section: string) => void
+  onCopy: (content: string, section: string) => void
+  onShare: (keywords: { word: string; frequency: string }[], title: string) => void
+  copiedSection: string | null
+  textColorClass?: string
+  isMobile: boolean
+  onMaximize?: (title: string) => void
 }
 
 export function MissedKeywordsTable({
@@ -25,15 +23,13 @@ export function MissedKeywordsTable({
   section,
   isExpanded,
   onToggle,
-  onCopy,
-  onShare,
-  copiedSection,
   textColorClass = "",
   isMobile,
+  onMaximize,
 }: MissedKeywordsTableProps) {
   const getContentForCopy = () => {
-    return keywords.map((k) => `${k.word}: ${k.frequency}`).join("\n");
-  };
+    return keywords.map((k) => `${k.word}: ${k.frequency}`).join("\n")
+  }
 
   if (isMobile) {
     return (
@@ -51,20 +47,12 @@ export function MissedKeywordsTable({
             <div className="font-medium mb-2">Ключевые слова</div>
             <div className="font-medium mb-2 text-right">Сумм. частотность</div>
 
-            {keywords
-              .slice(0, isExpanded ? undefined : 3)
-              .map((keyword, index) => (
-                <React.Fragment key={index}>
-                  <div
-                    className={`text-sm py-2 border-t border-gray-100 ${textColorClass}`}
-                  >
-                    {keyword.word}
-                  </div>
-                  <div className="text-sm py-2 border-t border-gray-100 text-right">
-                    {keyword.frequency}
-                  </div>
-                </React.Fragment>
-              ))}
+            {keywords.slice(0, isExpanded ? undefined : 3).map((keyword, index) => (
+              <React.Fragment key={index}>
+                <div className={`text-sm py-2 border-t border-gray-100 ${textColorClass}`}>{keyword.word}</div>
+                <div className="text-sm py-2 border-t border-gray-100 text-right">{keyword.frequency}</div>
+              </React.Fragment>
+            ))}
           </div>
         </div>
 
@@ -75,15 +63,11 @@ export function MissedKeywordsTable({
             onClick={() => onToggle(section)}
             aria-label={isExpanded ? "Collapse" : "Expand"}
           >
-            {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
+            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -94,15 +78,14 @@ export function MissedKeywordsTable({
     >
       <div className="p-4 border-b dark:border-gray-700 relative">
         {/* Title in a single line */}
-        <h3 className="font-medium text-center mb-0">
-          Упущенные ключевые слова
-        </h3>
+        <h3 className="font-medium text-center mb-0">Упущенные ключевые слова</h3>
 
         {/* Right side - only maximize icon */}
         <div className="absolute top-4 right-4">
           <button
-            onClick={() => onToggle(section)}
+            onClick={() => (onMaximize ? onMaximize(title) : onToggle(section))}
             className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="Maximize"
           >
             <Maximize2 className="h-5 w-5 text-gray-500 dark:text-gray-400" />
           </button>
@@ -125,5 +108,5 @@ export function MissedKeywordsTable({
         ))}
       </div>
     </div>
-  );
+  )
 }

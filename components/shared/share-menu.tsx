@@ -55,7 +55,7 @@ export function ShareMenu({ content, title, onClose }: ShareMenuProps) {
   };
 
   return (
-    <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center">
+    <div className="absolute inset-0 bg-black/50 z-50 flex items-center justify-center rounded-3xl">
       <div
         ref={menuRef}
         className="bg-white dark:bg-gray-800 rounded-xl shadow-lg max-w-xs w-full mx-4 overflow-hidden"

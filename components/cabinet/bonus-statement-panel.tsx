@@ -50,13 +50,13 @@ export function BonusStatementPanel({ onClose }: BalanceHistoryPanelProps) {
   return (
     <div className="h-full flex flex-col bg-white px-4 max-w-2xl mx-auto">
       {/* Заголовок с кнопкой закрытия */}
-      <div className="flex items-center mb-3">
+      <div className="flex items-center">
         {isMobile ? (
           <>
-            <button onClick={onClose} className="p-1" aria-label="Back">
+            <button onClick={onClose} className="p-1 mt-3" aria-label="Back">
               <ArrowLeft className="h-6 w-6" />
             </button>
-            <h1 className="text-xl font-medium text-center flex-1 pr-4 text-blue-600">
+            <h1 className="text-xl font-medium text-center flex-1 pr-4 text-blue-600 mt-3">
               Личный кабинет
             </h1>
           </>
