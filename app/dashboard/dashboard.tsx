@@ -34,6 +34,7 @@ import { ProcessingView } from "@/components/main/processing-view";
 import PartnerStandardPanel from "@/components/partner/partner-premium-panel";
 import PartnerPremiumPanel from "@/components/partner/partner-standard-panel";
 import EmptyPartnerPanel from "@/components/partner/empty-panel";
+import { usePostCardMutation, useStartAnalysisMutation, useStartDescriptionMutation } from "@/store/services/main";
 
 type ActivePanel =
   | null
@@ -84,6 +85,10 @@ export function Dashboard() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [shareContent, setShareContent] = useState({ title: "", content: "" });
+  const [postCard, { isLoading, error, data }] = usePostCardMutation();
+  const [startAnalysis, { isLoading: analysisIsLoading, error: analysingError, data: analysingData }] = useStartAnalysisMutation();
+  const [startDescription, { isLoading: descriptionIsLoading, error: descriptionError, data: descriptionData }] = useStartDescriptionMutation();
+  const [cardId, setCardId] = useState<null | number>(null);
 
   // Регистрируем глобальные функции для открытия панелей
   useEffect(() => {
@@ -164,20 +169,33 @@ export function Dashboard() {
     setSelectedArchiveItem(null);
   };
 
-  const handleAnalysisFormSubmit = (data: {
+  const handleAnalysisFormSubmit = async (data: {
     sku: string;
     competitorSku: string;
   }) => {
     setProductData(data);
-    setAnalysisStep("details");
+    try {
+      const result = await postCard({ top_article: +data?.competitorSku, article: +data?.sku, type_id: 1 }).unwrap();
+      setCardId(result?.card.id)
+      setAnalysisStep("details");
+      
+    } catch (e) {
+      console.log(e)
+    }
   };
 
-  const handleDescriptionFormSubmit = (data: {
+  const handleDescriptionFormSubmit = async(data: {
     sku: string;
     competitorSku: string;
   }) => {
     setProductData(data);
-    setDescriptionStep("details");
+    try {
+      const result = await postCard({ top_article: +data?.competitorSku, article: +data?.sku, type_id: 2 }).unwrap();
+      setCardId(result?.card.id)
+      setDescriptionStep("details");
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   const handleStartAnalysis = () => {
@@ -188,22 +206,40 @@ export function Dashboard() {
     setDescriptionStep("modal");
   };
 
-  const handleAnalysisModalContinue = () => {
+  const handleAnalysisModalContinue = async () => {
     // Добавляем элемент в очередь обработки
     // const { addProcessingItem } = useProcessingContext()
     addProcessingItem("analysis", productData);
+    try {
+      if (cardId) {
+        const response = await startAnalysis({ card_id: +cardId }).unwrap();
 
-    // Переходим на страницу обработки
-    setActivePanel("processing");
+        // Переходим на страницу обработки
+        
+        setActivePanel("processing");
+        setCardId(null)
+      }
+    } catch (e) {
+      console.log(e)
+    }
   };
 
-  const handleDescriptionModalContinue = () => {
+  const handleDescriptionModalContinue = async() => {
     // Добавляем элемент в очередь обработки
     // const { addProcessingItem } = useProcessingContext()
     addProcessingItem("description", productData);
+    try {
+      if (cardId) {
+        const response = await startDescription({ card_id: +cardId }).unwrap();
 
-    // Переходим на страницу обработки
-    setActivePanel("processing");
+        // Переходим на страницу обработки
+        
+        setCardId(null)
+        setActivePanel("processing");
+      }
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   const handleBackToAnalysisDetails = () => {
@@ -411,9 +447,8 @@ export function Dashboard() {
       {/* Правая панель - по умолчанию пустая */}
       <div className="flex-1 max-w-[1000px] relative ml-6 md:ml-8 lg:ml-10 xl:ml-12">
         <div
-          className={`w-full bg-white rounded-[25px] mt-[30px] ${
-            isFeedbackPanel ? "max-w-[1100px]" : ""
-          }`}
+          className={`w-full bg-white rounded-[25px] mt-[30px] ${isFeedbackPanel ? "max-w-[1100px]" : ""
+            }`}
         >
           {renderRightContent()}
         </div>
