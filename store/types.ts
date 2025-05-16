@@ -83,3 +83,150 @@ export interface IResponseStartDescription {
         "result": boolean
     }
 }
+
+// Add this new interface for the card analysis response
+export interface ICardAnalysisResponse {
+  card: {
+    article: string
+    brand: string
+    name: string
+    images: Array<{
+      image: string
+    }>
+    status_id: number
+    type_id: number
+    id: number
+  }
+  button: {
+    text: string
+    visible: boolean
+  }
+  output: any // Placeholder for IOutput until it is declared or imported
+}
+
+// Add this new interface for the card description response
+export interface ICardDescriptionResponse {
+  card: {
+    article: string
+    brand: string
+    name: string
+    images: Array<{
+      image: string
+    }>
+    status_id: number
+    type_id: number
+    id: number
+  }
+  button: {
+    text: string
+    visible: boolean
+  }
+  output: {
+    message_kk: string
+    message_en: string
+    message_ru: string
+    message: string
+    result: boolean
+  }
+}
+
+
+
+
+
+// Placeholder declaration for ICardDate
+type ICardDate = {}
+
+// Add this new interface for the card analysis response
+export interface ICardAnalysisResponse {
+  card: {
+    article: string
+    brand: string
+    name: string
+    images: Array<{
+      image: string
+    }>
+    status_id: number
+    type_id: number
+    id: number
+  }
+  button: {
+    text: string
+    visible: boolean
+  }
+  output: any // Placeholder for IOutput until it is declared or imported
+}
+
+// Add this new interface for the card description response
+export interface ICardDescriptionResponse {
+  card: {
+    article: string
+    brand: string
+    name: string
+    images: Array<{
+      image: string
+    }>
+    status_id: number
+    type_id: number
+    id: number
+  }
+  button: {
+    text: string
+    visible: boolean
+  }
+  output: {
+    message_kk: string
+    message_en: string
+    message_ru: string
+    message: string
+    result: boolean
+  }
+}
+
+
+
+// Update the IProcessResponse interface to allow card_dates to be null
+export interface IProcessResponse {
+  card_dates: ICardDate[] | null
+  output: {
+    message_kk: string
+    message_en: string
+    message_ru: string
+    message: string
+    result: boolean
+  }
+}
+
+
+
+// Add this new interface for the archive response
+export interface IArchiveResponse {
+  card_dates: IArchiveCardDate[]
+  output: {
+    message_kk: string
+    message_en: string
+    message_ru: string
+    message: string
+    result: boolean
+  }
+}
+
+export interface IArchiveCardDate {
+  cards: IArchiveCard[]
+  date: string
+  id: number
+}
+
+export interface IArchiveCard {
+  article: string
+  name: string
+  images: Array<{
+    image: string
+  }>
+  type: string
+  status: string
+  status_color: string
+  badge_visible: boolean
+  type_id: number
+  id: number
+}

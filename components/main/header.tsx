@@ -70,11 +70,11 @@ export function Header() {
     <div
       className={`w-full ${
         isMobile
-          ? "bg-gray-200 h-[65px] shadow-md"
-          : "bg-[#F6F6F6] h-[110px] shadow-md"
-      } relative z-20 border-b border-gray-200`}
+          ? "bg-gray-200 dark:bg-[#2C2B2B] h-[65px] shadow-md"
+          : "bg-[#F6F6F6] dark:bg-[#2C2B2B] h-[110px] shadow-md"
+      } relative z-20 border-b border-gray-200 dark:border-gray-700`}
     >
-      <div className="container mx-auto px-2 md:px-4 lg:px-6 xl:px-8 h-full relative">
+      <div className="container mx-auto px-2 md:px-4 lg:px-6 xl:px-8 h-full relative ">
         {/* Логотип - разные размеры для мобильной и десктопной версий */}
         <div
           className={`${
@@ -115,7 +115,7 @@ export function Header() {
                   <div className="flex flex-col p-4 space-y-2">
                     <button
                       className={`text-left py-3 px-4 rounded-md ${
-                        activeTab === "main" ? "text-blue-600 bg-blue-50" : ""
+                        activeTab === "main" ? "text-blue-600 bg-blue-50 dark:bg-[#3D3D3D]" : ""
                       }`}
                       onClick={() => handleTabChange("main")}
                     >
@@ -124,7 +124,7 @@ export function Header() {
                     <button
                       className={`text-left py-3 px-4 rounded-md relative ${
                         activeTab === "archive"
-                          ? "text-blue-600 bg-blue-50"
+                          ? "text-blue-600 bg-blue-50 dark:bg-[#3D3D3D]"
                           : ""
                       }`}
                       onClick={() => handleTabChange("archive")}
@@ -137,7 +137,7 @@ export function Header() {
                     <button
                       className={`text-left py-3 px-4 rounded-md ${
                         activeTab === "notifications"
-                          ? "text-blue-600 bg-blue-50"
+                          ? "text-blue-600 bg-blue-50 dark:bg-[#3D3D3D]"
                           : ""
                       }`}
                       onClick={() => handleTabChange("notifications")}
@@ -147,7 +147,7 @@ export function Header() {
                     <button
                       className={`text-left py-3 px-4 rounded-md ${
                         activeTab === "cabinet"
-                          ? "text-blue-600 bg-blue-50"
+                          ? "text-blue-600 bg-blue-50 dark:bg-[#3D3D3D]"
                           : ""
                       }`}
                       onClick={() => handleTabChange("cabinet")}
@@ -157,7 +157,7 @@ export function Header() {
                     <button
                       className={`text-left py-3 px-4 rounded-md ${
                         activeTab === "partner"
-                          ? "text-blue-600 bg-blue-50"
+                          ? "text-blue-600 bg-blue-50 dark:bg-[#3D3D3D]"
                           : ""
                       }`}
                       onClick={() => handleTabChange("partner")}
@@ -167,7 +167,7 @@ export function Header() {
                     <button
                       className={`text-left py-3 px-4 rounded-md ${
                         activeTab === "feedback"
-                          ? "text-blue-600 bg-blue-50"
+                          ? "text-blue-600 bg-blue-50 dark:bg-[#3D3D3D]"
                           : ""
                       }`}
                       onClick={() => handleTabChange("feedback")}
@@ -185,26 +185,26 @@ export function Header() {
                         onValueChange={(value) =>
                           value && setLanguage(value as "kz" | "ru" | "en")
                         }
-                        className="border rounded-full p-0.5 bg-gray-200"
+                        className="border rounded-full p-0.5 bg-gray-200 dark:bg-[#4D4D4D]"
                       >
                         <ToggleGroupItem
                           value="kz"
                           aria-label="Казахский"
-                          className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8"
+                          className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8 dark:bg-[#4D4D4D] dark:data-[state=on]:bg-black "
                         >
                           Каз
                         </ToggleGroupItem>
                         <ToggleGroupItem
                           value="ru"
                           aria-label="Русский"
-                          className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8"
+                          className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8 dark:bg-[#4D4D4D] dark:data-[state=on]:bg-black "
                         >
                           Рус
                         </ToggleGroupItem>
                         <ToggleGroupItem
                           value="en"
                           aria-label="Английский"
-                          className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8"
+                          className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8 dark:bg-[#4D4D4D] dark:data-[state=on]:bg-black "
                         >
                           Eng
                         </ToggleGroupItem>
@@ -213,7 +213,7 @@ export function Header() {
 
                     <div className="flex justify-between items-center mt-4">
                       <span className="text-sm text-gray-500">Тема:</span>
-                      <div className="flex items-center border rounded-full p-0.5 bg-gray-200">
+                      <div className="flex items-center border rounded-full p-0.5 bg-gray-200 dark:bg-[#4D4D4D]">
                         <Button
                           variant="ghost"
                           size="icon"
@@ -222,7 +222,7 @@ export function Header() {
                             theme === "dark" ? "opacity-50" : "bg-white"
                           }`}
                         >
-                          <Sun className="h-4 w-4" />
+                          <Sun className="h-4 w-4 text-black stroke-black fill-white" />
                           <span className="sr-only">Light mode</span>
                         </Button>
                         <Button
@@ -233,7 +233,7 @@ export function Header() {
                             theme === "light" ? "opacity-50" : "bg-gray-800"
                           }`}
                         >
-                          <Moon className="  h-4 w-4 text-black stroke-black fill-white " />
+                          <Moon className="  h-4 w-4 text-black stroke-black fill-white" />
                           <span className="sr-only">Dark mode</span>
                         </Button>
                       </div>
@@ -253,33 +253,33 @@ export function Header() {
                 onValueChange={(value) =>
                   value && setLanguage(value as "kz" | "ru" | "en")
                 }
-                className="border rounded-full p-0.5 bg-gray-200"
+                className="border rounded-full p-0.5 bg-gray-200 dark:bg-[#4D4D4D]"
               >
                 {" "}
                 <ToggleGroupItem
                   value="kz"
                   aria-label="Казахский"
-                  className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8"
+                  className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8  dark:data-[state=on]:bg-black"
                 >
                   Каз
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="ru"
                   aria-label="Русский"
-                  className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8"
+                  className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8 dark:data-[state=on]:bg-black"
                 >
                   Рус
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="en"
                   aria-label="Английский"
-                  className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8"
+                  className="text-xs px-1.5 py-0.5 rounded-full data-[state=on]:bg-white h-6 w-8 dark:data-[state=on]:bg-black"
                 >
                   Eng
                 </ToggleGroupItem>
               </ToggleGroup>
 
-              <div className="flex items-center border rounded-full p-0.5 bg-gray-200 ml-8">
+              <div className="flex items-center border rounded-full p-0.5 bg-gray-200 dark:bg-[#4D4D4D] ml-8">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -297,7 +297,7 @@ export function Header() {
                   size="icon"
                   onClick={() => handleThemeChange("dark")}
                   className={`rounded-full h-6 w-6 ${
-                    theme === "light" ? "opacity-50" : "bg-gray-800"
+                    theme === "light" ? "opacity-50" : "bg-black"
                   }`}
                 >
                   <Moon className="  h-4 w-4 text-black stroke-black fill-white" />

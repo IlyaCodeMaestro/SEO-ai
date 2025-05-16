@@ -1,201 +1,198 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState } from "react"
+import type React from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
+import {
+  useGetProcessListQuery,
+  useGetArchiveQuery,
+} from "@/store/services/main";
 
 // Определяем тип элемента истории обработки
 export type ProcessingHistoryItem = {
-  id: string
-  sku: string
-  competitorSku: string
-  type: "analysis" | "description" | "both"
-  status: "processing" | "completed"
-  timestamp: number
-  name: string
-  isNew?: boolean
-}
+  id: string;
+  sku: string;
+  competitorSku: string;
+  type: "analysis" | "description";
+  status: "processing" | "completed";
+  timestamp: number;
+  name: string;
+  cardId?: number;
+  cardData?: any; // Store the complete card data
+};
 
 type ProcessingContextType = {
-  processingItems: ProcessingHistoryItem[]
-  archivedItems: ProcessingHistoryItem[]
-  hasNewItems: boolean
-  addProcessingItem: (type: "analysis" | "description" | "both", data: { sku: string; competitorSku: string }) => void
-  clearNewItems: () => void
-  updateItemType: (sku: string, newType: "analysis" | "description" | "both") => void
-  markItemAsRead: (id: string) => void
-}
+  processingItems: ProcessingHistoryItem[];
+  hasNewItems: boolean;
+  addProcessingItem: (
+    type: "analysis" | "description",
+    data: {
+      sku: string;
+      competitorSku: string;
+      cardId?: number;
+      cardData?: any;
+    }
+  ) => void;
+  clearNewItems: () => void;
+  processedCardIds: number[];
+  clearProcessedCardIds: () => void;
+};
 
-const ProcessingContext = createContext<ProcessingContextType | undefined>(undefined)
+const ProcessingContext = createContext<ProcessingContextType | undefined>(
+  undefined
+);
 
-// Функция для генерации случайного названия товара
-const generateProductName = () => {
-  const types = ["Футболка", "Куртка", "Джинсы", "Рубашка", "Свитер"]
-  const genders = ["мужская", "женская", "детская", "унисекс"]
-  const colors = ["синяя", "черная", "белая", "красная", "зеленая"]
+export function ProcessingProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [processingItems, setProcessingItems] = useState<
+    ProcessingHistoryItem[]
+  >([]);
+  const [hasNewItems, setHasNewItems] = useState(false);
+  const [processedCardIds, setProcessedCardIds] = useState<number[]>([]);
 
-  const type = types[Math.floor(Math.random() * types.length)]
-  const gender = genders[Math.floor(Math.random() * genders.length)]
-  const color = colors[Math.floor(Math.random() * colors.length)]
+  // Use RTK Query hooks for polling
+  const { data: processData, refetch: refetchProcessList } =
+    useGetProcessListQuery(undefined, {
+      pollingInterval: 5000, // Poll every 5 seconds
+    });
 
-  return `${type} ${gender} ${color}`
-}
+  const { data: archiveData, refetch: refetchArchive } = useGetArchiveQuery(1, {
+    pollingInterval: 5000, // Poll every 5 seconds
+  });
 
-// Моковые данные для истории обработки
-const mockArchivedItems: ProcessingHistoryItem[] = [
-  {
-    id: "1",
-    sku: "36545961",
-    competitorSku: "16962800",
-    type: "description",
-    status: "completed",
-    timestamp: Date.now() - 86400000, // 1 day ago
-    name: "Тапочки домашние чуни закрытые",
-  },
-  {
-    id: "2",
-    sku: "258466777",
-    competitorSku: "51588463",
-    type: "analysis",
-    status: "completed",
-    timestamp: Date.now() - 172800000, // 2 days ago
-    name: "Утюг паровой для глажки с отпаривателем",
-  },
-]
+  // Store a ref to the current processing items for use in the polling effect
+  const processingItemsRef = useRef(processingItems);
+  useEffect(() => {
+    processingItemsRef.current = processingItems;
+  }, [processingItems]);
 
-// Изменяем логику обработки и добавления в архив
+  // Clear localStorage on initial load to start with an empty archive
+  useEffect(() => {
+    localStorage.removeItem("processedCardIds");
+    setProcessedCardIds([]);
+  }, []);
 
-export function ProcessingProvider({ children }: { children: React.ReactNode }) {
-  const [processingItems, setProcessingItems] = useState<ProcessingHistoryItem[]>([])
-  const [archivedItems, setArchivedItems] = useState<ProcessingHistoryItem[]>(mockArchivedItems)
-  const [hasNewItems, setHasNewItems] = useState(false)
+  // Check if any processing items have been completed based on API status
+  useEffect(() => {
+    if (!archiveData || processingItems.length === 0) return;
+
+    // Check all card dates in archive
+    const currentProcessingItems = [...processingItemsRef.current];
+    let updatedProcessingItems = [...currentProcessingItems];
+    const newProcessedCardIds = [...processedCardIds];
+    let hasChanges = false;
+
+    // Go through each card in the archive
+    archiveData.card_dates.forEach((dateGroup) => {
+      dateGroup.cards.forEach((card) => {
+        // Find matching processing item
+        const processingItem = currentProcessingItems.find(
+          (item) => item.cardId === card.id
+        );
+
+        if (processingItem) {
+          // Check if card is completed (status 3 = "завершен успешно")
+          if (card.status_id === 3 || card.status === "выполнен") {
+            console.log(
+              `Card ID ${card.id} has been processed and is now in the archive`
+            );
+
+            // Remove from processing items
+            updatedProcessingItems = updatedProcessingItems.filter(
+              (procItem) => procItem.id !== processingItem.id
+            );
+
+            // Add to processed card IDs if not already there
+            if (!newProcessedCardIds.includes(card.id)) {
+              newProcessedCardIds.push(card.id);
+              hasChanges = true;
+            }
+          }
+        }
+      });
+    });
+
+    // Update state if changes were made
+    if (updatedProcessingItems.length !== currentProcessingItems.length) {
+      setProcessingItems(updatedProcessingItems);
+      setHasNewItems(true);
+    }
+
+    if (hasChanges) {
+      setProcessedCardIds(newProcessedCardIds);
+      localStorage.setItem(
+        "processedCardIds",
+        JSON.stringify(newProcessedCardIds)
+      );
+    }
+  }, [archiveData, processedCardIds]);
 
   const addProcessingItem = async (
-    type: "analysis" | "description" | "both",
-    data: { sku: string; competitorSku: string },
+    type: "analysis" | "description",
+    data: {
+      sku: string;
+      competitorSku: string;
+      cardId?: number;
+      cardData?: any;
+    }
   ) => {
-    // Проверяем, есть ли уже элемент с таким SKU в обработке
-    const existingProcessingItem = processingItems.find((item) => item.sku === data.sku)
+    // Generate a unique ID for this processing item
+    const uniqueId = `${Date.now()}-${type}-${data.sku}`;
 
-    // Проверяем, есть ли уже элемент с таким SKU в архиве
-    const existingArchivedItem = archivedItems.find((item) => item.sku === data.sku)
-
-    // Если элемент с таким SKU уже есть в обработке
-    if (existingProcessingItem) {
-      // Если тип совпадает, ничего не делаем
-      if (existingProcessingItem.type === type) {
-        return
-      }
-
-      // Если тип не совпадает, обновляем тип на "both"
-      setProcessingItems((prev) => prev.map((item) => (item.sku === data.sku ? { ...item, type: "both" } : item)))
-      return
-    }
-
-    // Если элемент с таким SKU уже есть в архиве
-    if (existingArchivedItem) {
-      // Удаляем из архива
-      setArchivedItems((prev) => prev.filter((item) => item.sku !== data.sku))
-
-      // Определяем новый тип
-      let newType = type
-      if (existingArchivedItem.type !== type && existingArchivedItem.type !== "both") {
-        newType = "both"
-      }
-
-      // Создаем новый элемент в обработке
-      const newItem: ProcessingHistoryItem = {
-        id: Date.now().toString(),
-        sku: data.sku,
-        competitorSku: data.competitorSku,
-        type: newType,
-        status: "processing",
-        timestamp: Date.now(),
-        name: existingArchivedItem.name,
-      }
-
-      setProcessingItems((prev) => [...prev, newItem])
-
-      // Имитация завершения обработки через 5 секунд
-      setTimeout(() => {
-        // Удаляем из обработки
-        setProcessingItems((prev) => prev.filter((item) => item.id !== newItem.id))
-
-        // Добавляем в архив
-        const completedItem = { ...newItem, status: "completed", isNew: true }
-        setArchivedItems((prev) => [completedItem, ...prev])
-
-        // Устанавливаем флаг новых элементов
-        if (window.location.hash !== "#archive") {
-          setHasNewItems(true)
-        }
-      }, 5000)
-
-      return
-    }
-
-    // Если элемента с таким SKU нет ни в обработке, ни в архиве
+    // Create a new item with data from API
     const newItem: ProcessingHistoryItem = {
-      id: Date.now().toString(),
+      id: uniqueId,
       sku: data.sku,
       competitorSku: data.competitorSku,
       type,
-      status: "processing",
+      status: "processing", // Status 2 = "в обработке"
       timestamp: Date.now(),
-      name: generateProductName(),
-    }
+      name: data.cardData?.name || "",
+      cardId: data.cardId,
+      cardData: data.cardData,
+    };
 
-    setProcessingItems((prev) => [...prev, newItem])
+    // Add the new item to the processing list
+    setProcessingItems((prev) => [...prev, newItem]);
 
-    // Имитация завершения обработки через 5 секунд
-    setTimeout(() => {
-      // Удаляем из обработки
-      setProcessingItems((prev) => prev.filter((item) => item.id !== newItem.id))
+    // Immediately trigger a refetch of the process list and archive
+    refetchProcessList();
+    refetchArchive();
+  };
 
-      // Добавляем в архив
-      const completedItem = { ...newItem, status: "completed", isNew: true }
-      setArchivedItems((prev) => [completedItem, ...prev])
-
-      // Устанавливаем флаг новых элементов
-      if (window.location.hash !== "#archive") {
-        setHasNewItems(true)
-      }
-    }, 5000)
-  }
-
-  // Остальные функции остаются без изменений
   const clearNewItems = () => {
-    setHasNewItems(false)
-  }
+    setHasNewItems(false);
+  };
 
-  const updateItemType = (sku: string, newType: "analysis" | "description" | "both") => {
-    setArchivedItems((prev) => prev.map((item) => (item.sku === sku ? { ...item, type: newType } : item)))
-  }
-
-  const markItemAsRead = (id: string) => {
-    setArchivedItems((prev) => prev.map((item) => (item.id === id ? { ...item, isNew: false } : item)))
-  }
+  const clearProcessedCardIds = () => {
+    setProcessedCardIds([]);
+    localStorage.removeItem("processedCardIds");
+  };
 
   return (
     <ProcessingContext.Provider
       value={{
         processingItems,
-        archivedItems,
         hasNewItems,
         addProcessingItem,
         clearNewItems,
-        updateItemType,
-        markItemAsRead,
+        processedCardIds,
+        clearProcessedCardIds,
       }}
     >
       {children}
     </ProcessingContext.Provider>
-  )
+  );
 }
 
 export function useProcessingContext() {
-  const context = useContext(ProcessingContext)
+  const context = useContext(ProcessingContext);
   if (context === undefined) {
-    throw new Error("useProcessingContext must be used within a ProcessingProvider")
+    throw new Error(
+      "useProcessingContext must be used within a ProcessingProvider"
+    );
   }
-  return context
+  return context;
 }

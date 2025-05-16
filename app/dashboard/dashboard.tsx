@@ -34,7 +34,11 @@ import { ProcessingView } from "@/components/main/processing-view";
 import PartnerStandardPanel from "@/components/partner/partner-premium-panel";
 import PartnerPremiumPanel from "@/components/partner/partner-standard-panel";
 import EmptyPartnerPanel from "@/components/partner/empty-panel";
-import { usePostCardMutation, useStartAnalysisMutation, useStartDescriptionMutation } from "@/store/services/main";
+import {
+  usePostCardMutation,
+  useStartAnalysisMutation,
+  useStartDescriptionMutation,
+} from "@/store/services/main";
 
 type ActivePanel =
   | null
@@ -86,8 +90,22 @@ export function Dashboard() {
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [shareContent, setShareContent] = useState({ title: "", content: "" });
   const [postCard, { isLoading, error, data }] = usePostCardMutation();
-  const [startAnalysis, { isLoading: analysisIsLoading, error: analysingError, data: analysingData }] = useStartAnalysisMutation();
-  const [startDescription, { isLoading: descriptionIsLoading, error: descriptionError, data: descriptionData }] = useStartDescriptionMutation();
+  const [
+    startAnalysis,
+    {
+      isLoading: analysisIsLoading,
+      error: analysingError,
+      data: analysingData,
+    },
+  ] = useStartAnalysisMutation();
+  const [
+    startDescription,
+    {
+      isLoading: descriptionIsLoading,
+      error: descriptionError,
+      data: descriptionData,
+    },
+  ] = useStartDescriptionMutation();
   const [cardId, setCardId] = useState<null | number>(null);
 
   // Регистрируем глобальные функции для открытия панелей
@@ -175,26 +193,33 @@ export function Dashboard() {
   }) => {
     setProductData(data);
     try {
-      const result = await postCard({ top_article: +data?.competitorSku, article: +data?.sku, type_id: 1 }).unwrap();
-      setCardId(result?.card.id)
+      const result = await postCard({
+        top_article: +data?.competitorSku,
+        article: +data?.sku,
+        type_id: 1,
+      }).unwrap();
+      setCardId(result?.card.id);
       setAnalysisStep("details");
-      
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
 
-  const handleDescriptionFormSubmit = async(data: {
+  const handleDescriptionFormSubmit = async (data: {
     sku: string;
     competitorSku: string;
   }) => {
     setProductData(data);
     try {
-      const result = await postCard({ top_article: +data?.competitorSku, article: +data?.sku, type_id: 2 }).unwrap();
-      setCardId(result?.card.id)
+      const result = await postCard({
+        top_article: +data?.competitorSku,
+        article: +data?.sku,
+        type_id: 2,
+      }).unwrap();
+      setCardId(result?.card.id);
       setDescriptionStep("details");
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
 
@@ -215,16 +240,16 @@ export function Dashboard() {
         const response = await startAnalysis({ card_id: +cardId }).unwrap();
 
         // Переходим на страницу обработки
-        
+
         setActivePanel("processing");
-        setCardId(null)
+        setCardId(null);
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
 
-  const handleDescriptionModalContinue = async() => {
+  const handleDescriptionModalContinue = async () => {
     // Добавляем элемент в очередь обработки
     // const { addProcessingItem } = useProcessingContext()
     addProcessingItem("description", productData);
@@ -233,12 +258,12 @@ export function Dashboard() {
         const response = await startDescription({ card_id: +cardId }).unwrap();
 
         // Переходим на страницу обработки
-        
-        setCardId(null)
+
+        setCardId(null);
         setActivePanel("processing");
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
 
@@ -418,8 +443,8 @@ export function Dashboard() {
     // Если есть активная панель, показываем только её
     if (activePanel) {
       return (
-        <div className="flex flex-1 justify-center w-full min-h-[calc(100vh-65px)]">
-          <div className="w-full bg-white rounded-none">
+        <div className="flex flex-1 justify-center w-full min-h-[calc(100vh-65px)] ">
+          <div className="w-full bg-white  rounded-none">
             {renderRightContent()}
           </div>
         </div>
@@ -429,7 +454,7 @@ export function Dashboard() {
     // Иначе показываем только левый блок
     return (
       <div className="flex flex-1 justify-center w-full min-h-[calc(100vh-65px)] ">
-        <div className="w-full bg-[#F6F6F6] rounded-none ">
+        <div className="w-full bg-[#F6F6F6] rounded-none dark:bg-[#404040]">
           {renderLeftContent()}
         </div>
       </div>
@@ -441,14 +466,15 @@ export function Dashboard() {
     <div className="flex flex-1 w-full max-w-[1380px] mx-auto px-2 md:px-4 lg:px-6 xl:px-8 min-h-[calc(100vh-110px)] h-full">
       {/* Левая панель - всегда видима */}
 
-      <div className="w-[450px] bg-[#f9f8f8] rounded-[25px] mt-[30px] z-10 border shadow-md">
+      <div className="w-[450px] bg-[#f9f8f8] rounded-[25px] mt-[30px] z-10 border shadow-md dark:bg-[#2C2B2B]">
         {renderLeftContent()}
       </div>
       {/* Правая панель - по умолчанию пустая */}
       <div className="flex-1 max-w-[1000px] relative ml-6 md:ml-8 lg:ml-10 xl:ml-12">
         <div
-          className={`w-full bg-white rounded-[25px] mt-[30px] ${isFeedbackPanel ? "max-w-[1100px]" : ""
-            }`}
+          className={`w-full bg-white rounded-[25px] mt-[30px] ${
+            isFeedbackPanel ? "max-w-[1100px]" : ""
+          }`}
         >
           {renderRightContent()}
         </div>

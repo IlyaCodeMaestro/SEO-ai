@@ -4,10 +4,18 @@ import { Input } from "@/components/ui/input";
 import { X, ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useMediaQuery } from "@/hooks/use-media-query";
+// Добавить импорт хука usePostCardMutation и useState для обработки состояния загрузки и ответа
+import { useState } from "react";
+import { usePostCardMutation } from "@/store/services/main";
 
+// Обновить интерфейс ProductAnalysisFormProps, чтобы включить обработку ответа от API
 interface ProductAnalysisFormProps {
   onClose: () => void;
-  onSubmit: (data: { sku: string; competitorSku: string }) => void;
+  onSubmit: (data: {
+    sku: string;
+    competitorSku: string;
+    cardId?: number;
+  }) => void;
 }
 
 export function ProductAnalysisForm({
@@ -26,19 +34,44 @@ export function ProductAnalysisForm({
     },
   });
 
-  const onFormSubmit = (data) => {
-    onSubmit(data);
+  // Добавить состояние для обработки ошибок и загрузки
+  const [error, setError] = useState("");
+  const [postCard, { isLoading }] = usePostCardMutation();
+
+  // Обновить функцию onFormSubmit, чтобы она вызывала метод postCard
+  const onFormSubmit = async (data) => {
+    try {
+      // Вызываем API метод postCard с нужными параметрами
+      const response = await postCard({
+        top_article: 15203053,
+        article: 173867721,
+        type_id: 2,
+      }).unwrap();
+
+      // Если запрос успешен, передаем данные формы и ID карточки в родительский компонент
+      if (response.output.result) {
+        onSubmit({
+          ...data,
+          cardId: response.card.id,
+        });
+      } else {
+        // Если запрос не успешен, показываем сообщение об ошибке
+        setError(response.output.message_ru);
+      }
+    } catch (error) {
+      console.error("Error calling postCard:", error);
+      setError("Произошла ошибка при обработке запроса");
+    }
   };
-  
 
   return (
-    <div className="h-full relative">
+    <div className="h-full relative dark:bg-[#333333]">
       {/* Кнопка закрытия (X) в правом верхнем углу - только для десктопа */}
       {!isMobile && (
         <div className="p-6">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:bg-[#333333]"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -61,7 +94,9 @@ export function ProductAnalysisForm({
 
           {/* Подзаголовок с отступом */}
           <div className="text-center mb-8 mt-6">
-            <h2 className="text-black font-medium text-xl">Анализ карточки товара</h2>
+            <h2 className="text-black font-medium text-xl dark:text-white">
+              Анализ карточки товара
+            </h2>
           </div>
 
           {/* Форма */}
@@ -79,7 +114,7 @@ export function ProductAnalysisForm({
                     }`}
                     placeholder="SKU (анализируемый товар)"
                     autoFocus
-                    {...register("", { required: true })}
+                    {...register("sku", { required: true })}
                   />
                   {errors.sku && (
                     <p className="text-red-500 text-xs mt-1 text-center">
@@ -125,10 +160,14 @@ export function ProductAnalysisForm({
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[45px] border border-white shadow-custom inline-block px-8"
+                  disabled={isLoading}
                 >
-                  Продолжить
+                  {isLoading ? "Загрузка..." : "Продолжить"}
                 </Button>
               </div>
+              {error && (
+                <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+              )}
             </form>
           </div>
         </div>
@@ -203,10 +242,14 @@ export function ProductAnalysisForm({
               <Button
                 type="submit"
                 className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[45px] border border-white shadow-custom inline-block px-8"
+                disabled={isLoading}
               >
-                Продолжить
+                {isLoading ? "Загрузка..." : "Продолжить"}
               </Button>
             </div>
+            {error && (
+              <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+            )}
           </form>
         </div>
       )}

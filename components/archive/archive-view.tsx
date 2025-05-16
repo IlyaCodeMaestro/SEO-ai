@@ -1,8 +1,11 @@
 "use client";
-import { format } from "date-fns";
+
+import { format, parseISO } from "date-fns";
 import { ru } from "date-fns/locale";
 import { FileText, Inbox } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
+import { useGetArchiveQuery } from "@/store/services/main";
+import { Button } from "@/components/ui/button";
 import { useProcessingContext } from "../main/processing-provider";
 
 interface ArchiveViewProps {
@@ -17,40 +20,49 @@ function isMobileDevice() {
 }
 
 export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
-  const { archivedItems, markItemAsRead } = useProcessingContext();
+  const { processedCardIds, clearProcessedCardIds } = useProcessingContext();
+  const {
+    data: archiveData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetArchiveQuery(1, {
+    pollingInterval: 10000, // Poll every 10 seconds
+  });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+
+  console.log("Processed card IDs:", processedCardIds);
+
+  // Filter archive data to only show items that have been processed by the user
+  const filteredArchiveData = archiveData && {
+    ...archiveData,
+    card_dates: archiveData.card_dates
+      .map((dateGroup) => ({
+        ...dateGroup,
+        cards: dateGroup.cards.filter((card) =>
+          processedCardIds.includes(card.id)
+        ),
+      }))
+      .filter((dateGroup) => dateGroup.cards.length > 0),
+  };
 
   // Функция для безопасной проверки пустого архива
   const isArchiveEmpty = () => {
     return (
-      !archivedItems ||
-      !Array.isArray(archivedItems) ||
-      archivedItems.length === 0
+      !filteredArchiveData ||
+      !filteredArchiveData.card_dates ||
+      filteredArchiveData.card_dates.length === 0 ||
+      processedCardIds.length === 0
     );
   };
 
-  // Группировка элементов по дате, если архив не пуст
-  const groupedItems = !isArchiveEmpty()
-    ? archivedItems.reduce((acc, item) => {
-        const date = format(new Date(item.timestamp), "d MMMM", { locale: ru });
-        if (!acc[date]) acc[date] = [];
-        acc[date].push(item);
-        return acc;
-      }, {} as Record<string, typeof archivedItems>)
-    : {};
-
-  // Сортировка дат, если архив не пуст
-  const sortedDates = !isArchiveEmpty()
-    ? Object.keys(groupedItems).sort((a, b) => {
-        const dateA = new Date(groupedItems[a][0].timestamp);
-        const dateB = new Date(groupedItems[b][0].timestamp);
-        return dateB.getTime() - dateA.getTime();
-      })
-    : [];
+  const handleClearArchive = () => {
+    clearProcessedCardIds();
+  };
 
   const scrollToTop = () => {
     if (!isMobileDevice()) {
@@ -62,13 +74,12 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
   };
 
   const getItemStatus = (item: any) => {
-    if (item.type === "both") return "Анализ и\nописание\nвыполнены";
-    if (item.type === "analysis") return "Анализ\nвыполнен";
+    if (item.type_id === 3) return "Анализ и\nописание\nвыполнены";
+    if (item.type_id === 2) return "Анализ\nвыполнен";
     return "Описание\nвыполнено";
   };
 
   const handleItemClick = (item: any) => {
-    if (item.isNew) markItemAsRead(item.id);
     setSelectedItemId(item.id);
     if (onSelectItem) onSelectItem(item);
     scrollToTop();
@@ -88,7 +99,7 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
     checkScrollability();
     window.addEventListener("resize", checkScrollability);
     return () => window.removeEventListener("resize", checkScrollability);
-  }, [archivedItems]);
+  }, [filteredArchiveData]);
 
   const handleScroll = () => {
     checkScrollability();
@@ -119,7 +130,7 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
   };
 
   // Функция для определения стиля элемента в зависимости от его состояния
-  const getItemStyle = (itemId: string) => {
+  const getItemStyle = (itemId: number) => {
     // Базовые классы, которые всегда применяются
     const baseClasses =
       "bg-white rounded-2xl p-4 shadow-md flex items-start cursor-pointer mb-4 relative transition-all duration-200";
@@ -134,10 +145,66 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
     }
   };
 
+  // Format date from API (YYYY-MM-DD) to readable format
+  const formatDate = (dateString: string) => {
+    try {
+      return format(parseISO(dateString), "d MMMM", { locale: ru });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="h-full flex flex-col">
+        <div className="py-4">
+          <h2 className="text-blue-600 font-medium text-center text-xl">
+            Архив
+          </h2>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <p>Загрузка данных...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-full flex flex-col">
+        <div className="py-4">
+          <h2 className="text-blue-600 font-medium text-center text-xl">
+            Архив
+          </h2>
+        </div>
+        <div className="flex-1 flex items-center justify-center flex-col">
+          <p className="text-red-500">Ошибка при загрузке данных</p>
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+            size="sm"
+            className="mt-4"
+          >
+            Попробовать снова
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col">
-      <div className="py-4">
-        <h2 className="text-blue-600 font-medium text-center text-xl">Архив</h2>
+      <div className="py-4 flex justify-between items-center px-4">
+        <h2 className="text-blue-600 font-medium text-center text-xl flex-1">
+          Архив
+        </h2>
+        {!isArchiveEmpty() && (
+          <div>
+            <Button variant="outline" size="sm" onClick={handleClearArchive}>
+              Очистить архив
+            </Button>
+          </div>
+        )}
       </div>
 
       <div
@@ -152,44 +219,52 @@ export function ArchiveView({ onSelectItem }: ArchiveViewProps) {
           </div>
         ) : (
           <div>
-            {sortedDates.map((date) => (
-              <div key={date} className="mb-6">
+            {filteredArchiveData.card_dates.map((dateGroup) => (
+              <div key={dateGroup.id} className="mb-6">
                 <h3 className="text-[#333333] font-medium mb-4 text-lg md:text-lg sm:text-base">
-                  {date}
+                  {formatDate(dateGroup.date)}
                 </h3>
 
-                {groupedItems[date].map((item) => (
+                {dateGroup.cards.map((card) => (
                   <div
-                    key={item.id}
-                    className={getItemStyle(item.id)}
-                    onClick={() => handleItemClick(item)}
+                    key={card.id}
+                    className={getItemStyle(card.id)}
+                    onClick={() => handleItemClick(card)}
                   >
                     <div className="w-16 h-16 rounded-md mr-4 overflow-hidden flex-shrink-0">
-                      <img
-                        src={`/placeholder.svg?height=64&width=64&query=product`}
-                        alt="Product"
-                        className="w-full h-full object-cover"
-                      />
+                      {card.images && card.images.length > 0 ? (
+                        <img
+                          src={`https://upload.seo-ai.kz/test/images/${card.images[0].image}`}
+                          alt={card.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={`/placeholder.svg?height=64&width=64&query=product`}
+                          alt="Product"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                     </div>
 
                     <div className="flex-1 flex flex-col">
                       <div className="font-normal md:text-md sm:text-md text-md text-black leading-tight mb-2">
-                        {formatProductName(item.name)}
+                        {formatProductName(card.name)}
                       </div>
 
                       <div className="flex items-center mt-1">
                         <p className="text-blue-600 md:text-base sm:text-md text-md">
-                          {item.sku}
+                          {card.article}
                         </p>
                         <FileText className="md:h-5 md:w-5 md:ml-2 sm:h-3 sm:w-3 sm:ml-1 h-3 w-3 ml-1 text-blue-600" />
                       </div>
                     </div>
 
                     <div className="text-blue-600 text-right mt-3 md:text-md sm:text-md text-md font-normal ml-2 md:w-28 sm:w-24 w-24">
-                      {formatStatusText(getItemStatus(item))}
+                      {formatStatusText(getItemStatus(card))}
                     </div>
 
-                    {item.isNew && (
+                    {card.badge_visible && (
                       <div className="absolute right-1 top-1 w-6 h-6 bg-blue-600 rounded-full"></div>
                     )}
                   </div>

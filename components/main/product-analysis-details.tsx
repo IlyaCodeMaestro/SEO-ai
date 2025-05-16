@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { getProductBySku } from "@/lib/api";
+import { useGetCardAnalysisQuery } from "@/store/services/main";
+import { useProcessingContext } from "./processing-provider";
 
 interface ProductAnalysisDetailsProps {
   onClose: () => void;
@@ -13,6 +14,7 @@ interface ProductAnalysisDetailsProps {
   productData: {
     sku: string;
     competitorSku: string;
+    cardId?: number;
   };
 }
 
@@ -24,38 +26,45 @@ export function ProductAnalysisDetails({
 }: ProductAnalysisDetailsProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [isAnalysisStarted, setIsAnalysisStarted] = useState(false);
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const { addProcessingItem } = useProcessingContext();
 
-  // Загрузка данных о товаре при монтировании компонента
-  useEffect(() => {
-    const fetchProduct = async () => {
-      if (!productData.sku) {
-        setError("Ошибка при загрузке товара");
-        setLoading(false);
-        return;
-      }
+  // Use the cardId from productData
+  const cardId = productData.cardId || 0;
 
-      setLoading(true);
-      setError(null);
-      try {
-        const fetchedProduct = await getProductBySku(productData.sku);
-        setProduct(fetchedProduct);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setError("Ошибка при загрузке товара");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetch card analysis data using the cardId
+  const {
+    data: analysisData,
+    error: apiError,
+    isLoading,
+    refetch,
+  } = useGetCardAnalysisQuery(cardId, {
+    // Skip the query if cardId is 0 (invalid)
+    skip: cardId === 0,
+  });
 
-    fetchProduct();
-  }, [productData.sku]);
+  // Handle continue button click in modal
+  const handleContinue = () => {
+    if (analysisData && analysisData.card) {
+      console.log("Starting analysis for card ID:", analysisData.card.id);
+      // Add the item to the processing list with complete card data
+      addProcessingItem("analysis", {
+        sku: productData.sku,
+        competitorSku: productData.competitorSku,
+        cardId: analysisData.card.id, // Use the card ID from the API response
+        cardData: analysisData.card, // Pass the complete card data
+      });
+    }
+
+    // Close the modal
+    setShowModal(false);
+
+    // Close the current page completely
+    onClose();
+  };
 
   // Отображение загрузки
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="h-full relative flex items-center justify-center">
         <div className="text-center">
@@ -66,18 +75,26 @@ export function ProductAnalysisDetails({
   }
 
   // Отображение ошибки
-  if (error) {
+  if (apiError || !analysisData) {
     return (
       <div className="h-full relative flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-500">{error}</p>
-          <Button onClick={onBack} className="mt-4">
-            Попробуйте другой SKU
-          </Button>
+          <p className="text-red-500">Ошибка при загрузке данных анализа</p>
+          <div className="flex gap-2 mt-4 justify-center">
+            <Button onClick={onBack}>Попробуйте другой SKU</Button>
+            <Button onClick={() => refetch()} variant="outline">
+              Попробовать снова
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
+
+  // Extract data from the API response
+  const { card, button } = analysisData;
+  const buttonText = button?.text || "Начать анализ";
+  const buttonVisible = button?.visible !== false;
 
   return (
     <div className="h-full relative">
@@ -133,27 +150,29 @@ export function ProductAnalysisDetails({
         )}
 
         <div className="bg-white rounded-[30px] p-6 shadow-custom mb-6">
-          {product ? (
+          {card ? (
             <div className="flex">
               <div className="w-32 h-32 bg-gray-200 rounded-xl mr-4 overflow-hidden">
                 <img
-                  src="/placeholder.svg?height=128&width=128"
+                  src={
+                    card.images && card.images.length > 0
+                      ? `https://upload.seo-ai.kz/test/images/${card.images[0].image}`
+                      : "/placeholder.svg?height=128&width=128"
+                  }
                   alt="Изображение товара"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex-1">
                 <div className="mb-2">
-                  <p className="text-md font-medium">SKU: 379067832</p>
+                  <p className="text-md font-medium">SKU: {card.article}</p>
                 </div>
                 <div className="mb-2">
                   <p className="text-md">Название:</p>
-                  <p className="text-md">
-                    Фен для волос женский мощный с ионизацией
-                  </p>
+                  <p className="text-md">{card.name}</p>
                 </div>
                 <div>
-                  <p className="text-md">Бренд: ARD SHOP</p>
+                  <p className="text-md">Бренд: {card.brand}</p>
                 </div>
               </div>
             </div>
@@ -164,13 +183,13 @@ export function ProductAnalysisDetails({
           )}
         </div>
 
-        {!isAnalysisStarted && product && (
+        {!isAnalysisStarted && card && buttonVisible && (
           <div className="mt-40 pt-6 flex justify-center">
             <Button
               onClick={() => setShowModal(true)}
               className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[55px] w-[200px] border border-white shadow-custom inline-block px-8"
             >
-              Начать анализ
+              {buttonText}
             </Button>
           </div>
         )}
@@ -192,10 +211,7 @@ export function ProductAnalysisDetails({
               <p className="text-sm">Уведомление придет после завершения</p>
               <div className="flex space-x-4 justify-center mt-4">
                 <Button
-                  onClick={() => {
-                    setShowModal(false);
-                    onContinue();
-                  }}
+                  onClick={handleContinue}
                   type="submit"
                   className="bg-gradient-to-r from-[#64cada] to-[#4169E1] text-white rounded-full h-[40px] border border-white shadow-custom inline-block px-12"
                 >
