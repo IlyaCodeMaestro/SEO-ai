@@ -112,4 +112,6 @@ export async function loginUser(data: {
 export function logout() {
   localStorage.removeItem("sessionId")
   localStorage.removeItem("userId")
+  Cookies.set("sessionId", sessionId)
+  Cookies.set("userId", userId.toString())
 }
