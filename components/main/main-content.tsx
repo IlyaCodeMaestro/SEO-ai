@@ -17,7 +17,7 @@ export function MainContent({
 }: MainContentProps) {
   const { processingItems } = useProcessingContext();
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const { data: data, isLoading, error } = useGetMainInfoQuery()
+  const { data: data, isLoading, error } = useGetMainInfoQuery();
   const { language, setLanguage, t } = useLanguage();
 
   // Function to handle card click and set the selected item
@@ -87,13 +87,13 @@ export function MainContent({
               variant="secondary"
               className="bg-white text-black hover:bg-gray-100 font-light rounded-full text-base md:text-sm px-8 py-1 h-[32px] w-[120px]"
               onClick={(e) => {
-                e.stopPropagation(); // Prevent triggering parent onClick
+                // Prevent triggering parent onClick
                 handleCardClick("product-analysis", () =>
                   onOpenPanel("product-analysis")
                 );
               }}
             >
-              {t('tariff.switch')}
+              {t("tariff.switch")}
             </Button>
           </div>
         </div>
@@ -130,7 +130,7 @@ export function MainContent({
                 );
               }}
             >
-              {t('tariff.switch')}
+              {t("tariff.switch")}
             </Button>
           </div>
         </div>
