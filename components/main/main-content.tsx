@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { useProcessingContext } from "./processing-provider";
 import { useState } from "react";
+import { useGetMainInfoQuery } from "@/store/services/main";
+import { useLanguage } from "../provider/language-provider";
 
 interface MainContentProps {
   onOpenPanel: (panel: "product-analysis" | "product-description") => void;
@@ -15,6 +17,8 @@ export function MainContent({
 }: MainContentProps) {
   const { processingItems } = useProcessingContext();
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const { data: data, isLoading, error } = useGetMainInfoQuery()
+  const { language, setLanguage, t } = useLanguage();
 
   // Function to handle card click and set the selected item
   const handleCardClick = (itemId: string, callback: () => void) => {
@@ -76,7 +80,7 @@ export function MainContent({
             Проверьте качество SEO и текста
           </p>
           <p className="text-base md:text-sm mb-5 ml-2 font-thin">
-            Доступно 25 анализов
+            Доступно {data && data?.tariff?.analyses} анализов
           </p>
           <div className="ml-2">
             <Button
@@ -89,7 +93,7 @@ export function MainContent({
                 );
               }}
             >
-              Перейти
+              {t('tariff.switch')}
             </Button>
           </div>
         </div>
@@ -113,7 +117,7 @@ export function MainContent({
             Качественное SEO и текст за пару кликов
           </p>
           <p className="text-base mb-5 ml-2 text-[15px] md:text-sm font-thin">
-            Доступно 30 описаний
+            Доступно {data && data?.tariff?.descriptions} описаний
           </p>
           <div className="ml-2">
             <Button
@@ -126,7 +130,7 @@ export function MainContent({
                 );
               }}
             >
-              Перейти
+              {t('tariff.switch')}
             </Button>
           </div>
         </div>

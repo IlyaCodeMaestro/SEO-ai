@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const BASE_URL = "https://api.stage.seo-ai.kz/b";
+export const BASE_URL = "https://api.stage.seo-ai.kz/b";
 
 export async function getCountries() {
   const res = await fetch(`${BASE_URL}/v1/countries`, {
@@ -81,8 +81,6 @@ export async function loginUser(data: {
   password: string;
   firebase_id?: string;
 }) {
-  console.log(data);
-
   const res = await fetch(`${BASE_URL}/v1/login`, {
     method: "POST",
     headers: {
@@ -103,13 +101,15 @@ export async function loginUser(data: {
   }
 
   const { sessionId, userId } = json.user;
-  Cookies.set("sessionId", sessionId);
-  Cookies.set("userId", userId.toString());
+  Cookies.set("sessionId", sessionId)
+  Cookies.set("userId", userId.toString())
+  localStorage.setItem("sessionId", sessionId)
+  localStorage.setItem("userId", userId.toString())
 
   return json;
 }
 
 export function logout() {
-  Cookies.remove("sessionId");
-  Cookies.remove("userId");
+  localStorage.removeItem("sessionId")
+  localStorage.removeItem("userId")
 }
